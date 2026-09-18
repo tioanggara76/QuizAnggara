@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tebak Gambar Komponen Sepeda Motor</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #4bb38a;
+      --primary-hover: #4bb38a;
+      --bg-light: #f4f7f6;
+    }
+    body {
+      background-color: var(--bg-light);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .navbar-custom {
+      background-color: var(--primary-color);
+    }
+    .btn-custom {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    .btn-custom:hover {
+      background-color: var(--primary-hover);
+      color: white;
+    }
+    .hero-section {
+      background: linear-gradient(rgba(15, 82, 56, 0.85), rgba(15, 82, 56, 0.85)), 
+                  url('https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=1000&auto=format&fit=crop') center/cover no-repeat;
+      color: white;
+      min-height: 75vh;
+      border-radius: 15px;
+    }
+    .page-view {
+      display: none;
+    }
+    .page-view.active {
+      display: block;
+    }
+    .auth-card {
+      max-width: 700px;
+      margin: auto;
+      border-radius: 15px;
+    }
+    .option-btn {
+      text-align: left;
+      padding: 12px 20px;
+      border-radius: 25px;
+      margin-bottom: 10px;
+      border: 1px solid #dee2e6;
+      background: white;
+      transition: all 0.2s;
+    }
+    .option-btn:hover {
+      background-color: #e9ecef;
+    }
+    .badge-option {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="#" onclick="showPage('beranda')">
+         <img src="logo_quiz.png" alt="" class="img-fluid" width="150" height="80"> 
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center gap-3">
+          <li class="nav-item"><a class="nav-link text-white" href="#" onclick="showPage('beranda')">Beranda</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="#" onclick="showPage('daftar')">Mulai Game</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="#" onclick="showPage('ranking')">Ranking</a></li>
+          <li class="nav-item">
+            <button class="btn btn-outline-light btn-sm rounded-pill px-3" onclick="showAdminModal()">
+              <i class="bi bi-shield-lock me-1"></i> Admin
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-4">
+
+    <!-- 1. Halaman Beranda -->
+    <section id="beranda" class="page-view active">
+      <div class="hero-section d-flex align-items-center p-5 shadow">
+        <div class="col-lg-8">
+          <h1 class="display-4 fw-bold mb-3">Tebak Gambar<br>Komponen Sepeda Motor</h1>
+          <p class="fs-5 mb-4">Uji pengetahuanmu tentang komponen sepeda motor! Daftar dengan nama dan emailmu untuk langsung memulai permainan.</p>
+          <div class="row g-3 mb-4 text-white-50 fs-6">
+            <div class="col-md-4"><i class="bi bi-controller text-white me-2"></i>Belajar sambil bermain</div>
+            <div class="col-md-4"><i class="bi bi-x-circle text-white me-2"></i>Tidak ada kesempatan ngulang saat salah</div>
+            <div class="col-md-4"><i class="bi bi-trophy text-white me-2"></i>Masuk ke Dashboard Ranking</div>
+          </div>
+          <div class="d-flex gap-3">
+            <button class="btn btn-success btn-lg px-4 rounded-pill" onclick="showPage('daftar')">Main Sekarang <i class="bi bi-arrow-right"></i></button>
+            <button class="btn btn-outline-light btn-lg px-4 rounded-pill" onclick="showPage('ranking')">Lihat Ranking</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Halaman Daftar -->
+    <section id="daftar" class="page-view">
+      <div class="card auth-card shadow-sm border-0 p-4">
+        <div class="row align-items-center">
+          <div class="col-md-5 text-center p-4 border-end">
+            <i class="bi bi-bicycle text-success display-1"></i>
+            <h4 class="mt-3 fw-bold">Tebak Gambar</h4>
+            <p class="text-muted small">Masukkan data diri untuk mulai pengerjaan soal!</p>
+          </div>
+          <div class="col-md-7 p-4">
+            <h3 class="fw-bold mb-1">Daftar Pemain</h3>
+            <p class="text-muted small mb-3">Isi nama dan email untuk langsung memulai tantangan.</p>
+            <form id="formDaftar" onsubmit="mulaiPermainan(event)">
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Nama Lengkap</label>
+                <input type="text" id="playerNama" class="form-control form-control-lg" placeholder="Masukkan nama Anda" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Email</label>
+                <input type="email" id="playerEmail" class="form-control form-control-lg" placeholder="nama@email.com" required>
+              </div>
+              <button type="submit" class="btn btn-custom w-100 btn-lg rounded-3 mb-2">Mulai Kerjakan Soal <i class="bi bi-arrow-right"></i></button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Halaman Game (Soal) -->
+    <section id="game" class="page-view">
+      <div class="card navbar-custom text-white p-3 mb-4 rounded-3 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center fw-bold">
+          <div><i class="bi bi-person me-2"></i>Pemain: <span id="gamePlayerName">-</span></div>
+          <div><i class="bi bi-star-fill text-warning me-2"></i>Skor: <span id="gameSkor">0</span></div>
+          <div><i class="bi bi-list-task me-2"></i>Soal: <span id="gameSoalKe">1</span> / <span id="gameTotalSoal">0</span></div>
+        </div>
+      </div>
+      <div class="card p-4 border-0 shadow-sm rounded-4">
+        <div class="row align-items-center">
+          <div class="col-md-5 text-center mb-3 mb-md-0">
+            <img id="gameGambar" src="" class="img-fluid rounded-3 border shadow-sm" style="max-height: 280px; object-fit: contain;" alt="Komponen Motor">
+          </div>
+          <div class="col-md-7">
+            <h5 class="fw-bold mb-4" id="gamePertanyaan">Loading Soal...</h5>
+            <div class="d-grid gap-2" id="gamePilihanContainer"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Halaman Hasil -->
+    <section id="hasil" class="page-view">
+      <div class="row g-4">
+        <div class="col-md-8">
+          <div class="card text-center p-5 border-0 shadow-sm rounded-4 h-100">
+            <div class="mb-2" id="hasilIcon"><i class="bi bi-trophy-fill text-warning display-1"></i></div>
+            <h2 class="fw-bold" id="hasilJudul">Permainan Selesai!</h2>
+            <p class="text-muted" id="hasilKeterangan">Terima kasih telah berpartisipasi.</p>
+            <div class="row g-3 my-3">
+              <div class="col-6">
+                <div class="p-3 bg-light rounded-3">
+                  <div class="small text-muted"><i class="bi bi-star-fill text-warning me-1"></i>Total Skor</div>
+                  <div class="fs-2 fw-bold text-primary" id="hasilSkor">0</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="p-3 bg-light rounded-3">
+                  <div class="small text-muted"><i class="bi bi-check-circle-fill text-success me-1"></i>Jumlah Benar</div>
+                  <div class="fs-2 fw-bold" id="hasilBenar">0 / 0</div>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex gap-3 justify-content-center mt-3">
+              <button class="btn btn-custom px-4 rounded-pill" onclick="showPage('daftar')"><i class="bi bi-arrow-counterclockwise me-1"></i> Main Lagi</button>
+              <button class="btn btn-outline-success px-4 rounded-pill" onclick="showPage('ranking')"><i class="bi bi-trophy me-1"></i> Lihat Ranking</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card p-4 border-0 shadow-sm rounded-4 navbar-custom text-white h-100 d-flex flex-column justify-content-between text-center">
+            <div class="my-auto">
+              <blockquote class="fs-4 fst-italic">"Terus belajar, ilmu otomotif adalah bekal untuk masa depan."</blockquote>
+            </div>
+            <div>
+              <i class="bi bi-bicycle display-1"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Halaman Ranking Public -->
+    <section id="ranking" class="page-view">
+      <div class="card p-4 border-0 shadow-sm rounded-4">
+        <h4 class="fw-bold mb-4"><i class="bi bi-trophy-fill text-warning me-2"></i>Ranking Pemain Teratas</h4>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>Skor</th>
+                <th>Benar</th>
+                <th>Tanggal</th>
+              </tr>
+            </thead>
+            <tbody id="tabelRankingBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Halaman Dashboard Admin -->
+    <section id="admin" class="page-view">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold"><i class="bi bi-speedometer2 text-success me-2"></i>Dashboard Admin</h3>
+        <button class="btn btn-outline-danger btn-sm" onclick="showPage('beranda')"><i class="bi bi-box-arrow-right me-1"></i> Keluar Admin</button>
+      </div>
+
+      <!-- Navigasi Tab Admin -->
+      <ul class="nav nav-pills mb-4" id="adminTab" role="tablist">
+        <li class="nav-item">
+          <button class="nav-link active fw-bold" id="tab-hasil-tab" data-bs-toggle="tab" data-bs-target="#tab-hasil" type="button"><i class="bi bi-bar-chart-line me-1"></i> Hasil Pemain</button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link fw-bold" id="tab-soal-tab" data-bs-toggle="tab" data-bs-target="#tab-soal" type="button"><i class="bi bi-journal-plus me-1"></i> Kelola Soal</button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="adminTabContent">
+        <!-- Tab 1: Hasil Pemain -->
+        <div class="tab-pane fade show active" id="tab-hasil" role="tabpanel">
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <div class="card p-3 border-0 shadow-sm d-flex flex-row align-items-center gap-3">
+                <i class="bi bi-people-fill text-primary fs-1"></i>
+                <div>
+                  <div class="text-muted small">Total Percobaan</div>
+                  <div class="fs-3 fw-bold" id="adminTotalPercobaan">0</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card p-3 border-0 shadow-sm d-flex flex-row align-items-center gap-3">
+                <i class="bi bi-star-fill text-warning fs-1"></i>
+                <div>
+                  <div class="text-muted small">Rata-rata Skor</div>
+                  <div class="fs-3 fw-bold" id="adminRataSkor">0</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card p-3 border-0 shadow-sm d-flex flex-row align-items-center gap-3">
+                <i class="bi bi-person-check-fill text-success fs-1"></i>
+                <div>
+                  <div class="text-muted small">Pemain Unik</div>
+                  <div class="fs-3 fw-bold" id="adminPemainUnik">0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card p-4 border-0 shadow-sm">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold">Data Hasil pengerjaan Soal</h5>
+              <button class="btn btn-danger btn-sm" onclick="hapusSemuaDataAdmin()"><i class="bi bi-trash me-1"></i> Hapus Semua Data Pemain</button>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-striped align-middle">
+                <thead class="table-dark">
+                  <tr>
+                    <th>No</th>
+                    <th>Nama Pemain</th>
+                    <th>Email</th>
+                    <th>Skor</th>
+                    <th>Jumlah Benar</th>
+                    <th>Tanggal</th>
+                  </tr>
+                </thead>
+                <tbody id="tabelAdminBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Kelola Soal -->
+        <div class="tab-pane fade" id="tab-soal" role="tabpanel">
+          <div class="card p-4 border-0 shadow-sm">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold">Daftar Soal Permainan</h5>
+              <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary btn-sm" onclick="resetSoalDefault()"><i class="bi bi-arrow-counterclockwise me-1"></i> Reset Soal Bawaan</button>
+                <button class="btn btn-success btn-sm" onclick="bukaModalSoal()"><i class="bi bi-plus-circle me-1"></i> Tambah Soal Baru</button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-bordered align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th width="5%">No</th>
+                    <th width="15%">Gambar</th>
+                    <th>Pertanyaan & Pilihan</th>
+                    <th width="20%">Jawaban Benar</th>
+                    <th width="15%">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="tabelKelolaSoalBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Modal Password Admin -->
+  <div class="modal fade" id="modalAdmin" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold"><i class="bi bi-shield-lock me-2"></i>Login Admin</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="small text-muted">Masukkan password admin untuk mengakses dashboard.</p>
+          <div class="mb-3">
+            <input type="password" id="inputPassAdmin" class="form-control" placeholder="Password: ******">
+            <div id="adminErrorMsg" class="text-danger small mt-1" style="display:none;">Password salah!</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-custom" onclick="verifikasiAdmin()">Masuk Admin</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Form Tambah / Edit Soal -->
+  <div class="modal fade" id="modalFormSoal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold" id="modalSoalTitle">Tambah Soal Baru</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="formAdminSoal" onsubmit="simpanSoal(event)">
+          <div class="modal-body">
+            <input type="hidden" id="soalEditId">
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Pertanyaan</label>
+              <input type="text" id="inputPertanyaan" class="form-control" placeholder="Contoh: Apa nama komponen pada gambar?" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">URL Gambar (Direct Link Gambar)</label>
+              <input type="url" id="inputGambar" class="form-control" placeholder="https://domain.com/gambar.jpg" required>
+            </div>
+            <div class="row g-2 mb-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-bold">Pilihan A</label>
+                <input type="text" id="inputPil0" class="form-control" placeholder="Pilihan A" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-bold">Pilihan B</label>
+                <input type="text" id="inputPil1" class="form-control" placeholder="Pilihan B" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-bold">Pilihan C</label>
+                <input type="text" id="inputPil2" class="form-control" placeholder="Pilihan C" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-bold">Pilihan D</label>
+                <input type="text" id="inputPil3" class="form-control" placeholder="Pilihan D" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Kunci Jawaban Benar</label>
+              <select id="inputJawabanBenar" class="form-select" required>
+                <option value="0">Pilihan A</option>
+                <option value="1">Pilihan B</option>
+                <option value="2">Pilihan C</option>
+                <option value="3">Pilihan D</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-custom">Simpan Soal</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- JavaScript Logika Aplikasi -->
+  <script>
+    // --- Data Soal Default / Bawaan ---
+    const defaultSoal = [
+      {
+        id: 1,
+        pertanyaan: "Apa nama komponen pada gambar di samping?",
+        gambar: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=600&auto=format&fit=crop",
+        pilihan: ["Karburator", "Busi", "CDI", "Kampas Rem"],
+        jawabanBenar: 0
+      },
+      {
+        id: 2,
+        pertanyaan: "Komponen yang berfungsi mencetuskan percikan bunga api di ruang bakar adalah?",
+        gambar: "https://images.unsplash.com/photo-1590674899484-d5640e854abe?q=80&w=600&auto=format&fit=crop",
+        pilihan: ["Aki / Baterai", "Busi", "Radiator", "Piston"],
+        jawabanBenar: 1
+      },
+      {
+        id: 3,
+        pertanyaan: "Komponen berikut yang berfungsi sebagai penerus daya putar mesin ke roda belakang adalah?",
+        gambar: "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?q=80&w=600&auto=format&fit=crop",
+        pilihan: ["Shockbreaker", "Rantai & Gir Motor", "Karburator", "Knalpot"],
+        jawabanBenar: 1
+      },
+      {
+        id: 4,
+        pertanyaan: "Komponen penyerap guncangan pada roda kendaraan sepeda motor adalah?",
+        gambar: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=600&auto=format&fit=crop",
+        pilihan: ["Ban", "Velg", "Shockbreaker / Suspensi", "Stang"],
+        jawabanBenar: 2
+      },
+      {
+        id: 5,
+        pertanyaan: "Sistem pengereman sepeda motor yang menggunakan piringan dinamakan rem?",
+        gambar: "https://images.unsplash.com/photo-1609630875171-b1321377ee65?q=80&w=600&auto=format&fit=crop",
+        pilihan: ["Tromol", "Cakram (Disc Brake)", "CBS", "ABS"],
+        jawabanBenar: 1
+      }
+    ];
+
+    // --- State Game & Data ---
+    let daftarSoal = [];
+    let currentPlayer = { nama: "", email: "" };
+    let currentSoalIndex = 0;
+    let skorAktif = 0;
+    let jumlahBenar = 0;
+
+    // --- Inisialisasi Data Soal ---
+    function muatDaftarSoal() {
+      const stored = localStorage.getItem('tebak_gambar_soal');
+      if (stored) {
+        daftarSoal = JSON.parse(stored);
+      } else {
+        daftarSoal = [...defaultSoal];
+        localStorage.setItem('tebak_gambar_soal', JSON.stringify(daftarSoal));
+      }
+    }
+    muatDaftarSoal();
+
+    // --- Switch Halaman ---
+    function showPage(pageId) {
+      document.querySelectorAll('.page-view').forEach(page => page.classList.remove('active'));
+      const target = document.getElementById(pageId);
+      if (target) {
+        target.classList.add('active');
+        window.scrollTo(0, 0);
+      }
+
+      if (pageId === 'ranking') renderRanking();
+      if (pageId === 'admin') renderAdmin();
+    }
+
+    // --- Mulai Game dari Form Daftar ---
+    function mulaiPermainan(e) {
+      e.preventDefault();
+      muatDaftarSoal();
+
+      if (daftarSoal.length === 0) {
+        alert("Belum ada soal tersedia! Minta admin menambah soal terlebih dahulu.");
+        return;
+      }
+
+      const nama = document.getElementById('playerNama').value.trim();
+      const email = document.getElementById('playerEmail').value.trim();
+
+      if (!nama || !email) return;
+
+      currentPlayer = { nama, email };
+      currentSoalIndex = 0;
+      skorAktif = 0;
+      jumlahBenar = 0;
+
+      document.getElementById('gamePlayerName').innerText = nama;
+      showPage('game');
+      muatSoal();
+    }
+
+    // --- Render Soal ---
+    function muatSoal() {
+      const soal = daftarSoal[currentSoalIndex];
+      document.getElementById('gameSkor').innerText = skorAktif;
+      document.getElementById('gameSoalKe').innerText = currentSoalIndex + 1;
+      document.getElementById('gameTotalSoal').innerText = daftarSoal.length;
+      document.getElementById('gameGambar').src = soal.gambar;
+      document.getElementById('gamePertanyaan').innerText = soal.pertanyaan;
+
+      const containerPilihan = document.getElementById('gamePilihanContainer');
+      containerPilihan.innerHTML = "";
+
+      const huruf = ["A", "B", "C", "D"];
+      soal.pilihan.forEach((pilihan, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "btn option-btn text-start d-flex align-items-center";
+        btn.innerHTML = `<span class="badge-option">${huruf[idx]}</span> ${escapeHtml(pilihan)}`;
+        btn.onclick = () => pilihJawaban(idx);
+        containerPilihan.appendChild(btn);
+      });
+    }
+
+    // --- Pilihan Jawaban ---
+    function pilihJawaban(indexPilihan) {
+      const soal = daftarSoal[currentSoalIndex];
+
+      if (indexPilihan === parseInt(soal.jawabanBenar)) {
+        skorAktif += 20;
+        jumlahBenar++;
+        currentSoalIndex++;
+
+        if (currentSoalIndex < daftarSoal.length) {
+          muatSoal();
+        } else {
+          selesaiGame(true, "Selamat! Kamu berhasil menjawab semua soal dengan benar.");
+        }
+      } else {
+        selesaiGame(false, `Jawaban kamu salah pada Soal No. ${currentSoalIndex + 1}. Pengerjaan dihentikan.`);
+      }
+    }
+
+    // --- Selesai Permainan ---
+    function selesaiGame(isLunas, pesan) {
+      simpanHasilToLocalStorage();
+
+      document.getElementById('hasilSkor').innerText = skorAktif;
+      document.getElementById('hasilBenar').innerText = `${jumlahBenar} / ${daftarSoal.length}`;
+      document.getElementById('hasilKeterangan').innerText = pesan;
+
+      const iconElem = document.getElementById('hasilIcon');
+      if (isLunas) {
+        iconElem.innerHTML = `<i class="bi bi-trophy-fill text-warning display-1"></i>`;
+        document.getElementById('hasilJudul').innerText = "Kamu Luar Biasa!";
+      } else {
+        iconElem.innerHTML = `<i class="bi bi-x-circle-fill text-danger display-1"></i>`;
+        document.getElementById('hasilJudul').innerText = "Game Over!";
+      }
+
+      showPage('hasil');
+    }
+
+    // --- LocalStorage Result Handling ---
+    function getStoredResults() {
+      const data = localStorage.getItem('tebak_gambar_results');
+      return data ? JSON.parse(data) : [];
+    }
+
+    function simpanHasilToLocalStorage() {
+      const results = getStoredResults();
+      const newEntry = {
+        id: Date.now(),
+        nama: currentPlayer.nama,
+        email: currentPlayer.email,
+        skor: skorAktif,
+        benar: `${jumlahBenar}/${daftarSoal.length}`,
+        tanggal: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
+      };
+      results.push(newEntry);
+      localStorage.setItem('tebak_gambar_results', JSON.stringify(results));
+    }
+
+    // --- Render Ranking ---
+    function renderRanking() {
+      const results = getStoredResults();
+      results.sort((a, b) => b.skor - a.skor);
+
+      const tbody = document.getElementById('tabelRankingBody');
+      tbody.innerHTML = "";
+
+      if (results.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Belum ada data permainan.</td></tr>`;
+        return;
+      }
+
+      results.slice(0, 10).forEach((item, index) => {
+        let badge = `<span class="fw-bold">${index + 1}</span>`;
+        if (index === 0) badge = `<span class="badge bg-warning text-dark rounded-circle p-2">1</span>`;
+        if (index === 1) badge = `<span class="badge bg-secondary rounded-circle p-2">2</span>`;
+        if (index === 2) badge = `<span class="badge bg-danger rounded-circle p-2">3</span>`;
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${badge}</td>
+            <td class="fw-bold">${escapeHtml(item.nama)}</td>
+            <td class="text-primary fw-bold">${item.skor}</td>
+            <td>${item.benar}</td>
+            <td class="text-muted">${item.tanggal}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // --- Modal Admin Auth ---
+    let modalAdminBS = null;
+    function showAdminModal() {
+      modalAdminBS = new bootstrap.Modal(document.getElementById('modalAdmin'));
+      document.getElementById('inputPassAdmin').value = "";
+      document.getElementById('adminErrorMsg').style.display = "none";
+      modalAdminBS.show();
+    }
+
+    function verifikasiAdmin() {
+      const pass = document.getElementById('inputPassAdmin').value;
+      if (pass === 'admin123') {
+        modalAdminBS.hide();
+        showPage('admin');
+      } else {
+        document.getElementById('adminErrorMsg').style.display = "block";
+      }
+    }
+
+    // --- Render Admin Dashboard & Kelola Soal ---
+    function renderAdmin() {
+      muatDaftarSoal();
+      const results = getStoredResults();
+
+      // Render Tab Hasil Pemain
+      const tbodyHasil = document.getElementById('tabelAdminBody');
+      tbodyHasil.innerHTML = "";
+
+      const totalPercobaan = results.length;
+      const totalSkor = results.reduce((acc, curr) => acc + curr.skor, 0);
+      const rataSkor = totalPercobaan ? Math.round(totalSkor / totalPercobaan) : 0;
+      const pemainUnik = new Set(results.map(r => r.email.toLowerCase())).size;
+
+      document.getElementById('adminTotalPercobaan').innerText = totalPercobaan;
+      document.getElementById('adminRataSkor').innerText = rataSkor;
+      document.getElementById('adminPemainUnik').innerText = pemainUnik;
+
+      if (results.length === 0) {
+        tbodyHasil.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Belum ada data pengerjaan.</td></tr>`;
+      } else {
+        [...results].reverse().forEach((item, index) => {
+          tbodyHasil.innerHTML += `
+            <tr>
+              <td>${index + 1}</td>
+              <td class="fw-bold">${escapeHtml(item.nama)}</td>
+              <td>${escapeHtml(item.email)}</td>
+              <td><span class="badge bg-primary fs-6">${item.skor}</span></td>
+              <td>${item.benar}</td>
+              <td>${item.tanggal}</td>
+            </tr>
+          `;
+        });
+      }
+
+      // Render Tab Kelola Soal
+      const tbodySoal = document.getElementById('tabelKelolaSoalBody');
+      tbodySoal.innerHTML = "";
+
+      if (daftarSoal.length === 0) {
+        tbodySoal.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Belum ada soal. Klik 'Tambah Soal Baru' untuk menambah.</td></tr>`;
+        return;
+      }
+
+      const huruf = ["A", "B", "C", "D"];
+      daftarSoal.forEach((item, index) => {
+        const kunciJawabanText = `${huruf[item.jawabanBenar]}: ${item.pilihan[item.jawabanBenar]}`;
+        tbodySoal.innerHTML += `
+          <tr>
+            <td class="text-center fw-bold">${index + 1}</td>
+            <td class="text-center">
+              <img src="${item.gambar}" class="img-thumbnail" style="max-height: 70px; object-fit: contain;">
+            </td>
+            <td>
+              <div class="fw-bold mb-1">${escapeHtml(item.pertanyaan)}</div>
+              <small class="text-muted">
+                A. ${escapeHtml(item.pilihan[0])} | 
+                B. ${escapeHtml(item.pilihan[1])} | 
+                C. ${escapeHtml(item.pilihan[2])} | 
+                D. ${escapeHtml(item.pilihan[3])}
+              </small>
+            </td>
+            <td><span class="badge bg-success">${escapeHtml(kunciJawabanText)}</span></td>
+            <td>
+              <button class="btn btn-warning btn-sm me-1" onclick="editSoal(${item.id})"><i class="bi bi-pencil"></i> Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="hapusSoal(${item.id})"><i class="bi bi-trash"></i> Hapus</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    // --- Form Modal Kelola Soal ---
+    let modalSoalBS = null;
+
+    function bukaModalSoal() {
+      modalSoalBS = new bootstrap.Modal(document.getElementById('modalFormSoal'));
+      document.getElementById('modalSoalTitle').innerText = "Tambah Soal Baru";
+      document.getElementById('soalEditId').value = "";
+      document.getElementById('formAdminSoal').reset();
+      modalSoalBS.show();
+    }
+
+    function simpanSoal(e) {
+      e.preventDefault();
+      const editId = document.getElementById('soalEditId').value;
+      const pertanyaan = document.getElementById('inputPertanyaan').value.trim();
+      const gambar = document.getElementById('inputGambar').value.trim();
+      const pilihan = [
+        document.getElementById('inputPil0').value.trim(),
+        document.getElementById('inputPil1').value.trim(),
+        document.getElementById('inputPil2').value.trim(),
+        document.getElementById('inputPil3').value.trim()
+      ];
+      const jawabanBenar = parseInt(document.getElementById('inputJawabanBenar').value);
+
+      if (editId) {
+        // Edit Soal
+        const index = daftarSoal.findIndex(s => s.id == editId);
+        if (index !== -1) {
+          daftarSoal[index] = { id: parseInt(editId), pertanyaan, gambar, pilihan, jawabanBenar };
+        }
+      } else {
+        // Tambah Soal
+        const newSoal = {
+          id: Date.now(),
+          pertanyaan,
+          gambar,
+          pilihan,
+          jawabanBenar
+        };
+        daftarSoal.push(newSoal);
+      }
+
+      localStorage.setItem('tebak_gambar_soal', JSON.stringify(daftarSoal));
+      modalSoalBS.hide();
+      renderAdmin();
+    }
+
+    function editSoal(id) {
+      const soal = daftarSoal.find(s => s.id === id);
+      if (!soal) return;
+
+      modalSoalBS = new bootstrap.Modal(document.getElementById('modalFormSoal'));
+      document.getElementById('modalSoalTitle').innerText = "Edit Soal";
+      document.getElementById('soalEditId').value = soal.id;
+      document.getElementById('inputPertanyaan').value = soal.pertanyaan;
+      document.getElementById('inputGambar').value = soal.gambar;
+      document.getElementById('inputPil0').value = soal.pilihan[0];
+      document.getElementById('inputPil1').value = soal.pilihan[1];
+      document.getElementById('inputPil2').value = soal.pilihan[2];
+      document.getElementById('inputPil3').value = soal.pilihan[3];
+      document.getElementById('inputJawabanBenar').value = soal.jawabanBenar;
+
+      modalSoalBS.show();
+    }
+
+    function hapusSoal(id) {
+      if (confirm("Apakah Anda yakin ingin menghapus soal ini?")) {
+        daftarSoal = daftarSoal.filter(s => s.id !== id);
+        localStorage.setItem('tebak_gambar_soal', JSON.stringify(daftarSoal));
+        renderAdmin();
+      }
+    }
+
+    function resetSoalDefault() {
+      if (confirm("Kembalikan daftar soal ke soal default/bawaan? Soal buatan manual akan hilang.")) {
+        daftarSoal = [...defaultSoal];
+        localStorage.setItem('tebak_gambar_soal', JSON.stringify(daftarSoal));
+        renderAdmin();
+      }
+    }
+
+    function hapusSemuaDataAdmin() {
+      if (confirm("Apakah Anda yakin ingin menghapus seluruh data hasil pemain?")) {
+        localStorage.removeItem('tebak_gambar_results');
+        renderAdmin();
+      }
+    }
+
+    function escapeHtml(text) {
+      return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
