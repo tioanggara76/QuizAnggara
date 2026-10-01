@@ -1,814 +1,1384 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-bs-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tebak Gambar Komponen Sepeda Motor</title>
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-  <style>
-    :root {
-      --primary-color: #4bb38a;
-      --primary-hover: #4bb38a;
-      --bg-light: #f4f7f6;
-    }
-    body {
-      background-color: var(--bg-light);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    .navbar-custom {
-      background-color: var(--primary-color);
-    }
-    .btn-custom {
-      background-color: var(--primary-color);
-      color: white;
-    }
-    .btn-custom:hover {
-      background-color: var(--primary-hover);
-      color: white;
-    }
-    .hero-section {
-      background: linear-gradient(rgba(15, 82, 56, 0.85), rgba(15, 82, 56, 0.85)), 
-                  url('https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=1000&auto=format&fit=crop') center/cover no-repeat;
-      color: white;
-      min-height: 75vh;
-      border-radius: 15px;
-    }
-    .page-view {
-      display: none;
-    }
-    .page-view.active {
-      display: block;
-    }
-    .auth-card {
-      max-width: 700px;
-      margin: auto;
-      border-radius: 15px;
-    }
-    .option-btn {
-      text-align: left;
-      padding: 12px 20px;
-      border-radius: 25px;
-      margin-bottom: 10px;
-      border: 1px solid #dee2e6;
-      background: white;
-      transition: all 0.2s;
-    }
-    .option-btn:hover {
-      background-color: #e9ecef;
-    }
-    .badge-option {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background-color: var(--primary-color);
-      color: white;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 15px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizSMK - Platform Kuis Interaktif SMK</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- PDF.js Library for parsing PDF files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
+    <!-- Mammoth.js Library for parsing Word DOCX files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+
+    <style>
+        :root {
+            --primary-accent: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary-accent: #ec4899;
+            --success-glow: #10b981;
+            --warning-glow: #f59e0b;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-gradient-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .btn-gradient-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+            color: white;
+        }
+
+        .btn-gradient-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+        }
+
+        .option-card {
+            background: #273549;
+            border: 2px solid var(--card-border);
+            border-radius: 0.75rem;
+            padding: 0.85rem 1.15rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+        .option-card:hover {
+            border-color: var(--primary-accent);
+            background: #2e3e56;
+            transform: translateX(4px);
+        }
+        .option-card.selected {
+            border-color: var(--primary-accent);
+            background: rgba(99, 102, 241, 0.25);
+        }
+        .option-card .badge-key {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #334155;
+            font-weight: 700;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+        .option-card.selected .badge-key {
+            background: var(--primary-accent);
+            color: white;
+        }
+
+        /* Leaderboard Podium */
+        .podium-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-top: 1rem;
+        }
+        .podium-box {
+            text-align: center;
+            border-radius: 1rem 1rem 0 0;
+            padding: 1rem;
+            width: 110px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            transition: all 0.3s ease;
+        }
+        .podium-box.rank-1 {
+            height: 160px;
+            background: linear-gradient(180deg, #f59e0b 0%, rgba(245, 158, 11, 0.15) 100%);
+            border: 2px solid #fbbf24;
+        }
+        .podium-box.rank-2 {
+            height: 130px;
+            background: linear-gradient(180deg, #94a3b8 0%, rgba(148, 163, 184, 0.15) 100%);
+            border: 2px solid #cbd5e1;
+        }
+        .podium-box.rank-3 {
+            height: 100px;
+            background: linear-gradient(180deg, #b45309 0%, rgba(180, 83, 9, 0.15) 100%);
+            border: 2px solid #d97706;
+        }
+
+        /* Teacher Auth Styling */
+        .teacher-auth-card {
+            max-width: 480px;
+            margin: 2rem auto;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        .pulse-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #10b981;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
-    <div class="container">
-      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="#" onclick="showPage('beranda')">
-         <img src="logo_quiz.png" alt="" class="img-fluid" width="150" height="80"> 
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto align-items-center gap-3">
-          <li class="nav-item"><a class="nav-link text-white" href="#" onclick="showPage('beranda')">Beranda</a></li>
-          <li class="nav-item"><a class="nav-link text-white" href="#" onclick="showPage('daftar')">Mulai Game</a></li>
-          <li class="nav-item"><a class="nav-link text-white" href="#" onclick="showPage('ranking')">Ranking</a></li>
-          <li class="nav-item">
-            <button class="btn btn-outline-light btn-sm rounded-pill px-3" onclick="showAdminModal()">
-              <i class="bi bi-shield-lock me-1"></i> Admin
+    <nav class="navbar navbar-expand-lg sticky-top glass-card rounded-0 border-0 border-bottom border-secondary mb-4">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+                <i class="fa-solid fa-rocket text-primary fs-3"></i>
+                <span class="fs-4">QuizSMK<span class="text-white fs-6 fw-normal ms-2 badge bg-primary-subtle text-primary border border-primary">V2.0 Natural Parser</span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
             </button>
-          </li>
-        </ul>
-      </div>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto nav-pills gap-2 my-2 my-lg-0">
+                    <li class="nav-item">
+                        <button class="nav-link active rounded-pill px-3" id="tab-student-btn" onclick="switchTab('student')">
+                            <i class="fa-solid fa-gamepad me-1"></i> Kerjakan Kuis
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link rounded-pill px-3" id="tab-creator-btn" onclick="switchTab('creator')">
+                            <i class="fa-solid fa-file-pen me-1"></i> Mode Guru (Buat Soal)
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link rounded-pill px-3" id="tab-leaderboard-btn" onclick="switchTab('leaderboard')">
+                            <i class="fa-solid fa-trophy text-warning me-1"></i> Leaderboard
+                        </button>
+                    </li>
+                </ul>
+                <button class="btn btn-outline-info btn-sm rounded-pill ms-lg-3" data-bs-toggle="modal" data-bs-target="#githubHelpModal">
+                    <i class="fa-brands fa-github me-1"></i> Tutorial GitHub
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container flex-grow-1 pb-5">
+
+        <!-- ================= SECTION 1: STUDENT QUIZ PLAYER ================= -->
+        <section id="section-student" class="tab-section">
+            <!-- Entry Form -->
+            <div id="student-entry-card" class="row justify-content-center">
+                <div class="col-md-7 col-lg-6">
+                    <div class="glass-card p-4 p-md-5">
+                        <div class="text-center mb-4">
+                            <span class="badge bg-primary-subtle text-primary mb-2 px-3 py-2 rounded-pill fs-7">
+                                <i class="fa-solid fa-graduation-cap me-1"></i> Ujian & Kuis SMK Interaktif
+                            </span>
+                            <h2 class="fw-bold">Selamat Datang!</h2>
+                            <p class="text-secondary small">Masukkan nama dan kelas Anda untuk memulai kuis dan merebut peringkat 1 di leaderboard!</p>
+                        </div>
+
+                        <form id="form-student-entry" onsubmit="startQuiz(event)">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Pilih Kuis Tersedia</label>
+                                <select class="form-select bg-dark border-secondary text-white" id="select-active-quiz" required>
+                                    <!-- Populated dynamically via JS -->
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Nama Lengkap Siswa</label>
+                                <input type="text" class="form-control bg-dark border-secondary text-white" id="input-student-name" placeholder="Contoh: Budi Pratama" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Kelas & Jurusan</label>
+                                <input type="text" class="form-control bg-dark border-secondary text-white" id="input-student-class" placeholder="Contoh: XII TBSM 1 / XII RPL 2" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-gradient-primary w-100 py-2.5 fw-bold rounded-3 fs-6">
+                                <i class="fa-solid fa-play me-2"></i> Mulai Kerjakan Sekarang
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Quiz Layout -->
+            <div id="student-quiz-card" class="d-none">
+                <div class="row g-4">
+                    <!-- Questions Box -->
+                    <div class="col-lg-8">
+                        <div class="glass-card p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <span class="badge bg-primary px-3 py-2 rounded-pill" id="quiz-subject-badge">TKJ</span>
+                                    <span class="text-secondary small ms-2" id="quiz-question-counter">Soal 1 dari 10</span>
+                                </div>
+                                <div class="badge bg-danger-subtle text-danger fs-6 px-3 py-1.5 rounded-pill border border-danger">
+                                    <i class="fa-regular fa-clock me-1"></i> <span id="quiz-timer">00:00</span>
+                                </div>
+                            </div>
+
+                            <div class="progress mb-4" style="height: 8px;">
+                                <div id="quiz-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 10%"></div>
+                            </div>
+
+                            <div class="mb-4">
+                                <h4 class="fw-bold mb-3 lh-base" id="quiz-question-text">Loading pertanyaan...</h4>
+                            </div>
+
+                            <div class="d-flex flex-column gap-3 mb-4" id="quiz-options-container">
+                                <!-- Generated by JS -->
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top border-secondary">
+                                <button class="btn btn-outline-secondary rounded-pill px-4" id="btn-prev-question" onclick="prevQuestion()" disabled>
+                                    <i class="fa-solid fa-arrow-left me-1"></i> Sebelumnya
+                                </button>
+                                <button class="btn btn-gradient-primary rounded-pill px-4" id="btn-next-question" onclick="nextQuestion()">
+                                    Selanjutnya <i class="fa-solid fa-arrow-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Sidebar Leaderboard -->
+                    <div class="col-lg-4">
+                        <div class="glass-card p-3">
+                            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom border-secondary pb-2">
+                                <h6 class="fw-bold m-0"><i class="fa-solid fa-chart-line text-warning me-2"></i> Peringkat Realtime</h6>
+                                <span class="small text-success d-flex align-items-center gap-1">
+                                    <span class="pulse-indicator"></span> Live
+                                </span>
+                            </div>
+                            <div class="list-group list-group-flush bg-transparent" id="mini-leaderboard-list">
+                                <!-- Dynamic live status -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Result Summary -->
+            <div id="student-result-card" class="d-none row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="glass-card p-4 p-md-5 text-center">
+                        <div class="mb-3">
+                            <i class="fa-solid fa-trophy text-warning display-1"></i>
+                        </div>
+                        <h2 class="fw-bold mb-1">Kuis Selesai!</h2>
+                        <p class="text-secondary small mb-4">Hasil Anda telah tercatat secara otomatis di papan peringkat.</p>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <div class="p-3 rounded-3 bg-dark border border-secondary">
+                                    <div class="text-secondary small">Total Skor</div>
+                                    <div class="fs-1 fw-extrabold text-primary" id="result-score">0</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 rounded-3 bg-dark border border-secondary">
+                                    <div class="text-secondary small">Akurasi</div>
+                                    <div class="fs-1 fw-extrabold text-success" id="result-accuracy">0%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-center">
+                            <button class="btn btn-outline-light rounded-pill px-4" onclick="switchTab('leaderboard')">
+                                <i class="fa-solid fa-trophy me-1"></i> Cek Peringkat 1
+                            </button>
+                            <button class="btn btn-gradient-primary rounded-pill px-4" onclick="resetStudentView()">
+                                <i class="fa-solid fa-rotate-right me-1"></i> Pilih Kuis Lain
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: CREATOR / TEACHER MODE ================= -->
+        <section id="section-creator" class="tab-section d-none">
+
+            <!-- Teacher Authentication Lock Screen -->
+            <div id="creator-auth-screen" class="row justify-content-center my-4">
+                <div class="col-md-8 col-lg-6">
+                    <div class="glass-card teacher-auth-card p-4 p-md-5 text-center">
+                        <div class="mb-3">
+                            <span class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-25 text-primary rounded-circle p-3" style="width: 70px; height: 70px;">
+                                <i class="fa-solid fa-lock fs-1"></i>
+                            </span>
+                        </div>
+                        <h3 class="fw-bold mb-1">Akses Mode Guru</h3>
+                        <p class="text-secondary small mb-4">Masukkan PIN/Password khusus guru untuk membuat dan mengelola soal kuis.</p>
+
+                        <form id="form-teacher-login" onsubmit="verifyTeacherPin(event)">
+                            <div class="mb-3 position-relative">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fa-solid fa-key"></i></span>
+                                    <input type="password" class="form-control bg-dark border-secondary text-white" id="input-teacher-pin" placeholder="Masukkan Password Guru" required>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePinVisibility()">
+                                        <i class="fa-regular fa-eye" id="eye-icon"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text text-start text-secondary small mt-2">
+                                    <!-- <i class="fa-solid fa-circle-info me-1"></i> Default PIN: <code class="text-info fw-bold">anggara.com</code> -->
+                                </div>
+                            </div>
+
+                            <div id="teacher-pin-error" class="alert alert-danger small d-none py-2 mb-3">
+                                <i class="fa-solid fa-triangle-exclamation me-1"></i> Password yang Anda masukkan salah!
+                            </div>
+
+                            <button type="submit" class="btn btn-gradient-primary w-100 py-2.5 fw-bold rounded-3 fs-6">
+                                <i class="fa-solid fa-unlock me-2"></i> Buka Akses Pembuat Soal
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Teacher Content Panel (Unlocked) -->
+            <div id="creator-main-panel" class="d-none">
+                <!-- Teacher Top Bar Status & Controls -->
+                <div class="d-flex justify-content-between align-items-center mb-3 p-3 glass-card border border-primary border-opacity-50">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-success-subtle text-success border border-success px-3 py-2 rounded-pill">
+                            <i class="fa-solid fa-shield-halved me-1"></i> Akses Guru Terverifikasi
+                        </span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-warning btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#changePinModal">
+                            <i class="fa-solid fa-key me-1"></i> Ganti Password
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="lockTeacherAccess()">
+                            <i class="fa-solid fa-lock me-1"></i> Kunci Kembalian
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-7">
+                        <div class="glass-card p-4 mb-4">
+                            <h4 class="fw-bold mb-3"><i class="fa-solid fa-sliders text-primary me-2"></i> Pengaturan Kuis Baru</h4>
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <label class="form-label small fw-semibold">Judul Kuis / Penilaian</label>
+                                    <input type="text" id="creator-title" class="form-control bg-dark border-secondary text-white" placeholder="misal: Penilaian Harian Sistem Kelistrikan Motor">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold">Mata Pelajaran / Jurusan</label>
+                                    <input type="text" id="creator-subject" class="form-control bg-dark border-secondary text-white" placeholder="misal: TBSM / TKJ / Otomotif">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Creator Input Mode Tabs -->
+                        <div class="glass-card p-4">
+                            <ul class="nav nav-pills nav-fill gap-2 mb-4 p-1 bg-dark rounded-3 border border-secondary">
+                                <li class="nav-item">
+                                    <button class="nav-link active rounded-2 py-2" id="btn-mode-file" onclick="setCreatorMode('file')">
+                                        <i class="fa-solid fa-file-word me-1 text-info"></i> Smart Upload (.DOCX / .PDF / .TXT)
+                                    </button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link rounded-2 py-2" id="btn-mode-manual" onclick="setCreatorMode('manual')">
+                                        <i class="fa-solid fa-pen-to-square me-1"></i> Input Soal Manual
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <!-- File Upload Panel -->
+                            <div id="creator-file-box">
+                                <div class="border border-dashed border-secondary rounded-3 p-4 text-center mb-3 bg-dark">
+                                    <i class="fa-solid fa-cloud-arrow-up fs-1 text-primary mb-2"></i>
+                                    <h6>Upload File Document (Word .docx, PDF, atau TXT)</h6>
+                                    <p class="text-secondary small mb-3">Sistem parser otomatis mendukung format alami ujian sekolah (A-D / A-E):</p>
+                                    
+                                    <div class="bg-black p-3 rounded text-start small mb-3 border border-secondary font-monospace" style="font-size: 0.8rem; max-height: 150px; overflow-y: auto;">
+1. Komponen yang menyimpan energi listrik adalah...<br>
+A. Alternator<br>
+*B. Baterai   <span class="text-success">(Tanda * otomatis jadi kunci)</span><br>
+C. Regulator<br>
+D. Koil<br>
+E. CDI
+                                    </div>
+                                    
+                                    <input type="file" id="creator-file-input" class="form-control bg-dark border-secondary text-white" accept=".pdf,.docx,.doc,.txt">
+                                </div>
+                                
+                                <button class="btn btn-gradient-primary w-100 py-2.5 fw-semibold d-flex align-items-center justify-content-center gap-2" id="btn-process-file" onclick="processUploadedFile()">
+                                    <i class="fa-solid fa-microchip fs-5"></i> <span>Ekstrak & Process Soal Otomatis</span>
+                                </button>
+                            </div>
+
+                            <!-- Manual Input Panel -->
+                            <div id="creator-manual-box" class="d-none">
+                                <form onsubmit="addManualQuestion(event)">
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Teks Pertanyaan / Soal</label>
+                                        <textarea id="manual-q-text" class="form-control bg-dark border-secondary text-white" rows="2" required placeholder="Tuliskan pertanyaan soal di sini..."></textarea>
+                                    </div>
+                                    <div class="row g-2 mb-2">
+                                        <div class="col-6">
+                                            <input type="text" id="manual-opt-a" class="form-control bg-dark border-secondary text-white form-control-sm" placeholder="Pilihan A" required>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="text" id="manual-opt-b" class="form-control bg-dark border-secondary text-white form-control-sm" placeholder="Pilihan B" required>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="text" id="manual-opt-c" class="form-control bg-dark border-secondary text-white form-control-sm" placeholder="Pilihan C" required>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="text" id="manual-opt-d" class="form-control bg-dark border-secondary text-white form-control-sm" placeholder="Pilihan D" required>
+                                        </div>
+                                        <div class="col-12">
+                                            <input type="text" id="manual-opt-e" class="form-control bg-dark border-secondary text-white form-control-sm" placeholder="Pilihan E (Opsional)">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Kunci Jawaban Benar</label>
+                                        <select id="manual-q-key" class="form-select bg-dark border-secondary text-white form-select-sm" required>
+                                            <option value="A">Pilihan A</option>
+                                            <option value="B">Pilihan B</option>
+                                            <option value="C">Pilihan C</option>
+                                            <option value="D">Pilihan D</option>
+                                            <option value="E">Pilihan E</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-outline-success w-100 btn-sm fw-semibold">
+                                        <i class="fa-solid fa-plus me-1"></i> Tambahkan Soal Ke Daftar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preview Questions Sidebar -->
+                    <div class="col-lg-5">
+                        <div class="glass-card p-4 h-100 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold m-0"><i class="fa-solid fa-list-check me-2 text-primary"></i> Daftar Soal (<span id="creator-q-count">0</span>)</h5>
+                                <button class="btn btn-outline-danger btn-sm rounded-pill" onclick="clearQuestions()">Reset</button>
+                            </div>
+
+                            <div class="flex-grow-1 overflow-auto pe-1 mb-3" style="max-height: 420px;" id="creator-questions-list">
+                                <div class="text-center text-secondary py-5">Belum ada soal yang diekstrak.</div>
+                            </div>
+
+                            <button class="btn btn-gradient-success py-3 fw-bold rounded-3 w-100 mt-auto" onclick="publishQuiz()">
+                                <i class="fa-solid fa-paper-plane me-2"></i> Terbitkan Kuis & Buat Link Baru
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 3: LEADERBOARD ================= -->
+        <section id="section-leaderboard" class="tab-section d-none">
+            <div class="glass-card p-4 p-md-5">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 border-bottom border-secondary pb-3">
+                    <div>
+                        <h2 class="fw-bold m-0"><i class="fa-solid fa-trophy text-warning me-2"></i> Papan Peringkat Realtime</h2>
+                        <p class="text-secondary small m-0">Siswa bersaing mendapatkan posisi nomor 1 berdasarkan skor & waktu pengerjaan.</p>
+                    </div>
+                    <div>
+                        <select class="form-select bg-dark border-secondary text-white form-select-sm" id="leaderboard-filter-quiz" onchange="renderLeaderboard()">
+                            <!-- Filter options populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Podium View -->
+                <div class="podium-container" id="podium-section">
+                    <!-- Rank 2 -->
+                    <div class="podium-box rank-2">
+                        <i class="fa-solid fa-medal fs-3 text-secondary"></i>
+                        <div class="fw-bold text-truncate small" id="podium-2-name">-</div>
+                        <div class="badge bg-secondary text-dark fw-bold mt-1" id="podium-2-score">0 pt</div>
+                    </div>
+                    <!-- Rank 1 -->
+                    <div class="podium-box rank-1">
+                        <i class="fa-solid fa-crown fs-2 text-warning"></i>
+                        <div class="fw-bold text-truncate small" id="podium-1-name">-</div>
+                        <div class="badge bg-warning text-dark fw-bold mt-1" id="podium-1-score">0 pt</div>
+                    </div>
+                    <!-- Rank 3 -->
+                    <div class="podium-box rank-3">
+                        <i class="fa-solid fa-award fs-4 text-warning-emphasis"></i>
+                        <div class="fw-bold text-truncate small" id="podium-3-name">-</div>
+                        <div class="badge bg-warning-subtle text-warning-emphasis fw-bold mt-1" id="podium-3-score">0 pt</div>
+                    </div>
+                </div>
+
+                <!-- Table View -->
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle rounded-3 overflow-hidden">
+                        <thead class="table-active">
+                            <tr>
+                                <th scope="col" style="width: 70px;">Rank</th>
+                                <th scope="col">Nama Siswa</th>
+                                <th scope="col">Kelas / Jurusan</th>
+                                <th scope="col" class="text-center">Skor Akhir</th>
+                                <th scope="col" class="text-center">Waktu Pengerjaan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-table-body">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal: Change Teacher PIN -->
+    <div class="modal fade" id="changePinModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-key text-warning me-2"></i> Ganti Password Guru</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <form id="form-change-pin" onsubmit="saveNewPin(event)">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Password Lama</label>
+                            <input type="password" id="input-old-pin" class="form-control bg-dark border-secondary text-white" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Password Baru</label>
+                            <input type="password" id="input-new-pin" class="form-control bg-dark border-secondary text-white" placeholder="Minimal 4 karakter" required>
+                        </div>
+                        <div id="change-pin-msg" class="alert small d-none p-2 mb-3"></div>
+                        <button type="submit" class="btn btn-gradient-primary w-100 fw-bold">Simpan Password Baru</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-  </nav>
 
-  <div class="container py-4">
-
-    <!-- 1. Halaman Beranda -->
-    <section id="beranda" class="page-view active">
-      <div class="hero-section d-flex align-items-center p-5 shadow">
-        <div class="col-lg-8">
-          <h1 class="display-4 fw-bold mb-3">Tebak Gambar<br>Komponen Sepeda Motor</h1>
-          <p class="fs-5 mb-4">Uji pengetahuanmu tentang komponen sepeda motor! Daftar dengan nama dan emailmu untuk langsung memulai permainan.</p>
-          <div class="row g-3 mb-4 text-white-50 fs-6">
-            <div class="col-md-4"><i class="bi bi-controller text-white me-2"></i>Belajar sambil bermain</div>
-            <div class="col-md-4"><i class="bi bi-x-circle text-white me-2"></i>Tidak ada kesempatan ngulang saat salah</div>
-            <div class="col-md-4"><i class="bi bi-trophy text-white me-2"></i>Masuk ke Dashboard Ranking</div>
-          </div>
-          <div class="d-flex gap-3">
-            <button class="btn btn-success btn-lg px-4 rounded-pill" onclick="showPage('daftar')">Main Sekarang <i class="bi bi-arrow-right"></i></button>
-            <button class="btn btn-outline-light btn-lg px-4 rounded-pill" onclick="showPage('ranking')">Lihat Ranking</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. Halaman Daftar -->
-    <section id="daftar" class="page-view">
-      <div class="card auth-card shadow-sm border-0 p-4">
-        <div class="row align-items-center">
-          <div class="col-md-5 text-center p-4 border-end">
-            <i class="bi bi-bicycle text-success display-1"></i>
-            <h4 class="mt-3 fw-bold">Tebak Gambar</h4>
-            <p class="text-muted small">Masukkan data diri untuk mulai pengerjaan soal!</p>
-          </div>
-          <div class="col-md-7 p-4">
-            <h3 class="fw-bold mb-1">Daftar Pemain</h3>
-            <p class="text-muted small mb-3">Isi nama dan email untuk langsung memulai tantangan.</p>
-            <form id="formDaftar" onsubmit="mulaiPermainan(event)">
-              <div class="mb-3">
-                <label class="form-label small fw-bold">Nama Lengkap</label>
-                <input type="text" id="playerNama" class="form-control form-control-lg" placeholder="Masukkan nama Anda" required>
-              </div>
-              <div class="mb-3">
-                <label class="form-label small fw-bold">Email</label>
-                <input type="email" id="playerEmail" class="form-control form-control-lg" placeholder="nama@email.com" required>
-              </div>
-              <button type="submit" class="btn btn-custom w-100 btn-lg rounded-3 mb-2">Mulai Kerjakan Soal <i class="bi bi-arrow-right"></i></button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3. Halaman Game (Soal) -->
-    <section id="game" class="page-view">
-      <div class="card navbar-custom text-white p-3 mb-4 rounded-3 shadow-sm">
-        <div class="d-flex justify-content-between align-items-center fw-bold">
-          <div><i class="bi bi-person me-2"></i>Pemain: <span id="gamePlayerName">-</span></div>
-          <div><i class="bi bi-star-fill text-warning me-2"></i>Skor: <span id="gameSkor">0</span></div>
-          <div><i class="bi bi-list-task me-2"></i>Soal: <span id="gameSoalKe">1</span> / <span id="gameTotalSoal">0</span></div>
-        </div>
-      </div>
-      <div class="card p-4 border-0 shadow-sm rounded-4">
-        <div class="row align-items-center">
-          <div class="col-md-5 text-center mb-3 mb-md-0">
-            <img id="gameGambar" src="" class="img-fluid rounded-3 border shadow-sm" style="max-height: 280px; object-fit: contain;" alt="Komponen Motor">
-          </div>
-          <div class="col-md-7">
-            <h5 class="fw-bold mb-4" id="gamePertanyaan">Loading Soal...</h5>
-            <div class="d-grid gap-2" id="gamePilihanContainer"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 4. Halaman Hasil -->
-    <section id="hasil" class="page-view">
-      <div class="row g-4">
-        <div class="col-md-8">
-          <div class="card text-center p-5 border-0 shadow-sm rounded-4 h-100">
-            <div class="mb-2" id="hasilIcon"><i class="bi bi-trophy-fill text-warning display-1"></i></div>
-            <h2 class="fw-bold" id="hasilJudul">Permainan Selesai!</h2>
-            <p class="text-muted" id="hasilKeterangan">Terima kasih telah berpartisipasi.</p>
-            <div class="row g-3 my-3">
-              <div class="col-6">
-                <div class="p-3 bg-light rounded-3">
-                  <div class="small text-muted"><i class="bi bi-star-fill text-warning me-1"></i>Total Skor</div>
-                  <div class="fs-2 fw-bold text-primary" id="hasilSkor">0</div>
+    <!-- Modal: Share Generated Quiz Link -->
+    <div class="modal fade" id="shareModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-circle-check text-success me-2"></i> Kuis Berhasil Diterbitkan!</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-              </div>
-              <div class="col-6">
-                <div class="p-3 bg-light rounded-3">
-                  <div class="small text-muted"><i class="bi bi-check-circle-fill text-success me-1"></i>Jumlah Benar</div>
-                  <div class="fs-2 fw-bold" id="hasilBenar">0 / 0</div>
+                <div class="modal-body text-center py-4">
+                    <p class="text-secondary small">Gunakan link otomatis unik di bawah ini untuk dibagikan kepada siswa (Siap untuk GitHub Pages):</p>
+                    <div class="input-group mb-3">
+                        <input type="text" id="share-link-input" class="form-control bg-body-tertiary border-secondary text-white" readonly>
+                        <button class="btn btn-gradient-primary" onclick="copyShareLink()"><i class="fa-solid fa-copy me-1"></i> Salin</button>
+                    </div>
+                    <div id="copy-toast" class="alert alert-success small d-none p-2">Link kuis berhasil disalin ke clipboard!</div>
                 </div>
-              </div>
             </div>
-            <div class="d-flex gap-3 justify-content-center mt-3">
-              <button class="btn btn-custom px-4 rounded-pill" onclick="showPage('daftar')"><i class="bi bi-arrow-counterclockwise me-1"></i> Main Lagi</button>
-              <button class="btn btn-outline-success px-4 rounded-pill" onclick="showPage('ranking')"><i class="bi bi-trophy me-1"></i> Lihat Ranking</button>
-            </div>
-          </div>
         </div>
-        <div class="col-md-4">
-          <div class="card p-4 border-0 shadow-sm rounded-4 navbar-custom text-white h-100 d-flex flex-column justify-content-between text-center">
-            <div class="my-auto">
-              <blockquote class="fs-4 fst-italic">"Terus belajar, ilmu otomotif adalah bekal untuk masa depan."</blockquote>
-            </div>
-            <div>
-              <i class="bi bi-bicycle display-1"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 5. Halaman Ranking Public -->
-    <section id="ranking" class="page-view">
-      <div class="card p-4 border-0 shadow-sm rounded-4">
-        <h4 class="fw-bold mb-4"><i class="bi bi-trophy-fill text-warning me-2"></i>Ranking Pemain Teratas</h4>
-        <div class="table-responsive">
-          <table class="table table-hover align-middle">
-            <thead class="table-light">
-              <tr>
-                <th>No</th>
-                <th>Nama</th>
-                <th>Skor</th>
-                <th>Benar</th>
-                <th>Tanggal</th>
-              </tr>
-            </thead>
-            <tbody id="tabelRankingBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- 6. Halaman Dashboard Admin -->
-    <section id="admin" class="page-view">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold"><i class="bi bi-speedometer2 text-success me-2"></i>Dashboard Admin</h3>
-        <button class="btn btn-outline-danger btn-sm" onclick="showPage('beranda')"><i class="bi bi-box-arrow-right me-1"></i> Keluar Admin</button>
-      </div>
-
-      <!-- Navigasi Tab Admin -->
-      <ul class="nav nav-pills mb-4" id="adminTab" role="tablist">
-        <li class="nav-item">
-          <button class="nav-link active fw-bold" id="tab-hasil-tab" data-bs-toggle="tab" data-bs-target="#tab-hasil" type="button"><i class="bi bi-bar-chart-line me-1"></i> Hasil Pemain</button>
-        </li>
-        <li class="nav-item">
-          <button class="nav-link fw-bold" id="tab-soal-tab" data-bs-toggle="tab" data-bs-target="#tab-soal" type="button"><i class="bi bi-journal-plus me-1"></i> Kelola Soal</button>
-        </li>
-      </ul>
-
-      <div class="tab-content" id="adminTabContent">
-        <!-- Tab 1: Hasil Pemain -->
-        <div class="tab-pane fade show active" id="tab-hasil" role="tabpanel">
-          <div class="row g-3 mb-4">
-            <div class="col-md-4">
-              <div class="card p-3 border-0 shadow-sm d-flex flex-row align-items-center gap-3">
-                <i class="bi bi-people-fill text-primary fs-1"></i>
-                <div>
-                  <div class="text-muted small">Total Percobaan</div>
-                  <div class="fs-3 fw-bold" id="adminTotalPercobaan">0</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="card p-3 border-0 shadow-sm d-flex flex-row align-items-center gap-3">
-                <i class="bi bi-star-fill text-warning fs-1"></i>
-                <div>
-                  <div class="text-muted small">Rata-rata Skor</div>
-                  <div class="fs-3 fw-bold" id="adminRataSkor">0</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="card p-3 border-0 shadow-sm d-flex flex-row align-items-center gap-3">
-                <i class="bi bi-person-check-fill text-success fs-1"></i>
-                <div>
-                  <div class="text-muted small">Pemain Unik</div>
-                  <div class="fs-3 fw-bold" id="adminPemainUnik">0</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card p-4 border-0 shadow-sm">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h5 class="fw-bold">Data Hasil pengerjaan Soal</h5>
-              <button class="btn btn-danger btn-sm" onclick="hapusSemuaDataAdmin()"><i class="bi bi-trash me-1"></i> Hapus Semua Data Pemain</button>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-striped align-middle">
-                <thead class="table-dark">
-                  <tr>
-                    <th>No</th>
-                    <th>Nama Pemain</th>
-                    <th>Email</th>
-                    <th>Skor</th>
-                    <th>Jumlah Benar</th>
-                    <th>Tanggal</th>
-                  </tr>
-                </thead>
-                <tbody id="tabelAdminBody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tab 2: Kelola Soal -->
-        <div class="tab-pane fade" id="tab-soal" role="tabpanel">
-          <div class="card p-4 border-0 shadow-sm">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h5 class="fw-bold">Daftar Soal Permainan</h5>
-              <div class="d-flex gap-2">
-                <button class="btn btn-outline-secondary btn-sm" onclick="resetSoalDefault()"><i class="bi bi-arrow-counterclockwise me-1"></i> Reset Soal Bawaan</button>
-                <button class="btn btn-success btn-sm" onclick="bukaModalSoal()"><i class="bi bi-plus-circle me-1"></i> Tambah Soal Baru</button>
-              </div>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-bordered align-middle">
-                <thead class="table-light">
-                  <tr>
-                    <th width="5%">No</th>
-                    <th width="15%">Gambar</th>
-                    <th>Pertanyaan & Pilihan</th>
-                    <th width="20%">Jawaban Benar</th>
-                    <th width="15%">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody id="tabelKelolaSoalBody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </div>
-
-  <!-- Modal Password Admin -->
-  <div class="modal fade" id="modalAdmin" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title fw-bold"><i class="bi bi-shield-lock me-2"></i>Login Admin</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p class="small text-muted">Masukkan password admin untuk mengakses dashboard.</p>
-          <div class="mb-3">
-            <input type="password" id="inputPassAdmin" class="form-control" placeholder="Password: ******">
-            <div id="adminErrorMsg" class="text-danger small mt-1" style="display:none;">Password salah!</div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-          <button type="button" class="btn btn-custom" onclick="verifikasiAdmin()">Masuk Admin</button>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Modal Form Tambah / Edit Soal -->
-  <div class="modal fade" id="modalFormSoal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title fw-bold" id="modalSoalTitle">Tambah Soal Baru</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Modal: GitHub Deployment Help -->
+    <div class="modal fade" id="githubHelpModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title fw-bold"><i class="fa-brands fa-github me-2"></i> Panduan Upload ke GitHub Pages</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h6 class="fw-bold text-primary">1. Struktur Folder Repositori</h6>
+                    <pre class="bg-black p-3 rounded text-success small">
+quiz-smk-app/
+│
+└── index.html       (File tunggal gabungan seluruh kode ini)
+                    </pre>
+
+                    <h6 class="fw-bold text-primary mt-4">2. Langkah-Langkah Deploy Link Publik Gratis</h6>
+                    <ol class="small text-secondary lh-lg">
+                        <li>Buat repositori publik baru di <strong class="text-white">GitHub.com</strong> (misalnya diberi nama <code>kuis-smk</code>).</li>
+                        <li>Upload file <code>index.html</code> ini ke dalam repositori tersebut.</li>
+                        <li>Buka tab <strong class="text-white">Settings</strong> &gt; <strong class="text-white">Pages</strong>.</li>
+                        <li>Di bawah menu <em>Build and deployment / Branch</em>, pilih <code>main</code> dan folder <code>/ (root)</code>, lalu klik <strong>Save</strong>.</li>
+                        <li>Tunggu sekitar 1 menit, GitHub akan memberikan link publik kuis Anda: <br><code class="text-info">https://username.github.io/kuis-smk/</code></li>
+                    </ol>
+                </div>
+            </div>
         </div>
-        <form id="formAdminSoal" onsubmit="simpanSoal(event)">
-          <div class="modal-body">
-            <input type="hidden" id="soalEditId">
-            <div class="mb-3">
-              <label class="form-label small fw-bold">Pertanyaan</label>
-              <input type="text" id="inputPertanyaan" class="form-control" placeholder="Contoh: Apa nama komponen pada gambar?" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label small fw-bold">URL Gambar (Direct Link Gambar)</label>
-              <input type="url" id="inputGambar" class="form-control" placeholder="https://domain.com/gambar.jpg" required>
-            </div>
-            <div class="row g-2 mb-3">
-              <div class="col-md-6">
-                <label class="form-label small fw-bold">Pilihan A</label>
-                <input type="text" id="inputPil0" class="form-control" placeholder="Pilihan A" required>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label small fw-bold">Pilihan B</label>
-                <input type="text" id="inputPil1" class="form-control" placeholder="Pilihan B" required>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label small fw-bold">Pilihan C</label>
-                <input type="text" id="inputPil2" class="form-control" placeholder="Pilihan C" required>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label small fw-bold">Pilihan D</label>
-                <input type="text" id="inputPil3" class="form-control" placeholder="Pilihan D" required>
-              </div>
-            </div>
-            <div class="mb-3">
-              <label class="form-label small fw-bold">Kunci Jawaban Benar</label>
-              <select id="inputJawabanBenar" class="form-select" required>
-                <option value="0">Pilihan A</option>
-                <option value="1">Pilihan B</option>
-                <option value="2">Pilihan C</option>
-                <option value="3">Pilihan D</option>
-              </select>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-            <button type="submit" class="btn btn-custom">Simpan Soal</button>
-          </div>
-        </form>
-      </div>
     </div>
-  </div>
 
-  <!-- Bootstrap 5 JS Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/bootstrap.bundle.min.js"></script>
 
-  <!-- JavaScript Logika Aplikasi -->
-  <script>
-    // --- Data Soal Default / Bawaan ---
-    const defaultSoal = [
-      {
-        id: 1,
-        pertanyaan: "Apa nama komponen pada gambar di samping?",
-        gambar: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=600&auto=format&fit=crop",
-        pilihan: ["Karburator", "Busi", "CDI", "Kampas Rem"],
-        jawabanBenar: 0
-      },
-      {
-        id: 2,
-        pertanyaan: "Komponen yang berfungsi mencetuskan percikan bunga api di ruang bakar adalah?",
-        gambar: "https://images.unsplash.com/photo-1590674899484-d5640e854abe?q=80&w=600&auto=format&fit=crop",
-        pilihan: ["Aki / Baterai", "Busi", "Radiator", "Piston"],
-        jawabanBenar: 1
-      },
-      {
-        id: 3,
-        pertanyaan: "Komponen berikut yang berfungsi sebagai penerus daya putar mesin ke roda belakang adalah?",
-        gambar: "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?q=80&w=600&auto=format&fit=crop",
-        pilihan: ["Shockbreaker", "Rantai & Gir Motor", "Karburator", "Knalpot"],
-        jawabanBenar: 1
-      },
-      {
-        id: 4,
-        pertanyaan: "Komponen penyerap guncangan pada roda kendaraan sepeda motor adalah?",
-        gambar: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=600&auto=format&fit=crop",
-        pilihan: ["Ban", "Velg", "Shockbreaker / Suspensi", "Stang"],
-        jawabanBenar: 2
-      },
-      {
-        id: 5,
-        pertanyaan: "Sistem pengereman sepeda motor yang menggunakan piringan dinamakan rem?",
-        gambar: "https://images.unsplash.com/photo-1609630875171-b1321377ee65?q=80&w=600&auto=format&fit=crop",
-        pilihan: ["Tromol", "Cakram (Disc Brake)", "CBS", "ABS"],
-        jawabanBenar: 1
-      }
-    ];
+    <script>
+        /* ==========================================================================
+           STATE MANAGEMENT & DEFAULT DATA
+           ========================================================================== */
+        const DEFAULT_TEACHER_PIN = "anggara.com";
 
-    // --- State Game & Data ---
-    let daftarSoal = [];
-    let currentPlayer = { nama: "", email: "" };
-    let currentSoalIndex = 0;
-    let skorAktif = 0;
-    let jumlahBenar = 0;
+        const DEFAULT_QUIZZES = [
+            {
+                id: "quiz_smk_tbsm_01",
+                title: "Pemeliharaan Kelistrikan Sepeda Motor",
+                subject: "TBSM",
+                questions: [
+                    {
+                        text: "Komponen yang berfungsi menyimpan energi listrik pada sepeda motor adalah ...",
+                        options: ["Alternator", "Baterai", "Regulator", "Koil", "CDI"],
+                        key: "B"
+                    },
+                    {
+                        text: "Alat yang digunakan untuk mengukur tegangan listrik adalah ...",
+                        options: ["Ampermeter", "Voltmeter", "Ohmmeter", "Tachometer", "Multitester"],
+                        key: "B"
+                    }
+                ]
+            }
+        ];
 
-    // --- Inisialisasi Data Soal ---
-    function muatDaftarSoal() {
-      const stored = localStorage.getItem('tebak_gambar_soal');
-      if (stored) {
-        daftarSoal = JSON.parse(stored);
-      } else {
-        daftarSoal = [...defaultSoal];
-        localStorage.setItem('tebak_gambar_soal', JSON.stringify(daftarSoal));
-      }
-    }
-    muatDaftarSoal();
-
-    // --- Switch Halaman ---
-    function showPage(pageId) {
-      document.querySelectorAll('.page-view').forEach(page => page.classList.remove('active'));
-      const target = document.getElementById(pageId);
-      if (target) {
-        target.classList.add('active');
-        window.scrollTo(0, 0);
-      }
-
-      if (pageId === 'ranking') renderRanking();
-      if (pageId === 'admin') renderAdmin();
-    }
-
-    // --- Mulai Game dari Form Daftar ---
-    function mulaiPermainan(e) {
-      e.preventDefault();
-      muatDaftarSoal();
-
-      if (daftarSoal.length === 0) {
-        alert("Belum ada soal tersedia! Minta admin menambah soal terlebih dahulu.");
-        return;
-      }
-
-      const nama = document.getElementById('playerNama').value.trim();
-      const email = document.getElementById('playerEmail').value.trim();
-
-      if (!nama || !email) return;
-
-      currentPlayer = { nama, email };
-      currentSoalIndex = 0;
-      skorAktif = 0;
-      jumlahBenar = 0;
-
-      document.getElementById('gamePlayerName').innerText = nama;
-      showPage('game');
-      muatSoal();
-    }
-
-    // --- Render Soal ---
-    function muatSoal() {
-      const soal = daftarSoal[currentSoalIndex];
-      document.getElementById('gameSkor').innerText = skorAktif;
-      document.getElementById('gameSoalKe').innerText = currentSoalIndex + 1;
-      document.getElementById('gameTotalSoal').innerText = daftarSoal.length;
-      document.getElementById('gameGambar').src = soal.gambar;
-      document.getElementById('gamePertanyaan').innerText = soal.pertanyaan;
-
-      const containerPilihan = document.getElementById('gamePilihanContainer');
-      containerPilihan.innerHTML = "";
-
-      const huruf = ["A", "B", "C", "D"];
-      soal.pilihan.forEach((pilihan, idx) => {
-        const btn = document.createElement('button');
-        btn.className = "btn option-btn text-start d-flex align-items-center";
-        btn.innerHTML = `<span class="badge-option">${huruf[idx]}</span> ${escapeHtml(pilihan)}`;
-        btn.onclick = () => pilihJawaban(idx);
-        containerPilihan.appendChild(btn);
-      });
-    }
-
-    // --- Pilihan Jawaban ---
-    function pilihJawaban(indexPilihan) {
-      const soal = daftarSoal[currentSoalIndex];
-
-      if (indexPilihan === parseInt(soal.jawabanBenar)) {
-        skorAktif += 20;
-        jumlahBenar++;
-        currentSoalIndex++;
-
-        if (currentSoalIndex < daftarSoal.length) {
-          muatSoal();
-        } else {
-          selesaiGame(true, "Selamat! Kamu berhasil menjawab semua soal dengan benar.");
-        }
-      } else {
-        selesaiGame(false, `Jawaban kamu salah pada Soal No. ${currentSoalIndex + 1}. Pengerjaan dihentikan.`);
-      }
-    }
-
-    // --- Selesai Permainan ---
-    function selesaiGame(isLunas, pesan) {
-      simpanHasilToLocalStorage();
-
-      document.getElementById('hasilSkor').innerText = skorAktif;
-      document.getElementById('hasilBenar').innerText = `${jumlahBenar} / ${daftarSoal.length}`;
-      document.getElementById('hasilKeterangan').innerText = pesan;
-
-      const iconElem = document.getElementById('hasilIcon');
-      if (isLunas) {
-        iconElem.innerHTML = `<i class="bi bi-trophy-fill text-warning display-1"></i>`;
-        document.getElementById('hasilJudul').innerText = "Kamu Luar Biasa!";
-      } else {
-        iconElem.innerHTML = `<i class="bi bi-x-circle-fill text-danger display-1"></i>`;
-        document.getElementById('hasilJudul').innerText = "Game Over!";
-      }
-
-      showPage('hasil');
-    }
-
-    // --- LocalStorage Result Handling ---
-    function getStoredResults() {
-      const data = localStorage.getItem('tebak_gambar_results');
-      return data ? JSON.parse(data) : [];
-    }
-
-    function simpanHasilToLocalStorage() {
-      const results = getStoredResults();
-      const newEntry = {
-        id: Date.now(),
-        nama: currentPlayer.nama,
-        email: currentPlayer.email,
-        skor: skorAktif,
-        benar: `${jumlahBenar}/${daftarSoal.length}`,
-        tanggal: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
-      };
-      results.push(newEntry);
-      localStorage.setItem('tebak_gambar_results', JSON.stringify(results));
-    }
-
-    // --- Render Ranking ---
-    function renderRanking() {
-      const results = getStoredResults();
-      results.sort((a, b) => b.skor - a.skor);
-
-      const tbody = document.getElementById('tabelRankingBody');
-      tbody.innerHTML = "";
-
-      if (results.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Belum ada data permainan.</td></tr>`;
-        return;
-      }
-
-      results.slice(0, 10).forEach((item, index) => {
-        let badge = `<span class="fw-bold">${index + 1}</span>`;
-        if (index === 0) badge = `<span class="badge bg-warning text-dark rounded-circle p-2">1</span>`;
-        if (index === 1) badge = `<span class="badge bg-secondary rounded-circle p-2">2</span>`;
-        if (index === 2) badge = `<span class="badge bg-danger rounded-circle p-2">3</span>`;
-
-        tbody.innerHTML += `
-          <tr>
-            <td>${badge}</td>
-            <td class="fw-bold">${escapeHtml(item.nama)}</td>
-            <td class="text-primary fw-bold">${item.skor}</td>
-            <td>${item.benar}</td>
-            <td class="text-muted">${item.tanggal}</td>
-          </tr>
-        `;
-      });
-    }
-
-    // --- Modal Admin Auth ---
-    let modalAdminBS = null;
-    function showAdminModal() {
-      modalAdminBS = new bootstrap.Modal(document.getElementById('modalAdmin'));
-      document.getElementById('inputPassAdmin').value = "";
-      document.getElementById('adminErrorMsg').style.display = "none";
-      modalAdminBS.show();
-    }
-
-    function verifikasiAdmin() {
-      const pass = document.getElementById('inputPassAdmin').value;
-      if (pass === 'admin123') {
-        modalAdminBS.hide();
-        showPage('admin');
-      } else {
-        document.getElementById('adminErrorMsg').style.display = "block";
-      }
-    }
-
-    // --- Render Admin Dashboard & Kelola Soal ---
-    function renderAdmin() {
-      muatDaftarSoal();
-      const results = getStoredResults();
-
-      // Render Tab Hasil Pemain
-      const tbodyHasil = document.getElementById('tabelAdminBody');
-      tbodyHasil.innerHTML = "";
-
-      const totalPercobaan = results.length;
-      const totalSkor = results.reduce((acc, curr) => acc + curr.skor, 0);
-      const rataSkor = totalPercobaan ? Math.round(totalSkor / totalPercobaan) : 0;
-      const pemainUnik = new Set(results.map(r => r.email.toLowerCase())).size;
-
-      document.getElementById('adminTotalPercobaan').innerText = totalPercobaan;
-      document.getElementById('adminRataSkor').innerText = rataSkor;
-      document.getElementById('adminPemainUnik').innerText = pemainUnik;
-
-      if (results.length === 0) {
-        tbodyHasil.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Belum ada data pengerjaan.</td></tr>`;
-      } else {
-        [...results].reverse().forEach((item, index) => {
-          tbodyHasil.innerHTML += `
-            <tr>
-              <td>${index + 1}</td>
-              <td class="fw-bold">${escapeHtml(item.nama)}</td>
-              <td>${escapeHtml(item.email)}</td>
-              <td><span class="badge bg-primary fs-6">${item.skor}</span></td>
-              <td>${item.benar}</td>
-              <td>${item.tanggal}</td>
-            </tr>
-          `;
-        });
-      }
-
-      // Render Tab Kelola Soal
-      const tbodySoal = document.getElementById('tabelKelolaSoalBody');
-      tbodySoal.innerHTML = "";
-
-      if (daftarSoal.length === 0) {
-        tbodySoal.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Belum ada soal. Klik 'Tambah Soal Baru' untuk menambah.</td></tr>`;
-        return;
-      }
-
-      const huruf = ["A", "B", "C", "D"];
-      daftarSoal.forEach((item, index) => {
-        const kunciJawabanText = `${huruf[item.jawabanBenar]}: ${item.pilihan[item.jawabanBenar]}`;
-        tbodySoal.innerHTML += `
-          <tr>
-            <td class="text-center fw-bold">${index + 1}</td>
-            <td class="text-center">
-              <img src="${item.gambar}" class="img-thumbnail" style="max-height: 70px; object-fit: contain;">
-            </td>
-            <td>
-              <div class="fw-bold mb-1">${escapeHtml(item.pertanyaan)}</div>
-              <small class="text-muted">
-                A. ${escapeHtml(item.pilihan[0])} | 
-                B. ${escapeHtml(item.pilihan[1])} | 
-                C. ${escapeHtml(item.pilihan[2])} | 
-                D. ${escapeHtml(item.pilihan[3])}
-              </small>
-            </td>
-            <td><span class="badge bg-success">${escapeHtml(kunciJawabanText)}</span></td>
-            <td>
-              <button class="btn btn-warning btn-sm me-1" onclick="editSoal(${item.id})"><i class="bi bi-pencil"></i> Edit</button>
-              <button class="btn btn-danger btn-sm" onclick="hapusSoal(${item.id})"><i class="bi bi-trash"></i> Hapus</button>
-            </td>
-          </tr>
-        `;
-      });
-    }
-
-    // --- Form Modal Kelola Soal ---
-    let modalSoalBS = null;
-
-    function bukaModalSoal() {
-      modalSoalBS = new bootstrap.Modal(document.getElementById('modalFormSoal'));
-      document.getElementById('modalSoalTitle').innerText = "Tambah Soal Baru";
-      document.getElementById('soalEditId').value = "";
-      document.getElementById('formAdminSoal').reset();
-      modalSoalBS.show();
-    }
-
-    function simpanSoal(e) {
-      e.preventDefault();
-      const editId = document.getElementById('soalEditId').value;
-      const pertanyaan = document.getElementById('inputPertanyaan').value.trim();
-      const gambar = document.getElementById('inputGambar').value.trim();
-      const pilihan = [
-        document.getElementById('inputPil0').value.trim(),
-        document.getElementById('inputPil1').value.trim(),
-        document.getElementById('inputPil2').value.trim(),
-        document.getElementById('inputPil3').value.trim()
-      ];
-      const jawabanBenar = parseInt(document.getElementById('inputJawabanBenar').value);
-
-      if (editId) {
-        // Edit Soal
-        const index = daftarSoal.findIndex(s => s.id == editId);
-        if (index !== -1) {
-          daftarSoal[index] = { id: parseInt(editId), pertanyaan, gambar, pilihan, jawabanBenar };
-        }
-      } else {
-        // Tambah Soal
-        const newSoal = {
-          id: Date.now(),
-          pertanyaan,
-          gambar,
-          pilihan,
-          jawabanBenar
+        let appState = {
+            quizzes: [],
+            leaderboard: [],
+            currentQuiz: null,
+            currentQuestionIdx: 0,
+            userAnswers: [],
+            studentInfo: { name: "", class: "" },
+            timerSeconds: 0,
+            timerInterval: null,
+            teacherPin: DEFAULT_TEACHER_PIN,
+            isTeacherUnlocked: false
         };
-        daftarSoal.push(newSoal);
-      }
 
-      localStorage.setItem('tebak_gambar_soal', JSON.stringify(daftarSoal));
-      modalSoalBS.hide();
-      renderAdmin();
-    }
+        window.onload = function() {
+            loadLocalStorageData();
+            checkUrlQueryParams();
+            populateActiveQuizDropdown();
+            renderLeaderboard();
+        };
 
-    function editSoal(id) {
-      const soal = daftarSoal.find(s => s.id === id);
-      if (!soal) return;
+        function loadLocalStorageData() {
+            const savedPin = localStorage.getItem('quiz_smk_teacher_pin');
+            if (savedPin) {
+                appState.teacherPin = savedPin;
+            } else {
+                appState.teacherPin = DEFAULT_TEACHER_PIN;
+                localStorage.setItem('quiz_smk_teacher_pin', DEFAULT_TEACHER_PIN);
+            }
 
-      modalSoalBS = new bootstrap.Modal(document.getElementById('modalFormSoal'));
-      document.getElementById('modalSoalTitle').innerText = "Edit Soal";
-      document.getElementById('soalEditId').value = soal.id;
-      document.getElementById('inputPertanyaan').value = soal.pertanyaan;
-      document.getElementById('inputGambar').value = soal.gambar;
-      document.getElementById('inputPil0').value = soal.pilihan[0];
-      document.getElementById('inputPil1').value = soal.pilihan[1];
-      document.getElementById('inputPil2').value = soal.pilihan[2];
-      document.getElementById('inputPil3').value = soal.pilihan[3];
-      document.getElementById('inputJawabanBenar').value = soal.jawabanBenar;
+            const savedQuizzes = localStorage.getItem('quiz_smk_data_v2');
+            if (savedQuizzes) {
+                appState.quizzes = JSON.parse(savedQuizzes);
+            } else {
+                appState.quizzes = DEFAULT_QUIZZES;
+                saveQuizzesToStorage();
+            }
 
-      modalSoalBS.show();
-    }
+            const savedLeaderboard = localStorage.getItem('quiz_smk_leaderboard_v2');
+            if (savedLeaderboard) {
+                appState.leaderboard = JSON.parse(savedLeaderboard);
+            } else {
+                appState.leaderboard = [
+                    { quizId: "quiz_smk_tbsm_01", name: "Ahmad Fadillah", class: "XII TBSM 1", score: 100, timeTaken: "00:35", date: new Date().toISOString() },
+                    { quizId: "quiz_smk_tbsm_01", name: "Deni Kurniawan", class: "XII TBSM 2", score: 50, timeTaken: "00:52", date: new Date().toISOString() }
+                ];
+                saveLeaderboardToStorage();
+            }
+        }
 
-    function hapusSoal(id) {
-      if (confirm("Apakah Anda yakin ingin menghapus soal ini?")) {
-        daftarSoal = daftarSoal.filter(s => s.id !== id);
-        localStorage.setItem('tebak_gambar_soal', JSON.stringify(daftarSoal));
-        renderAdmin();
-      }
-    }
+        /* ==========================================================================
+           TEACHER AUTHENTICATION & ACCESS CONTROLS
+           ========================================================================== */
+        function verifyTeacherPin(event) {
+            event.preventDefault();
+            const inputPin = document.getElementById('input-teacher-pin').value.trim();
+            const errorEl = document.getElementById('teacher-pin-error');
 
-    function resetSoalDefault() {
-      if (confirm("Kembalikan daftar soal ke soal default/bawaan? Soal buatan manual akan hilang.")) {
-        daftarSoal = [...defaultSoal];
-        localStorage.setItem('tebak_gambar_soal', JSON.stringify(daftarSoal));
-        renderAdmin();
-      }
-    }
+            if (inputPin === appState.teacherPin) {
+                errorEl.classList.add('d-none');
+                appState.isTeacherUnlocked = true;
+                document.getElementById('creator-auth-screen').classList.add('d-none');
+                document.getElementById('creator-main-panel').classList.remove('d-none');
+                document.getElementById('input-teacher-pin').value = '';
+            } else {
+                errorEl.classList.remove('d-none');
+            }
+        }
 
-    function hapusSemuaDataAdmin() {
-      if (confirm("Apakah Anda yakin ingin menghapus seluruh data hasil pemain?")) {
-        localStorage.removeItem('tebak_gambar_results');
-        renderAdmin();
-      }
-    }
+        function lockTeacherAccess() {
+            appState.isTeacherUnlocked = false;
+            document.getElementById('creator-main-panel').classList.add('d-none');
+            document.getElementById('creator-auth-screen').classList.remove('d-none');
+        }
 
-    function escapeHtml(text) {
-      return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-    }
-  </script>
+        function togglePinVisibility() {
+            const pinInput = document.getElementById('input-teacher-pin');
+            const eyeIcon = document.getElementById('eye-icon');
+            if (pinInput.type === 'password') {
+                pinInput.type = 'text';
+                eyeIcon.className = 'fa-regular fa-eye-slash';
+            } else {
+                pinInput.type = 'password';
+                eyeIcon.className = 'fa-regular fa-eye';
+            }
+        }
+
+        function saveNewPin(event) {
+            event.preventDefault();
+            const oldPin = document.getElementById('input-old-pin').value.trim();
+            const newPin = document.getElementById('input-new-pin').value.trim();
+            const msgEl = document.getElementById('change-pin-msg');
+
+            if (oldPin !== appState.teacherPin) {
+                msgEl.className = 'alert alert-danger small p-2 mb-3';
+                msgEl.textContent = 'Password lama Anda tidak sesuai!';
+                msgEl.classList.remove('d-none');
+                return;
+            }
+
+            if (!newPin || newPin.length < 4) {
+                msgEl.className = 'alert alert-warning small p-2 mb-3';
+                msgEl.textContent = 'Password baru minimal 4 karakter!';
+                msgEl.classList.remove('d-none');
+                return;
+            }
+
+            appState.teacherPin = newPin;
+            localStorage.setItem('quiz_smk_teacher_pin', newPin);
+
+            msgEl.className = 'alert alert-success small p-2 mb-3';
+            msgEl.textContent = 'Password Guru berhasil diperbarui!';
+            msgEl.classList.remove('d-none');
+
+            setTimeout(() => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('changePinModal'));
+                if (modal) modal.hide();
+                document.getElementById('form-change-pin').reset();
+                msgEl.classList.add('d-none');
+            }, 1200);
+        }
+
+        function saveQuizzesToStorage() {
+            localStorage.setItem('quiz_smk_data_v2', JSON.stringify(appState.quizzes));
+        }
+
+        function saveLeaderboardToStorage() {
+            localStorage.setItem('quiz_smk_leaderboard_v2', JSON.stringify(appState.leaderboard));
+        }
+
+        function checkUrlQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const quizIdParam = urlParams.get('quiz');
+            if (quizIdParam) {
+                const targetQuiz = appState.quizzes.find(q => q.id === quizIdParam);
+                if (targetQuiz) {
+                    setTimeout(() => {
+                        document.getElementById('select-active-quiz').value = quizIdParam;
+                    }, 100);
+                }
+            }
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-section').forEach(el => el.classList.add('d-none'));
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+
+            if (tabName === 'student') {
+                document.getElementById('section-student').classList.remove('d-none');
+                document.getElementById('tab-student-btn').classList.add('active');
+            } else if (tabName === 'creator') {
+                document.getElementById('section-creator').classList.remove('d-none');
+                document.getElementById('tab-creator-btn').classList.add('active');
+                
+                // Enforce authentication lock check
+                if (appState.isTeacherUnlocked) {
+                    document.getElementById('creator-auth-screen').classList.add('d-none');
+                    document.getElementById('creator-main-panel').classList.remove('d-none');
+                } else {
+                    document.getElementById('creator-auth-screen').classList.remove('d-none');
+                    document.getElementById('creator-main-panel').classList.add('d-none');
+                }
+            } else if (tabName === 'leaderboard') {
+                document.getElementById('section-leaderboard').classList.remove('d-none');
+                document.getElementById('tab-leaderboard-btn').classList.add('active');
+                renderLeaderboard();
+            }
+        }
+
+        function populateActiveQuizDropdown() {
+            const selectEl = document.getElementById('select-active-quiz');
+            const filterEl = document.getElementById('leaderboard-filter-quiz');
+            
+            selectEl.innerHTML = '';
+            filterEl.innerHTML = '<option value="ALL">Semua Kuis</option>';
+
+            appState.quizzes.forEach(q => {
+                selectEl.innerHTML += `<option value="${q.id}">[${q.subject}] ${q.title} (${q.questions.length} Soal)</option>`;
+                filterEl.innerHTML += `<option value="${q.id}">${q.title}</option>`;
+            });
+        }
+
+        /* ==========================================================================
+           QUIZ PLAYER LOGIC
+           ========================================================================== */
+        function startQuiz(event) {
+            event.preventDefault();
+            const quizId = document.getElementById('select-active-quiz').value;
+            const studentName = document.getElementById('input-student-name').value.trim();
+            const studentClass = document.getElementById('input-student-class').value.trim();
+
+            appState.currentQuiz = appState.quizzes.find(q => q.id === quizId);
+            if (!appState.currentQuiz || appState.currentQuiz.questions.length === 0) {
+                alert('Kuis yang dipilih belum memiliki soal!');
+                return;
+            }
+
+            appState.studentInfo = { name: studentName, class: studentClass };
+            appState.currentQuestionIdx = 0;
+            appState.userAnswers = new Array(appState.currentQuiz.questions.length).fill(null);
+            appState.timerSeconds = 0;
+
+            document.getElementById('student-entry-card').classList.add('d-none');
+            document.getElementById('student-quiz-card').classList.remove('d-none');
+            document.getElementById('quiz-subject-badge').textContent = appState.currentQuiz.subject;
+
+            startTimer();
+            renderCurrentQuestion();
+            renderMiniLeaderboard();
+        }
+
+        function startTimer() {
+            clearInterval(appState.timerInterval);
+            appState.timerInterval = setInterval(() => {
+                appState.timerSeconds++;
+                const mins = String(Math.floor(appState.timerSeconds / 60)).padStart(2, '0');
+                const secs = String(appState.timerSeconds % 60).padStart(2, '0');
+                document.getElementById('quiz-timer').textContent = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function renderCurrentQuestion() {
+            const q = appState.currentQuiz.questions[appState.currentQuestionIdx];
+            const totalQ = appState.currentQuiz.questions.length;
+
+            document.getElementById('quiz-question-counter').textContent = `Soal ${appState.currentQuestionIdx + 1} dari ${totalQ}`;
+            document.getElementById('quiz-progress-bar').style.width = `${((appState.currentQuestionIdx + 1) / totalQ) * 100}%`;
+            document.getElementById('quiz-question-text').textContent = q.text;
+
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = '';
+
+            const keys = ['A', 'B', 'C', 'D', 'E'];
+            q.options.forEach((optText, i) => {
+                const key = keys[i];
+                const isSelected = appState.userAnswers[appState.currentQuestionIdx] === key;
+                
+                const cardHtml = `
+                    <div class="option-card ${isSelected ? 'selected' : ''}" onclick="selectAnswer('${key}')">
+                        <div class="badge-key">${key}</div>
+                        <div class="fw-semibold">${optText}</div>
+                    </div>
+                `;
+                optionsContainer.innerHTML += cardHtml;
+            });
+
+            document.getElementById('btn-prev-question').disabled = (appState.currentQuestionIdx === 0);
+            
+            const nextBtn = document.getElementById('btn-next-question');
+            if (appState.currentQuestionIdx === totalQ - 1) {
+                nextBtn.innerHTML = `Selesai <i class="fa-solid fa-check ms-1"></i>`;
+                nextBtn.className = "btn btn-gradient-success rounded-pill px-4";
+            } else {
+                nextBtn.innerHTML = `Selanjutnya <i class="fa-solid fa-arrow-right ms-1"></i>`;
+                nextBtn.className = "btn btn-gradient-primary rounded-pill px-4";
+            }
+        }
+
+        function selectAnswer(key) {
+            appState.userAnswers[appState.currentQuestionIdx] = key;
+            renderCurrentQuestion();
+        }
+
+        function prevQuestion() {
+            if (appState.currentQuestionIdx > 0) {
+                appState.currentQuestionIdx--;
+                renderCurrentQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (appState.currentQuestionIdx < appState.currentQuiz.questions.length - 1) {
+                appState.currentQuestionIdx++;
+                renderCurrentQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            clearInterval(appState.timerInterval);
+            let correctCount = 0;
+            const total = appState.currentQuiz.questions.length;
+
+            appState.currentQuiz.questions.forEach((q, i) => {
+                if (appState.userAnswers[i] === q.key) {
+                    correctCount++;
+                }
+            });
+
+            const finalScore = Math.round((correctCount / total) * 100);
+            const mins = String(Math.floor(appState.timerSeconds / 60)).padStart(2, '0');
+            const secs = String(appState.timerSeconds % 60).padStart(2, '0');
+            const timeTakenFormatted = `${mins}:${secs}`;
+
+            appState.leaderboard.push({
+                quizId: appState.currentQuiz.id,
+                name: appState.studentInfo.name,
+                class: appState.studentInfo.class,
+                score: finalScore,
+                timeTaken: timeTakenFormatted,
+                date: new Date().toISOString()
+            });
+            saveLeaderboardToStorage();
+
+            document.getElementById('student-quiz-card').classList.add('d-none');
+            document.getElementById('student-result-card').classList.remove('d-none');
+            document.getElementById('result-score').textContent = finalScore;
+            document.getElementById('result-accuracy').textContent = `${finalScore}%`;
+
+            confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+        }
+
+        function resetStudentView() {
+            document.getElementById('student-result-card').classList.add('d-none');
+            document.getElementById('student-entry-card').classList.remove('d-none');
+        }
+
+        function renderMiniLeaderboard() {
+            const listEl = document.getElementById('mini-leaderboard-list');
+            listEl.innerHTML = '';
+
+            const currentQuizBoard = appState.leaderboard
+                .filter(item => item.quizId === appState.currentQuiz.id)
+                .sort((a, b) => {
+                    if (b.score !== a.score) return b.score - a.score;
+                    return a.timeTaken.localeCompare(b.timeTaken);
+                })
+                .slice(0, 5);
+
+            if (currentQuizBoard.length === 0) {
+                listEl.innerHTML = `<div class="text-secondary small text-center py-3">Jadilah yang pertama di peringkat!</div>`;
+                return;
+            }
+
+            currentQuizBoard.forEach((item, idx) => {
+                listEl.innerHTML += `
+                    <div class="list-group-item bg-transparent text-white px-0 d-flex justify-content-between align-items-center border-secondary">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge ${idx === 0 ? 'bg-warning text-dark' : 'bg-secondary'} rounded-circle">${idx + 1}</span>
+                            <div>
+                                <div class="fw-semibold small text-truncate" style="max-width: 110px;">${item.name}</div>
+                                <div class="text-secondary opacity-75" style="font-size: 0.75rem;">${item.class}</div>
+                            </div>
+                        </div>
+                        <span class="fw-bold text-success small">${item.score} pt</span>
+                    </div>
+                `;
+            });
+        }
+
+        /* ==========================================================================
+           ADVANCED REGEX SMART PARSER LOGIC
+           ========================================================================== */
+        let creatorQuestions = [];
+
+        function setCreatorMode(mode) {
+            document.getElementById('btn-mode-file').classList.toggle('active', mode === 'file');
+            document.getElementById('btn-mode-manual').classList.toggle('active', mode === 'manual');
+            document.getElementById('creator-file-box').classList.toggle('d-none', mode !== 'file');
+            document.getElementById('creator-manual-box').classList.toggle('d-none', mode !== 'manual');
+        }
+
+        async function processUploadedFile() {
+            const fileInput = document.getElementById('creator-file-input');
+            const btnProcess = document.getElementById('btn-process-file');
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('Silakan pilih file Word (.docx), PDF, atau TXT terlebih dahulu!');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const fileName = file.name.toLowerCase();
+
+            btnProcess.disabled = true;
+            btnProcess.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Mengesktrak dokumen...`;
+
+            try {
+                let textContent = "";
+
+                if (fileName.endsWith('.docx')) {
+                    textContent = await extractTextFromDocx(file);
+                } else if (fileName.endsWith('.pdf')) {
+                    textContent = await extractTextFromPdf(file);
+                } else {
+                    textContent = await file.text();
+                }
+
+                parseNaturalFormatQuestions(textContent);
+            } catch (err) {
+                console.error("File processing error:", err);
+                alert("Gagal membaca dokumen. Pastikan file berisi teks biasa dan tidak terenkripsi password.");
+            } finally {
+                btnProcess.disabled = false;
+                btnProcess.innerHTML = `<i class="fa-solid fa-microchip fs-5"></i> <span>Ekstrak & Process Soal Otomatis</span>`;
+            }
+        }
+
+        function extractTextFromDocx(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    mammoth.extractRawText({ arrayBuffer: e.target.result })
+                        .then(res => resolve(res.value))
+                        .catch(err => reject(err));
+                };
+                reader.onerror = reject;
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        function extractTextFromPdf(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    try {
+                        const typedarray = new Uint8Array(e.target.result);
+                        const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                        let fullText = "";
+
+                        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                            const page = await pdf.getPage(pageNum);
+                            const textContent = await page.getTextContent();
+                            const pageText = textContent.items.map(item => item.str).join("\n");
+                            fullText += pageText + "\n";
+                        }
+                        resolve(fullText);
+                    } catch (err) {
+                        reject(err);
+                    }
+                };
+                reader.onerror = reject;
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        /**
+         * Natural Indonesian Exam Format Parser using Powerful Regex
+         */
+        function parseNaturalFormatQuestions(rawText) {
+            const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+            
+            // Regex patterns
+            const questionNumberRegex = /^(\d+|Soal\s*\d+)[\.\)\:\-]\s*(.+)/i;
+            const optionRegex = /^([\*\[x\]]*)\s*([A-Ea-e])[\.\)\:\-]\s*(.+)/;
+            const keyLabelRegex = /^(Kunci|Jawaban|Key)\s*[\:\-]\s*([A-Ea-e])/i;
+
+            let parsedList = [];
+            let currentQuestion = null;
+
+            lines.forEach((line) => {
+                // Check if line matches a new Question Number (e.g. "1. Komponen Listrik...")
+                const qMatch = line.match(questionNumberRegex);
+                
+                // Check if line matches Option Choice (e.g. "A. Alternator" or "*B. Baterai")
+                const optMatch = line.match(optionRegex);
+                
+                // Check if line specifies answer key (e.g. "Kunci: B")
+                const keyMatch = line.match(keyLabelRegex);
+
+                if (qMatch && !optMatch) {
+                    if (currentQuestion && currentQuestion.options.length >= 2) {
+                        parsedList.push(currentQuestion);
+                    }
+                    currentQuestion = {
+                        text: qMatch[2].trim(),
+                        options: [],
+                        key: "A" // default fallback
+                    };
+                } else if (optMatch && currentQuestion) {
+                    const hasAsterisk = optMatch[1].includes('*') || optMatch[1].toLowerCase().includes('[x]');
+                    const optionLetter = optMatch[2].toUpperCase();
+                    let optionText = optMatch[3].trim();
+
+                    // Check if asterisk is at the end of text (e.g. "Baterai*")
+                    if (optionText.endsWith('*')) {
+                        optionText = optionText.slice(0, -1).trim();
+                        currentQuestion.key = optionLetter;
+                    } else if (hasAsterisk) {
+                        currentQuestion.key = optionLetter;
+                    }
+
+                    currentQuestion.options.push(optionText);
+                } else if (keyMatch && currentQuestion) {
+                    currentQuestion.key = keyMatch[2].toUpperCase();
+                } else if (currentQuestion && currentQuestion.options.length === 0) {
+                    // Append continuation text to current question text
+                    currentQuestion.text += " " + line;
+                }
+            });
+
+            // Push last parsed question
+            if (currentQuestion && currentQuestion.options.length >= 2) {
+                parsedList.push(currentQuestion);
+            }
+
+            if (parsedList.length > 0) {
+                creatorQuestions = creatorQuestions.concat(parsedList);
+                renderCreatorQuestionsList();
+                alert(`Berhasil mengekstrak ${parsedList.length} soal otomatis dari dokumen!`);
+            } else {
+                alert("Sistem tidak menemukan format soal yang cocok. Pastikan nomor soal diawali dengan '1.' dan pilihan diawali huruf 'A.', 'B.', dll.");
+            }
+        }
+
+        function addManualQuestion(event) {
+            event.preventDefault();
+            const qText = document.getElementById('manual-q-text').value.trim();
+            const optA = document.getElementById('manual-opt-a').value.trim();
+            const optB = document.getElementById('manual-opt-b').value.trim();
+            const optC = document.getElementById('manual-opt-c').value.trim();
+            const optD = document.getElementById('manual-opt-d').value.trim();
+            const optE = document.getElementById('manual-opt-e').value.trim();
+            const key = document.getElementById('manual-q-key').value;
+
+            const opts = [optA, optB, optC, optD];
+            if (optE) opts.push(optE);
+
+            creatorQuestions.push({
+                text: qText,
+                options: opts,
+                key: key
+            });
+
+            // Clear inputs
+            document.getElementById('manual-q-text').value = '';
+            document.getElementById('manual-opt-a').value = '';
+            document.getElementById('manual-opt-b').value = '';
+            document.getElementById('manual-opt-c').value = '';
+            document.getElementById('manual-opt-d').value = '';
+            document.getElementById('manual-opt-e').value = '';
+
+            renderCreatorQuestionsList();
+        }
+
+        function renderCreatorQuestionsList() {
+            const listEl = document.getElementById('creator-questions-list');
+            document.getElementById('creator-q-count').textContent = creatorQuestions.length;
+
+            if (creatorQuestions.length === 0) {
+                listEl.innerHTML = `<div class="text-center text-secondary py-5">Belum ada soal yang diekstrak.</div>`;
+                return;
+            }
+
+            const keys = ['A', 'B', 'C', 'D', 'E'];
+            listEl.innerHTML = '';
+            creatorQuestions.forEach((q, idx) => {
+                let optionsBadges = q.options.map((opt, i) => `
+                    <span class="badge ${keys[i] === q.key ? 'bg-success text-white' : 'bg-secondary-subtle text-white'} me-1 mb-1">
+                        ${keys[i]}. ${opt}
+                    </span>
+                `).join('');
+
+                listEl.innerHTML += `
+                    <div class="p-3 bg-dark rounded-3 border border-secondary mb-3 position-relative">
+                        <button class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 py-0 px-1.5" onclick="deleteCreatorQuestion(${idx})">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                        <div class="fw-semibold small text-white pe-4 mb-2">${idx + 1}. ${q.text}</div>
+                        <div class="mb-2">${optionsBadges}</div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="small text-secondary">Kunci Jawaban:</span>
+                            <select class="form-select form-select-sm bg-body-tertiary border-secondary text-white py-0 px-2" style="width: auto;" onchange="updateQuestionKey(${idx}, this.value)">
+                                ${q.options.map((_, i) => `<option value="${keys[i]}" ${keys[i] === q.key ? 'selected' : ''}>Kunci ${keys[i]}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function updateQuestionKey(idx, selectedKey) {
+            creatorQuestions[idx].key = selectedKey;
+            renderCreatorQuestionsList();
+        }
+
+        function deleteCreatorQuestion(idx) {
+            creatorQuestions.splice(idx, 1);
+            renderCreatorQuestionsList();
+        }
+
+        function clearQuestions() {
+            creatorQuestions = [];
+            renderCreatorQuestionsList();
+        }
+
+        function publishQuiz() {
+            const title = document.getElementById('creator-title').value.trim();
+            const subject = document.getElementById('creator-subject').value.trim();
+
+            if (!title || !subject) {
+                alert('Silakan isi Judul Kuis dan Mata Pelajaran terlebih dahulu!');
+                return;
+            }
+
+            if (creatorQuestions.length === 0) {
+                alert('Tambahkan minimal 1 soal sebelum menerbitkan kuis!');
+                return;
+            }
+
+            const newQuizId = 'quiz_' + Date.now();
+            const newQuiz = {
+                id: newQuizId,
+                title: title,
+                subject: subject,
+                questions: [...creatorQuestions]
+            };
+
+            appState.quizzes.push(newQuiz);
+            saveQuizzesToStorage();
+            populateActiveQuizDropdown();
+
+            const baseUrl = window.location.origin + window.location.pathname;
+            const shareUrl = `${baseUrl}?quiz=${newQuizId}`;
+
+            document.getElementById('share-link-input').value = shareUrl;
+            const modal = new bootstrap.Modal(document.getElementById('shareModal'));
+            modal.show();
+
+            document.getElementById('creator-title').value = '';
+            document.getElementById('creator-subject').value = '';
+            clearQuestions();
+        }
+
+        function copyShareLink() {
+            const input = document.getElementById('share-link-input');
+            input.select();
+            document.execCommand('copy');
+            
+            const toast = document.getElementById('copy-toast');
+            toast.classList.remove('d-none');
+            setTimeout(() => toast.classList.add('d-none'), 3000);
+        }
+
+        /* ==========================================================================
+           LEADERBOARD RENDER LOGIC
+           ========================================================================== */
+        function renderLeaderboard() {
+            const filterQuizId = document.getElementById('leaderboard-filter-quiz').value;
+            let filteredData = [...appState.leaderboard];
+
+            if (filterQuizId !== 'ALL') {
+                filteredData = filteredData.filter(item => item.quizId === filterQuizId);
+            }
+
+            filteredData.sort((a, b) => {
+                if (b.score !== a.score) return b.score - a.score;
+                return a.timeTaken.localeCompare(b.timeTaken);
+            });
+
+            document.getElementById('podium-1-name').textContent = filteredData[0] ? filteredData[0].name : '-';
+            document.getElementById('podium-1-score').textContent = filteredData[0] ? `${filteredData[0].score} pt` : '0 pt';
+
+            document.getElementById('podium-2-name').textContent = filteredData[1] ? filteredData[1].name : '-';
+            document.getElementById('podium-2-score').textContent = filteredData[1] ? `${filteredData[1].score} pt` : '0 pt';
+
+            document.getElementById('podium-3-name').textContent = filteredData[2] ? filteredData[2].name : '-';
+            document.getElementById('podium-3-score').textContent = filteredData[2] ? `${filteredData[2].score} pt` : '0 pt';
+
+            const tbody = document.getElementById('leaderboard-table-body');
+            tbody.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-secondary py-4">Belum ada data pengerjaan kuis.</td></tr>`;
+                return;
+            }
+
+            filteredData.forEach((item, idx) => {
+                let rankBadge = `<span class="fw-bold">${idx + 1}</span>`;
+                if (idx === 0) rankBadge = `<i class="fa-solid fa-crown text-warning fs-5"></i>`;
+                else if (idx === 1) rankBadge = `<i class="fa-solid fa-medal text-secondary fs-5"></i>`;
+                else if (idx === 2) rankBadge = `<i class="fa-solid fa-award text-warning-emphasis fs-5"></i>`;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <th scope="row" class="text-center">${rankBadge}</th>
+                        <td class="fw-semibold text-white">${item.name}</td>
+                        <td class="text-secondary small">${item.class}</td>
+                        <td class="text-center fw-bold text-success">${item.score}</td>
+                        <td class="text-center text-secondary small"><i class="fa-regular fa-clock me-1"></i>${item.timeTaken}</td>
+                    </tr>
+                `;
+            });
+        }
+    </script>
 </body>
 </html>
