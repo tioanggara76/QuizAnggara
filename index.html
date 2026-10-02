@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz Anggara</title>
+  <title>Kuis Interaktif Realtime SMK</title>
   
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -120,6 +120,16 @@
       padding: 6px 16px;
       border-radius: 20px;
     }
+
+    .status-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    .status-online { background-color: #10b981; }
+    .status-offline { background-color: #ef4444; }
   </style>
 </head>
 <body>
@@ -129,9 +139,12 @@
     <div class="container">
       <a class="navbar-brand d-flex align-items-center gap-2 fw-bold fs-4" href="#">
         <i class="fa-solid fa-graduation-cap fs-3"></i>
-        <span>Kuis Interaktif SMK</span>
+        <span>Kuis Realtime SMK</span>
       </a>
       <div class="d-flex align-items-center gap-2">
+        <span id="syncBadge" class="badge bg-light text-dark fw-semibold me-2 d-none d-md-inline-block">
+          <span class="status-indicator status-online"></span> Realtime Sync Active
+        </span>
         <button id="btnSwitchMode" class="btn btn-light btn-sm rounded-pill px-3 fw-semibold text-primary">
           <i class="fa-solid fa-user-gear me-1"></i> Mode Guru
         </button>
@@ -146,7 +159,7 @@
     <div id="teacherView" class="d-none">
       
       <!-- Navigasi Menu Guru -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <ul class="nav nav-pills" id="teacherTab" role="tablist">
           <li class="nav-item" role="presentation">
             <button class="nav-link active fw-bold px-4" id="tab-buat-soal" data-bs-toggle="pill" data-bs-target="#content-buat-soal" type="button">
@@ -155,12 +168,12 @@
           </li>
           <li class="nav-item" role="presentation">
             <button class="nav-link fw-bold px-4" id="tab-pustaka" data-bs-toggle="pill" data-bs-target="#content-pustaka" type="button">
-              <i class="fa-solid fa-book-bookmark me-2"></i>Pustaka Soal Tersimpan
+              <i class="fa-solid fa-book-bookmark me-2"></i>Pustaka Soal
             </button>
           </li>
           <li class="nav-item" role="presentation">
             <button class="nav-link fw-bold px-4" id="tab-monitoring" data-bs-toggle="pill" data-bs-target="#content-monitoring" type="button">
-              <i class="fa-solid fa-chart-line me-2"></i>Ranking Realtime Siswa <span class="badge bg-danger ms-1 pulse-badge">LIVE</span>
+              <i class="fa-solid fa-chart-line me-2"></i>Ranking Realtime <span class="badge bg-danger ms-1 pulse-badge">LIVE</span>
             </button>
           </li>
         </ul>
@@ -181,7 +194,7 @@
                   <i class="fa-solid fa-file-circle-plus me-2"></i>1. Import File Soal (Word / PDF / TXT)
                 </h5>
                 <p class="text-muted small">
-                  Upload file Word (<code>.docx</code>), PDF (<code>.pdf</code>), atau Teks (<code>.txt</code>) berformat standar dengan kunci tanda bintang (<code>*B. Jawaban</code>).
+                  Upload file Word (<code>.docx</code>), PDF (<code>.pdf</code>), atau Teks (<code>.txt</code>). Gunakan format kunci tanda bintang (<code>*B. Jawaban Benar</code>).
                 </p>
 
                 <div class="mb-3">
@@ -201,7 +214,7 @@
 
                 <form id="manualQuestionForm">
                   <div class="mb-3">
-                    <label class="form-label fw-semibold">Teks Soal:</label>
+                    <label class="form-label fw-semibold">Teks Soal Pertanyaan:</label>
                     <textarea class="form-control" id="manualQuestionText" rows="2" placeholder="Masukkan pertanyaan..." required></textarea>
                   </div>
 
@@ -260,7 +273,7 @@
               <div class="card card-custom p-4 mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                   <h5 class="fw-bold mb-0">
-                    <i class="fa-solid fa-list-check me-2"></i>Pratinjau Soal (<span id="qCount">0</span>)
+                    <i class="fa-solid fa-list-check me-2"></i>Daftar Soal (<span id="qCount">0</span>)
                   </h5>
                   <button class="btn btn-outline-danger btn-sm" onclick="clearQuestions()">
                     <i class="fa-solid fa-trash me-1"></i> Hapus
@@ -270,16 +283,16 @@
                 <div id="questionListPreview" class="overflow-auto mb-3" style="max-height: 320px;">
                   <div class="text-center text-muted py-5">
                     <i class="fa-solid fa-folder-open fs-1 mb-2 d-block opacity-50"></i>
-                    Belum ada soal ditambahkan. Upload file atau gunakan input manual.
+                    Belum ada soal. Tambahkan secara manual atau upload file.
                   </div>
                 </div>
 
                 <div class="d-grid gap-2">
                   <button class="btn btn-outline-success fw-semibold" onclick="saveToLibrary()">
-                    <i class="fa-solid fa-floppy-disk me-2"></i>Simpan ke Pustaka Soal
+                    <i class="fa-solid fa-floppy-disk me-2"></i>Simpan Ke Pustaka
                   </button>
-                  <button id="btnPublishQuiz" class="btn btn-gradient py-2 fs-6 shadow-sm">
-                    <i class="fa-solid fa-paper-plane me-2"></i>Terbitkan Kuis Aktif
+                  <button id="btnPublishQuiz" class="btn btn-gradient py-3 fs-6 shadow-sm fw-bold">
+                    <i class="fa-solid fa-wifi me-2"></i>Terbitkan / Sinkronkan Soal Ke HP Siswa
                   </button>
                 </div>
               </div>
@@ -293,7 +306,7 @@
             <h4 class="fw-bold mb-3 text-primary">
               <i class="fa-solid fa-book-bookmark me-2"></i>Pustaka Soal Tersimpan
             </h4>
-            <p class="text-muted small">Pilih paket soal yang pernah disimpan untuk digunakan kembali kapan saja.</p>
+            <p class="text-muted small">Pilih paket soal yang pernah disimpan untuk digunakan atau diterbitkan ulang.</p>
 
             <div class="table-responsive">
               <table class="table table-hover align-middle">
@@ -306,7 +319,7 @@
                   </tr>
                 </thead>
                 <tbody id="libraryTableBody">
-                  <!-- Data pustaka soal dimuat secara dinamis -->
+                  <!-- Data pustaka dimuat dinamis -->
                 </tbody>
               </table>
             </div>
@@ -319,12 +332,12 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
               <div>
                 <h4 class="fw-bold mb-1 text-warning">
-                  <i class="fa-solid fa-trophy me-2"></i>Papan Ranking Siswa (Realtime Monitoring Guru)
+                  <i class="fa-solid fa-trophy me-2"></i>Papan Ranking Siswa Realtime
                 </h4>
-                <p class="text-muted small mb-0">Pantau progres dan keluarkan siswa jika diperlukan.</p>
+                <p class="text-muted small mb-0">Memantau progres siswa secara langsung (Realtime Cloud Sync).</p>
               </div>
-              <button class="btn btn-outline-secondary btn-sm" onclick="renderTeacherMonitoring()">
-                <i class="fa-solid fa-arrows-rotate me-1"></i> Refresh Data
+              <button class="btn btn-outline-danger btn-sm" onclick="clearLeaderboard()">
+                <i class="fa-solid fa-rotate-left me-1"></i> Reset Nilai Siswa
               </button>
             </div>
 
@@ -335,13 +348,13 @@
                     <th scope="col" style="width: 80px;">Peringkat</th>
                     <th scope="col">Nama Siswa</th>
                     <th scope="col">Kelas / Jurusan</th>
-                    <th scope="col" class="text-center">Skor Akhir</th>
+                    <th scope="col" class="text-center">Skor</th>
                     <th scope="col" class="text-center">Status</th>
                     <th scope="col" class="text-center">Aksi (Kontrol)</th>
                   </tr>
                 </thead>
                 <tbody id="teacherLeaderboardTable">
-                  <!-- Data leaderboard guru akan dimuat di sini -->
+                  <!-- Data leaderboard dimuat dinamis dari Firebase -->
                 </tbody>
               </table>
             </div>
@@ -360,11 +373,11 @@
           <div class="card card-custom p-4 text-center animate__animated animate__fadeInDown">
             <div class="my-3">
               <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fs-6 fw-bold">
-                <i class="fa-solid fa-bolt me-1"></i> Kuis Interaktif SMK
+                <i class="fa-solid fa-bolt me-1"></i> Live Realtime Quiz
               </span>
             </div>
             <h3 class="fw-bold mb-2">Selamat Datang!</h3>
-            <p class="text-muted small mb-4">Masukkan nama dan kelas Anda untuk memulai atau melanjutkan kuis!</p>
+            <p class="text-muted small mb-4">Masukkan identitas Anda. Soal akan otomatis diperbarui saat Guru menerbitkan kuis baru.</p>
             
             <form id="startQuizForm">
               <div class="form-floating mb-3 text-start">
@@ -376,7 +389,7 @@
                 <label for="studentClass">Kelas / Jurusan (misal: XI TBSM 1)</label>
               </div>
               <button type="submit" class="btn btn-gradient w-100 py-3 fw-bold fs-5">
-                <i class="fa-solid fa-play me-2"></i> Mulai Kuis Now!
+                <i class="fa-solid fa-play me-2"></i> Masuk Ruang Kuis
               </button>
             </form>
           </div>
@@ -392,14 +405,14 @@
               <!-- Header Kuis -->
               <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
                 <div>
-                  <span class="text-muted small d-block">Pertanyaan</span>
+                  <span class="text-muted small d-block">Pertanyaan No:</span>
                   <span class="fs-4 fw-bold text-primary">
-                    <span id="currentQIndex">1</span> / <span id="totalQIndex">5</span>
+                    <span id="currentQIndex">1</span> / <span id="totalQIndex">0</span>
                   </span>
                 </div>
                 <div class="d-flex align-items-center gap-2">
                   <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 rounded-pill small">
-                    <i class="fa-solid fa-lock me-1"></i> 1x Kesempatan Jawab
+                    <i class="fa-solid fa-lock me-1"></i> 1x Jawab
                   </span>
                   <div class="timer-badge">
                     <i class="fa-solid fa-clock me-1"></i> <span id="timerDisplay">00:00</span>
@@ -409,7 +422,7 @@
 
               <!-- Teks Soal -->
               <h5 id="questionTextDisplay" class="fw-bold mb-4" style="line-height: 1.6;">
-                Memuat pertanyaan...
+                Memuat pertanyaan dari server...
               </h5>
 
               <!-- Pilihan Jawaban -->
@@ -429,7 +442,7 @@
               <i class="fa-solid fa-award text-warning" style="font-size: 5rem;"></i>
             </div>
             <h2 class="fw-bold mb-2">Kuis Selesai!</h2>
-            <p class="text-muted">Terima kasih telah menyelesaikan ujian ini.</p>
+            <p class="text-muted">Hasil telah dikirim ke Papan Ranking Guru secara realtime.</p>
 
             <div class="row my-4 g-3 justify-content-center">
               <div class="col-6">
@@ -440,8 +453,8 @@
               </div>
             </div>
 
-            <button onclick="location.reload()" class="btn btn-gradient py-3 fw-bold">
-              <i class="fa-solid fa-rotate-right me-2"></i> Kembali Ke Halaman Utama
+            <button onclick="resetStudentState()" class="btn btn-gradient py-3 fw-bold">
+              <i class="fa-solid fa-rotate-right me-2"></i> Tunggu Soal Baru dari Guru
             </button>
           </div>
         </div>
@@ -450,38 +463,70 @@
     </div>
   </div>
 
-  <!-- External JavaScript Libraries -->
+  <!-- External JS Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-  <script>
+  <!-- Firebase SDK via ES Modules -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Setup PDF Worker
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
+    // Firebase App Initialization
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'smk-quiz-app';
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+      apiKey: "demo-api-key",
+      authDomain: "demo-app.firebaseapp.com",
+      projectId: "demo-app",
+      storageBucket: "demo-app.appspot.com",
+      messagingSenderId: "123456789",
+      appId: "1:123456789:web:abcdef"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUserId = null;
+
+    // Authenticate First
+    async function initAuth() {
+      try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          const userCred = await signInWithCustomToken(auth, __initial_auth_token);
+          currentUserId = userCred.user.uid;
+        } else {
+          const userCred = await signInAnonymously(auth);
+          currentUserId = userCred.user.uid;
+        }
+      } catch (err) {
+        console.error("Auth Exception:", err);
+      }
+    }
+
     // Application State
-    let state = {
+    window.state = {
       isTeacherLoggedIn: false,
-      teacherPin: localStorage.getItem('teacher_pin') || 'anggara.com',
+      teacherPin: 'anggara.com',
       questions: [],
       currentQuestionIdx: 0,
       userAnswers: {},
       studentInfo: null,
       quizLibrary: JSON.parse(localStorage.getItem('smk_quiz_library')) || [],
-      leaderboard: JSON.parse(localStorage.getItem('smk_quiz_leaderboard')) || [],
+      leaderboard: [],
       timer: 0,
       timerInterval: null,
-      isAnswering: false // Flag untuk cegah klik ganda
+      isAnswering: false
     };
 
-    const btnSwitchMode = document.getElementById('btnSwitchMode');
-    const teacherView = document.getElementById('teacherView');
-    const studentView = document.getElementById('studentView');
-    const questionListPreview = document.getElementById('questionListPreview');
-    const qCount = document.getElementById('qCount');
-
-    // Default Questions
+    // Default Fallback Questions
     const defaultQuestions = [
       {
         id: 1,
@@ -494,51 +539,211 @@
         question: "Fungsi utama sekring (fuse) pada sistem kelistrikan sepeda motor adalah ...",
         options: { A: "Menaikkan tegangan", B: "Menyimpan arus", C: "Melindungi rangkaian dari arus berlebih", D: "Menghasilkan api", E: "Mengisi baterai" },
         key: "C"
-      },
-      {
-        id: 3,
-        question: "Alat yang digunakan untuk mengukur tegangan, arus, dan hambatan listrik adalah ...",
-        options: { A: "Tachometer", B: "Compression tester", C: "Multimeter", D: "Feeler gauge", E: "Torque wrench" },
-        key: "C"
       }
     ];
 
-    window.addEventListener('DOMContentLoaded', () => {
-      const savedQ = localStorage.getItem('active_quiz_questions');
-      if (savedQ) {
-        state.questions = JSON.parse(savedQ);
-      } else {
-        state.questions = defaultQuestions;
-      }
+    // Initialization on DOM Loaded
+    window.addEventListener('DOMContentLoaded', async () => {
+      await initAuth();
       
-      renderQuestionPreview();
+      // Load local library
       renderLibraryTable();
-      renderTeacherMonitoring();
 
-      window.addEventListener('storage', (e) => {
-        if (e.key === 'smk_quiz_leaderboard') {
-          state.leaderboard = JSON.parse(e.newValue);
-          renderTeacherMonitoring();
-        }
-      });
+      // Listen to Active Quiz Firestore Document Realtime
+      listenActiveQuizRealtime();
+
+      // Listen to Leaderboard Firestore Collection Realtime
+      listenLeaderboardRealtime();
     });
 
-    // Switch View & Login PIN via SweetAlert2
+    // 1. Realtime Active Quiz Listener (Guru -> HP Siswa)
+    function listenActiveQuizRealtime() {
+      const quizDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'active_quiz', 'current');
+      
+      onSnapshot(quizDocRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.questions && Array.isArray(data.questions) && data.questions.length > 0) {
+            const oldQuestionsStr = JSON.stringify(window.state.questions);
+            const newQuestionsStr = JSON.stringify(data.questions);
+
+            window.state.questions = data.questions;
+
+            // Mode Guru Preview Update
+            renderQuestionPreview();
+
+            // Notify Student if active quiz changes
+            if (oldQuestionsStr !== newQuestionsStr && oldQuestionsStr !== '[]') {
+              if (window.state.studentInfo) {
+                Swal.fire({
+                  icon: 'info',
+                  title: 'Soal Baru Diterbitkan Guru!',
+                  text: 'Daftar pertanyaan telah diperbarui secara otomatis.',
+                  timer: 2000,
+                  showConfirmButton: false
+                });
+
+                // Reset Student Progress for new Quiz
+                window.state.currentQuestionIdx = 0;
+                window.state.userAnswers = {};
+                renderPlayQuestion();
+              }
+            }
+          }
+        } else {
+          // If Firestore document doesn't exist yet, seed with default questions
+          if (window.state.questions.length === 0) {
+            window.state.questions = defaultQuestions;
+            renderQuestionPreview();
+          }
+        }
+      }, (error) => {
+        console.error("Quiz Snapshot Error:", error);
+      });
+    }
+
+    // 2. Realtime Leaderboard Listener (Siswa -> Panel Monitoring Guru)
+    function listenLeaderboardRealtime() {
+      const leaderboardColRef = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
+      
+      onSnapshot(leaderboardColRef, (snapshot) => {
+        const list = [];
+        snapshot.forEach((doc) => {
+          list.push({ id: doc.id, ...doc.data() });
+        });
+        window.state.leaderboard = list;
+        renderTeacherMonitoring();
+      }, (error) => {
+        console.error("Leaderboard Snapshot Error:", error);
+      });
+    }
+
+    // Publish / Synchronize Quiz to Cloud Database
+    window.publishQuizToCloud = async function() {
+      if (window.state.questions.length === 0) {
+        Swal.fire({ icon: 'warning', title: 'Soal Masih Kosong!' });
+        return;
+      }
+
+      try {
+        Swal.showLoading();
+        const quizDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'active_quiz', 'current');
+        
+        await setDoc(quizDocRef, {
+          questions: window.state.questions,
+          updatedAt: new Date().toISOString()
+        });
+
+        const fullUrl = `${window.location.origin}${window.location.pathname}`;
+
+        Swal.fire({
+          title: 'Kuis Berhasil Disinkronkan!',
+          html: `
+            <p class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Soal telah terbit ke seluruh HP Siswa secara Realtime!</p>
+            <p class="text-muted small mb-3">Bagikan link atau QR code berikut kepada siswa:</p>
+            <div class="input-group mb-3">
+              <input type="text" id="swalShareUrl" class="form-control form-control-sm" value="${fullUrl}" readonly>
+              <button class="btn btn-primary btn-sm" id="btnSwalCopy">Salin Link</button>
+            </div>
+            <div class="text-center my-3">
+              <div id="swalQrCode" class="p-2 bg-light d-inline-block rounded border"></div>
+            </div>
+          `,
+          icon: 'success',
+          didOpen: () => {
+            new QRCode(document.getElementById('swalQrCode'), { text: fullUrl, width: 140, height: 140 });
+            document.getElementById('btnSwalCopy').addEventListener('click', () => {
+              const input = document.getElementById('swalShareUrl');
+              input.select();
+              document.execCommand('copy');
+              Swal.showValidationMessage('Link berhasil disalin!');
+            });
+          }
+        });
+      } catch (err) {
+        console.error("Error publishing quiz:", err);
+        Swal.fire({ icon: 'error', title: 'Gagal Menyinkronkan Soal', text: err.message });
+      }
+    };
+
+    document.getElementById('btnPublishQuiz').addEventListener('click', window.publishQuizToCloud);
+
+    // Update Student Record in Firestore
+    async function syncStudentToCloud(studentData) {
+      if (!currentUserId) return;
+      const docId = `${studentData.name}_${studentData.class}`.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+      const studentDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', docId);
+
+      try {
+        await setDoc(studentDocRef, {
+          name: studentData.name,
+          class: studentData.class,
+          score: studentData.score,
+          status: studentData.status,
+          lastQuestionIdx: studentData.lastQuestionIdx,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+      } catch (err) {
+        console.error("Sync Student Error:", err);
+      }
+    }
+
+    window.clearLeaderboard = async function() {
+      Swal.fire({
+        title: 'Reset Papan Skor?',
+        text: 'Seluruh nilai siswa akan dihapus dari server realtime.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Reset'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            for (let item of window.state.leaderboard) {
+              if (item.id) {
+                const itemRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', item.id);
+                await deleteDoc(itemRef);
+              }
+            }
+            Swal.fire({ icon: 'success', title: 'Reset Berhasil', timer: 1200, showConfirmButton: false });
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      });
+    };
+
+    window.removeStudentCloud = async function(docId) {
+      if (!docId) return;
+      try {
+        const itemRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', docId);
+        await deleteDoc(itemRef);
+        Swal.fire({ icon: 'success', title: 'Siswa Dikeluarkan', timer: 1200, showConfirmButton: false });
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    // Switch Mode Button
+    const btnSwitchMode = document.getElementById('btnSwitchMode');
+    const teacherView = document.getElementById('teacherView');
+    const studentView = document.getElementById('studentView');
+
     btnSwitchMode.addEventListener('click', () => {
-      if (!state.isTeacherLoggedIn) {
+      if (!window.state.isTeacherLoggedIn) {
         Swal.fire({
           title: 'Akses Mode Guru',
-          text: 'Masukkan KODE PIN / Password Guru:',
+          text: 'Masukkan KODE PIN Guru:',
           input: 'password',
-          inputAttributes: { autocapitalize: 'off', placeholder: 'Default: ' },
+          inputAttributes: { autocapitalize: 'off', placeholder: 'PIN: anggara.com' },
           showCancelButton: true,
           confirmButtonText: 'Masuk',
           cancelButtonText: 'Batal',
           confirmButtonColor: '#4f46e5'
         }).then((result) => {
           if (result.isConfirmed) {
-            if (result.value === state.teacherPin) {
-              state.isTeacherLoggedIn = true;
+            if (result.value === window.state.teacherPin) {
+              window.state.isTeacherLoggedIn = true;
               btnSwitchMode.innerHTML = '<i class="fa-solid fa-user-graduate me-1"></i> Mode Siswa';
               teacherView.classList.remove('d-none');
               studentView.classList.add('d-none');
@@ -558,63 +763,60 @@
           }
         });
       } else {
-        lockTeacherSession();
+        window.lockTeacherSession();
       }
     });
 
-    function lockTeacherSession() {
-      state.isTeacherLoggedIn = false;
+    window.lockTeacherSession = function() {
+      window.state.isTeacherLoggedIn = false;
       btnSwitchMode.innerHTML = '<i class="fa-solid fa-user-gear me-1"></i> Mode Guru';
       teacherView.classList.add('d-none');
       studentView.classList.remove('d-none');
-    }
+    };
 
-    // --- PUSTAKA SOAL FUNCTIONS ---
-    function saveToLibrary() {
-      if (state.questions.length === 0) {
-        Swal.fire({ icon: 'warning', title: 'Soal Kosong', text: 'Tambahkan soal terlebih dahulu sebelum menyimpan.' });
+    // Library Rendering & Management
+    window.saveToLibrary = function() {
+      if (window.state.questions.length === 0) {
+        Swal.fire({ icon: 'warning', title: 'Soal Kosong', text: 'Tambahkan soal terlebih dahulu.' });
         return;
       }
 
       Swal.fire({
         title: 'Simpan Ke Pustaka Soal',
         input: 'text',
-        inputLabel: 'Masukkan Judul Paket Soal:',
-        inputPlaceholder: 'Misal: Penilaian Harian Kelistrikan Otomotif',
+        inputLabel: 'Judul Paket Soal:',
+        inputPlaceholder: 'Misal: Kuis Kelistrikan Motor',
         showCancelButton: true,
         confirmButtonText: 'Simpan',
-        cancelButtonText: 'Batal',
-        inputValidator: (value) => {
-          if (!value) return 'Judul paket soal tidak boleh kosong!';
-        }
+        inputValidator: (value) => { if (!value) return 'Judul tidak boleh kosong!'; }
       }).then((result) => {
         if (result.isConfirmed) {
           const newPackage = {
             id: Date.now(),
             title: result.value,
-            count: state.questions.length,
+            count: window.state.questions.length,
             date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
-            questions: [...state.questions]
+            questions: [...window.state.questions]
           };
 
-          state.quizLibrary.push(newPackage);
-          localStorage.setItem('smk_quiz_library', JSON.stringify(state.quizLibrary));
+          window.state.quizLibrary.push(newPackage);
+          localStorage.setItem('smk_quiz_library', JSON.stringify(window.state.quizLibrary));
           renderLibraryTable();
 
-          Swal.fire({ icon: 'success', title: 'Tersimpan!', text: 'Soal berhasil disimpan ke Pustaka.', timer: 1500, showConfirmButton: false });
+          Swal.fire({ icon: 'success', title: 'Tersimpan!', timer: 1500, showConfirmButton: false });
         }
       });
-    }
+    };
 
     function renderLibraryTable() {
       const tbody = document.getElementById('libraryTableBody');
-      if (state.quizLibrary.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">Belum ada paket soal tersimpan di pustaka.</td></tr>`;
+      if (window.state.quizLibrary.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">Belum ada paket soal tersimpan.</td></tr>`;
         return;
       }
 
       let html = '';
-      state.quizLibrary.forEach((item, index) => {
+      window.state.quizLibrary.forEach((item, index) => {
         html += `
           <tr>
             <td class="fw-bold">${item.title}</td>
@@ -634,63 +836,33 @@
       tbody.innerHTML = html;
     }
 
-    function loadPackage(index) {
-      const pkg = state.quizLibrary[index];
-      state.questions = [...pkg.questions];
-      localStorage.setItem('active_quiz_questions', JSON.stringify(state.questions));
+    window.loadPackage = function(index) {
+      const pkg = window.state.quizLibrary[index];
+      window.state.questions = [...pkg.questions];
       renderQuestionPreview();
 
       Swal.fire({
         icon: 'success',
         title: 'Paket Dimuat!',
-        text: `Paket "${pkg.title}" berhasil dimuat ke editor kuis aktif.`,
-        timer: 1500,
+        text: `Paket "${pkg.title}" dimuat. Klik 'Terbitkan' untuk menyinkronkan ke HP siswa.`,
+        timer: 1800,
         showConfirmButton: false
       });
-    }
+    };
 
-    function deletePackage(index) {
-      Swal.fire({
-        title: 'Hapus Paket Soal?',
-        text: 'Paket soal akan dihapus secara permanen dari Pustaka.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'Hapus'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          state.quizLibrary.splice(index, 1);
-          localStorage.setItem('smk_quiz_library', JSON.stringify(state.quizLibrary));
-          renderLibraryTable();
-        }
-      });
-    }
+    window.deletePackage = function(index) {
+      window.state.quizLibrary.splice(index, 1);
+      localStorage.setItem('smk_quiz_library', JSON.stringify(window.state.quizLibrary));
+      renderLibraryTable();
+    };
 
-    // --- MANAJEMEN SISWA OLEH GURU ---
-    function removeStudent(index) {
-      const student = state.leaderboard[index];
-      Swal.fire({
-        title: 'Keluarkan Siswa?',
-        text: `Hapus ${student.name} dari kuis? Data dan progresnya akan direset.`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'Keluarkan'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          state.leaderboard.splice(index, 1);
-          saveAndSyncLeaderboard();
-          renderTeacherMonitoring();
-        }
-      });
-    }
-
+    // Teacher Monitoring UI Rendering
     function renderTeacherMonitoring() {
       const tableBody = document.getElementById('teacherLeaderboardTable');
-      const sorted = [...state.leaderboard].sort((a, b) => b.score - a.score);
+      const sorted = [...window.state.leaderboard].sort((a, b) => b.score - a.score);
 
       if (sorted.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Belum ada siswa yang mengerjakan kuis.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Belum ada siswa yang mendaftar / mengerjakan.</td></tr>`;
         return;
       }
 
@@ -702,17 +874,15 @@
         else if (idx === 1) rankBadge = '🥈 #2';
         else if (idx === 2) rankBadge = '🥉 #3';
 
-        const originalIndex = state.leaderboard.findIndex(s => s.name === item.name && s.class === item.class);
-
         html += `
           <tr>
             <td class="fw-bold">${rankBadge}</td>
             <td class="fw-semibold">${item.name}</td>
             <td>${item.class}</td>
-            <td class="text-center fw-bold text-primary fs-5">${item.score}</td>
+            <td class="text-center fw-bold text-primary fs-5">${item.score || 0}</td>
             <td class="text-center"><span class="badge ${badgeClass}">${item.status || 'Sedang Mengerjakan'}</span></td>
             <td class="text-center">
-              <button class="btn btn-outline-danger btn-sm py-0 px-2" onclick="removeStudent(${originalIndex})">
+              <button class="btn btn-outline-danger btn-sm py-0 px-2" onclick="removeStudentCloud('${item.id}')">
                 <i class="fa-solid fa-user-xmark me-1"></i> Keluarkan
               </button>
             </td>
@@ -723,51 +893,40 @@
       tableBody.innerHTML = html;
     }
 
-    // --- STUDENT QUIZ PLAY LOGIC & AUTOMATIC NEXT ---
+    // Student Form Submit
     document.getElementById('startQuizForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const name = document.getElementById('studentName').value.trim();
       const sClass = document.getElementById('studentClass').value.trim();
 
-      state.studentInfo = { name, class: sClass };
-      
-      const existingIdx = state.leaderboard.findIndex(i => i.name.toLowerCase() === name.toLowerCase() && i.class.toLowerCase() === sClass.toLowerCase());
-      
-      if (existingIdx >= 0) {
-        const studentRecord = state.leaderboard[existingIdx];
-        if (studentRecord.status === 'Selesai') {
+      window.state.studentInfo = { name, class: sClass };
+
+      const existingRecord = window.state.leaderboard.find(i => 
+        i.name && i.name.toLowerCase() === name.toLowerCase() && 
+        i.class && i.class.toLowerCase() === sClass.toLowerCase()
+      );
+
+      if (existingRecord) {
+        if (existingRecord.status === 'Selesai') {
           Swal.fire({
-            icon: 'error',
-            title: 'Kuis Sudah Selesai',
-            text: 'Anda telah menyelesaikan kuis ini dan tidak bisa mengerjakan ulang.'
+            icon: 'info',
+            title: 'Kuis Selesai',
+            text: 'Anda telah menyelesaikan kuis ini. Menunggu soal baru dari guru.'
           });
           return;
         } else {
-          // Melanjutkan sesi soal sebelumnya
-          state.userAnswers = studentRecord.answers || {};
-          state.currentQuestionIdx = studentRecord.lastQuestionIdx || 0;
-          
-          Swal.fire({
-            icon: 'info',
-            title: 'Sesi Dilanjutkan!',
-            text: `Selamat datang kembali, ${name}. Melanjutkan dari soal nomor ${state.currentQuestionIdx + 1}.`,
-            timer: 1800,
-            showConfirmButton: false
-          });
+          window.state.currentQuestionIdx = existingRecord.lastQuestionIdx || 0;
         }
       } else {
-        // Siswa baru mendaftar
-        state.userAnswers = {};
-        state.currentQuestionIdx = 0;
-        state.leaderboard.push({
+        window.state.currentQuestionIdx = 0;
+        window.state.userAnswers = {};
+        syncStudentToCloud({
           name: name,
           class: sClass,
           score: 0,
           status: 'Sedang Mengerjakan',
-          lastQuestionIdx: 0,
-          answers: {}
+          lastQuestionIdx: 0
         });
-        saveAndSyncLeaderboard();
       }
 
       document.getElementById('studentStartScreen').classList.add('d-none');
@@ -777,94 +936,97 @@
       renderPlayQuestion();
     });
 
-    function saveAndSyncLeaderboard() {
-      localStorage.setItem('smk_quiz_leaderboard', JSON.stringify(state.leaderboard));
-    }
-
     function startTimer() {
-      state.timer = 0;
-      state.timerInterval = setInterval(() => {
-        state.timer++;
-        const mins = Math.floor(state.timer / 60).toString().padStart(2, '0');
-        const secs = (state.timer % 60).toString().padStart(2, '0');
+      if (window.state.timerInterval) clearInterval(window.state.timerInterval);
+      window.state.timer = 0;
+      window.state.timerInterval = setInterval(() => {
+        window.state.timer++;
+        const mins = Math.floor(window.state.timer / 60).toString().padStart(2, '0');
+        const secs = (window.state.timer % 60).toString().padStart(2, '0');
         document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
       }, 1000);
     }
 
     function renderPlayQuestion() {
-      state.isAnswering = false; // Reset flag
-      const q = state.questions[state.currentQuestionIdx];
-      document.getElementById('currentQIndex').innerText = state.currentQuestionIdx + 1;
-      document.getElementById('totalQIndex').innerText = state.questions.length;
+      window.state.isAnswering = false;
+      const qList = window.state.questions;
+
+      if (!qList || qList.length === 0) {
+        document.getElementById('questionTextDisplay').innerText = "Belum ada soal yang diterbitkan oleh Guru.";
+        document.getElementById('optionsContainer').innerHTML = "";
+        return;
+      }
+
+      if (window.state.currentQuestionIdx >= qList.length) {
+        finishQuiz();
+        return;
+      }
+
+      const q = qList[window.state.currentQuestionIdx];
+      document.getElementById('currentQIndex').innerText = window.state.currentQuestionIdx + 1;
+      document.getElementById('totalQIndex').innerText = qList.length;
       document.getElementById('questionTextDisplay').innerText = q.question;
 
       const container = document.getElementById('optionsContainer');
       container.innerHTML = '';
 
       Object.keys(q.options).forEach(key => {
-        container.innerHTML += `
-          <div class="option-card" onclick="selectOption('${key}')">
-            <div class="option-prefix">${key}</div>
-            <div class="fw-medium">${q.options[key]}</div>
-          </div>
+        const optionEl = document.createElement('div');
+        optionEl.className = 'option-card';
+        optionEl.innerHTML = `
+          <div class="option-prefix">${key}</div>
+          <div class="fw-medium">${q.options[key]}</div>
         `;
+        optionEl.addEventListener('click', () => selectOption(key, optionEl));
+        container.appendChild(optionEl);
       });
     }
 
-    // FUNGSI JAWAB 1x DAN OTOMATIS PINDAH SOAL
-    function selectOption(key) {
-      if (state.isAnswering) return; // Mencegah spamm/klik ganda
-      state.isAnswering = true;
+    function selectOption(key, element) {
+      if (window.state.isAnswering) return;
+      window.state.isAnswering = true;
 
-      // Lock semua pilihan jawaban agar tidak bisa diklik lagi
       const cards = document.querySelectorAll('.option-card');
       cards.forEach(card => card.classList.add('disabled'));
 
-      const currentQ = state.questions[state.currentQuestionIdx];
-      state.userAnswers[state.currentQuestionIdx] = key;
+      element.classList.add('selected');
 
-      // Visual status pilihan aktif
-      event.currentTarget.classList.add('selected');
+      const currentQ = window.state.questions[window.state.currentQuestionIdx];
+      window.state.userAnswers[window.state.currentQuestionIdx] = key;
 
-      // Hitung dan perbarui skor siswa
+      // Calculate temporary score
       let tempCorrect = 0;
-      state.questions.forEach((q, i) => {
-        if (state.userAnswers[i] === q.key) tempCorrect++;
+      window.state.questions.forEach((q, i) => {
+        if (window.state.userAnswers[i] === q.key) tempCorrect++;
       });
-      const tempScore = Math.round((tempCorrect / state.questions.length) * 100);
+      const tempScore = Math.round((tempCorrect / window.state.questions.length) * 100);
 
-      const itemIdx = state.leaderboard.findIndex(i => i.name === state.studentInfo.name && i.class === state.studentInfo.class);
-      if (itemIdx >= 0) {
-        state.leaderboard[itemIdx].score = tempScore;
-        state.leaderboard[itemIdx].lastQuestionIdx = state.currentQuestionIdx;
-        state.leaderboard[itemIdx].answers = state.userAnswers;
-        saveAndSyncLeaderboard();
-      }
+      // Sync to cloud
+      syncStudentToCloud({
+        name: window.state.studentInfo.name,
+        class: window.state.studentInfo.class,
+        score: tempScore,
+        status: 'Sedang Mengerjakan',
+        lastQuestionIdx: window.state.currentQuestionIdx
+      });
 
-      // SweetAlert2 Umpan Balik
       const isCorrect = (key === currentQ.key);
       const swalConfig = isCorrect ? {
         icon: 'success',
         title: 'Jawaban Benar! 🎉',
-        text: 'Pilihan Anda tepat.',
-        timer: 1200,
+        timer: 1000,
         showConfirmButton: false
       } : {
         icon: 'error',
         title: 'Jawaban Salah! ❌',
-        text: `Jawaban yang benar adalah (${currentQ.key})`,
-        timer: 1500,
+        text: `Kunci: (${currentQ.key})`,
+        timer: 1300,
         showConfirmButton: false
       };
 
       Swal.fire(swalConfig).then(() => {
-        // Otomatis Lanjut Ke Soal Berikutnya / Selesai
-        if (state.currentQuestionIdx < state.questions.length - 1) {
-          state.currentQuestionIdx++;
-          if (itemIdx >= 0) {
-            state.leaderboard[itemIdx].lastQuestionIdx = state.currentQuestionIdx;
-            saveAndSyncLeaderboard();
-          }
+        if (window.state.currentQuestionIdx < window.state.questions.length - 1) {
+          window.state.currentQuestionIdx++;
           renderPlayQuestion();
         } else {
           finishQuiz();
@@ -873,29 +1035,37 @@
     }
 
     function finishQuiz() {
-      clearInterval(state.timerInterval);
+      clearInterval(window.state.timerInterval);
 
       let correct = 0;
-      state.questions.forEach((q, i) => {
-        if (state.userAnswers[i] === q.key) correct++;
+      window.state.questions.forEach((q, i) => {
+        if (window.state.userAnswers[i] === q.key) correct++;
       });
 
-      const finalScore = Math.round((correct / state.questions.length) * 100);
+      const finalScore = window.state.questions.length > 0 ? Math.round((correct / window.state.questions.length) * 100) : 0;
 
-      const itemIdx = state.leaderboard.findIndex(i => i.name === state.studentInfo.name && i.class === state.studentInfo.class);
-      if (itemIdx >= 0) {
-        state.leaderboard[itemIdx].score = finalScore;
-        state.leaderboard[itemIdx].status = 'Selesai';
-        saveAndSyncLeaderboard();
+      if (window.state.studentInfo) {
+        syncStudentToCloud({
+          name: window.state.studentInfo.name,
+          class: window.state.studentInfo.class,
+          score: finalScore,
+          status: 'Selesai',
+          lastQuestionIdx: window.state.questions.length
+        });
       }
 
       document.getElementById('quizPlayScreen').classList.add('d-none');
       document.getElementById('quizResultScreen').classList.remove('d-none');
-
       document.getElementById('finalScoreDisplay').innerText = finalScore;
     }
 
-    // --- OTHER GURU UTILITY FUNCTIONS ---
+    window.resetStudentState = function() {
+      document.getElementById('quizResultScreen').classList.add('d-none');
+      document.getElementById('studentStartScreen').classList.remove('d-none');
+      window.state.studentInfo = null;
+    };
+
+    // Document File Upload Parsing
     document.getElementById('fileInput').addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -962,11 +1132,12 @@
       });
 
       if (parsedQuestions.length > 0) {
-        state.questions = parsedQuestions;
+        window.state.questions = parsedQuestions;
         renderQuestionPreview();
       }
     }
 
+    // Manual Question Input
     document.getElementById('manualQuestionForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const qText = document.getElementById('manualQuestionText').value;
@@ -980,20 +1151,23 @@
       const options = { A: optA, B: optB, C: optC, D: optD };
       if (optE) options.E = optE;
 
-      state.questions.push({ id: Date.now(), question: qText, options: options, key: keyVal });
+      window.state.questions.push({ id: Date.now(), question: qText, options: options, key: keyVal });
       renderQuestionPreview();
       document.getElementById('manualQuestionForm').reset();
     });
 
     function renderQuestionPreview() {
-      qCount.innerText = state.questions.length;
-      if (state.questions.length === 0) {
-        questionListPreview.innerHTML = `<div class="text-center text-muted py-5"><i class="fa-solid fa-folder-open fs-1 mb-2 d-block opacity-50"></i>Belum ada soal ditambahkan. Upload file atau gunakan input manual.</div>`;
+      const qCount = document.getElementById('qCount');
+      const questionListPreview = document.getElementById('questionListPreview');
+
+      qCount.innerText = window.state.questions.length;
+      if (window.state.questions.length === 0) {
+        questionListPreview.innerHTML = `<div class="text-center text-muted py-5"><i class="fa-solid fa-folder-open fs-1 mb-2 d-block opacity-50"></i>Belum ada soal. Tambahkan secara manual atau upload file.</div>`;
         return;
       }
 
       let html = '';
-      state.questions.forEach((q, i) => {
+      window.state.questions.forEach((q, i) => {
         html += `
           <div class="card mb-2 p-3 border">
             <div class="d-flex justify-content-between align-items-start mb-2">
@@ -1016,65 +1190,30 @@
       questionListPreview.innerHTML = html;
     }
 
-    function deleteQuestion(idx) {
-      state.questions.splice(idx, 1);
+    window.deleteQuestion = function(idx) {
+      window.state.questions.splice(idx, 1);
       renderQuestionPreview();
-    }
+    };
 
-    function updateKey(idx, newKey) {
-      state.questions[idx].key = newKey;
-    }
+    window.updateKey = function(idx, newKey) {
+      window.state.questions[idx].key = newKey;
+    };
 
-    function clearQuestions() {
-      if (state.questions.length === 0) return;
+    window.clearQuestions = function() {
+      if (window.state.questions.length === 0) return;
       Swal.fire({
         title: 'Hapus Semua Soal?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
-        confirmButtonText: 'Ya, Hapus!'
+        confirmButtonText: 'Hapus'
       }).then((result) => {
         if (result.isConfirmed) {
-          state.questions = [];
+          window.state.questions = [];
           renderQuestionPreview();
         }
       });
-    }
-
-    document.getElementById('btnPublishQuiz').addEventListener('click', () => {
-      if (state.questions.length === 0) {
-        Swal.fire({ icon: 'warning', title: 'Soal Masih Kosong!' });
-        return;
-      }
-
-      localStorage.setItem('active_quiz_questions', JSON.stringify(state.questions));
-      const encodedQuiz = btoa(JSON.stringify(state.questions));
-      const fullUrl = `${window.location.origin}${window.location.pathname}?quiz=${encodedQuiz}`;
-
-      Swal.fire({
-        title: 'Kuis Berhasil Diterbitkan!',
-        html: `
-          <p class="text-muted small mb-3">Bagikan link atau QR code berikut kepada siswa:</p>
-          <div class="input-group mb-3">
-            <input type="text" id="swalShareUrl" class="form-control form-control-sm" value="${fullUrl}" readonly>
-            <button class="btn btn-primary btn-sm" id="btnSwalCopy">Salin Link</button>
-          </div>
-          <div class="text-center my-3">
-            <div id="swalQrCode" class="p-2 bg-light d-inline-block rounded border"></div>
-          </div>
-        `,
-        icon: 'success',
-        didOpen: () => {
-          new QRCode(document.getElementById('swalQrCode'), { text: fullUrl, width: 140, height: 140 });
-          document.getElementById('btnSwalCopy').addEventListener('click', () => {
-            const input = document.getElementById('swalShareUrl');
-            input.select();
-            navigator.clipboard.writeText(input.value);
-            Swal.showValidationMessage('Link berhasil disalin!');
-          });
-        }
-      });
-    });
+    };
   </script>
 </body>
 </html>
