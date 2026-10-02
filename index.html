@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kuis Interaktif SMK - Realtime Sync</title>
+  <title>Kuis Interaktif SMK - Bank/Pustaka Soal</title>
   
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,28 +16,31 @@
   
   <style>
     :root {
-      --primary-color: #4f46e5;
-      --secondary-color: #06b6d4;
-      --accent-color: #f59e0b;
-      --bg-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+      --primary-color: #6366f1;
+      --secondary-color: #a855f7;
+      --bg-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%);
     }
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f8fafc;
+      background: var(--bg-gradient);
       min-height: 100vh;
+      color: #1e293b;
     }
 
+    .uppercase-input { text-transform: uppercase; }
+
     .navbar-custom {
-      background: var(--bg-gradient);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .card-custom {
       border: none;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
-      transition: all 0.3s ease;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      background: #ffffff;
     }
 
     .btn-gradient {
@@ -50,73 +53,84 @@
 
     .btn-gradient:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 15px rgba(99, 102, 241, 0.4);
+      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
       color: white;
     }
 
-    .option-card {
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 14px 18px;
-      margin-bottom: 12px;
+    .quiz-card {
+      border-radius: 28px;
+      padding: 32px 28px;
+      background: #ffffff;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .quiz-progress-bar {
+      height: 8px;
+      border-radius: 10px;
+      background-color: #e2e8f0;
+      overflow: hidden;
+    }
+
+    .quiz-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .option-card-app {
+      border: 2px solid #f1f5f9;
+      border-radius: 20px;
+      padding: 16px 20px;
+      margin-bottom: 14px;
       cursor: pointer;
-      transition: all 0.2s ease;
-      background: white;
+      transition: all 0.25s ease;
+      background: #ffffff;
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      font-weight: 600;
+      color: #334155;
     }
 
-    .option-card:hover {
-      border-color: #818cf8;
-      background-color: #f5f3ff;
-      transform: translateX(4px);
+    .option-card-app:hover {
+      border-color: #cbd5e1;
+      background-color: #f8fafc;
+      transform: translateY(-2px);
     }
 
-    .option-card.disabled {
-      pointer-events: none;
-      opacity: 0.7;
+    .option-card-app.disabled { pointer-events: none; }
+
+    .option-card-app.correct {
+      background-color: #dcfce7 !important;
+      border-color: #86efac !important;
+      color: #166534 !important;
     }
 
-    .option-card.selected {
-      border-color: #4f46e5;
-      background-color: #eef2ff;
-      box-shadow: 0 0 0 1px #4f46e5;
+    .option-card-app.wrong {
+      background-color: #ffe4e6 !important;
+      border-color: #fca5a5 !important;
+      color: #991b1b !important;
     }
 
-    .option-prefix {
-      width: 32px;
-      height: 32px;
+    .status-icon {
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
-      background: #e0e7ff;
-      color: #4f46e5;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: bold;
-      margin-right: 14px;
-      flex-shrink: 0;
+      font-size: 0.85rem;
     }
 
-    .option-card.selected .option-prefix {
-      background: #4f46e5;
-      color: white;
-    }
-
-    .pulse-badge {
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
+    .correct .status-icon { background-color: #22c55e; color: white; }
+    .wrong .status-icon { background-color: #ef4444; color: white; }
 
     .timer-badge {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: 700;
-      background: #334155;
-      color: #38bdf8;
+      background: #f1f5f9;
+      color: #475569;
       padding: 6px 16px;
       border-radius: 20px;
     }
@@ -127,16 +141,16 @@
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold fs-4" href="#">
+      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold fs-4 text-white" href="#">
         <i class="fa-solid fa-graduation-cap fs-3"></i>
-        <span>Kuis Interaktif SMK</span>
+        <span>quiz</span>
       </a>
       <div class="d-flex align-items-center gap-2">
-        <span id="syncStatus" class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2 small">
-          <i class="fa-solid fa-wifi me-1"></i> Firebase Realtime
+        <span id="syncStatus" class="badge bg-success text-white rounded-pill px-3 py-2 small">
+          <i class="fa-solid fa-users-gear me-1"></i> Multi-Teacher System
         </span>
         <button id="btnSwitchMode" class="btn btn-light btn-sm rounded-pill px-3 fw-semibold text-primary ms-2">
-          <i class="fa-solid fa-user-gear me-1"></i> Mode Guru
+          <i class="fa-solid fa-user-gear me-1"></i> Portal Guru
         </button>
       </div>
     </div>
@@ -149,27 +163,38 @@
     <div id="teacherView" class="d-none">
       
       <!-- Navigasi Menu Guru -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded-4 shadow-sm">
         <ul class="nav nav-pills" id="teacherTab" role="tablist">
-          <li class="nav-item" role="presentation">
-            <button class="nav-link active fw-bold px-4" id="tab-buat-soal" data-bs-toggle="pill" data-bs-target="#content-buat-soal" type="button">
+          <li class="nav-item">
+            <button class="nav-link active fw-bold px-3" id="tab-buat-soal" data-bs-toggle="pill" data-bs-target="#content-buat-soal" type="button">
               <i class="fa-solid fa-pen-to-square me-2"></i>Kelola Soal
             </button>
           </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link fw-bold px-4" id="tab-pustaka" data-bs-toggle="pill" data-bs-target="#content-pustaka" type="button">
+          <li class="nav-item">
+            <button class="nav-link fw-bold px-3" id="tab-pustaka-soal" data-bs-toggle="pill" data-bs-target="#content-pustaka-soal" type="button">
               <i class="fa-solid fa-book-bookmark me-2"></i>Pustaka Soal
             </button>
           </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link fw-bold px-4" id="tab-monitoring" data-bs-toggle="pill" data-bs-target="#content-monitoring" type="button">
-              <i class="fa-solid fa-chart-line me-2"></i>Monitoring Siswa <span class="badge bg-danger ms-1 pulse-badge">LIVE</span>
+          <li class="nav-item">
+            <button class="nav-link fw-bold px-3" id="tab-monitoring" data-bs-toggle="pill" data-bs-target="#content-monitoring" type="button">
+              <i class="fa-solid fa-chart-line me-2"></i>Monitoring Siswa
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link fw-bold px-3" id="tab-kelola-guru" data-bs-toggle="pill" data-bs-target="#content-kelola-guru" type="button">
+              <i class="fa-solid fa-user-plus me-2"></i>Kelola Guru
             </button>
           </li>
         </ul>
-        <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="lockTeacherSession()">
-          <i class="fa-solid fa-lock me-1"></i> Keluar
-        </button>
+        
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-2 rounded-pill" id="loggedInTeacherBadge">
+            Guru: Admin
+          </span>
+          <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="lockTeacherSession()">
+            <i class="fa-solid fa-lock me-1"></i> Keluar
+          </button>
+        </div>
       </div>
 
       <div class="tab-content" id="teacherTabContent">
@@ -181,19 +206,18 @@
             <div class="col-lg-7">
               <div class="card card-custom p-4 mb-4">
                 <h5 class="fw-bold mb-3 text-primary">
-                  <i class="fa-solid fa-file-circle-plus me-2"></i>1. Import File Soal (Word / PDF / TXT)
+                  <i class="fa-solid fa-file-circle-plus me-2"></i>1. Import File Soal (.docx, .pdf, .txt)
                 </h5>
-                <p class="text-muted small">
-                  Upload file Word (<code>.docx</code>), PDF (<code>.pdf</code>), atau TXT dengan kunci tanda bintang (<code>*B. Jawaban</code>).
-                </p>
-
-                <div class="mb-3">
+                <div class="mb-2">
                   <input type="file" class="form-control" id="fileInput" accept=".docx, .pdf, .txt">
                 </div>
-
-                <div id="parseStatus" class="d-none alert alert-info py-2 small">
-                  <i class="fa-solid fa-spinner fa-spin me-2"></i>Membaca dokumen...
-                </div>
+                <small class="text-muted d-block mb-3">
+                  <strong>Format teks file yang didukung:</strong><br>
+                  1. Pertanyaan...<br>
+                  A. Pilihan A<br>
+                  B. Pilihan B<br>
+                  Kunci: A
+                </small>
 
                 <hr class="my-4">
 
@@ -214,7 +238,7 @@
                     <div class="col-md-6"><input type="text" class="form-control form-control-sm" id="optE" placeholder="Pilihan E (Opsional)"></div>
                     <div class="col-md-6">
                       <select class="form-select form-select-sm fw-semibold text-success" id="keySelect" required>
-                        <option value="" disabled selected>-- Pilih Kunci Jawaban --</option>
+                        <option value="" disabled selected>-- Kunci Jawaban --</option>
                         <option value="A">Kunci: A</option>
                         <option value="B">Kunci: B</option>
                         <option value="C">Kunci: C</option>
@@ -250,50 +274,55 @@
                   </div>
                 </div>
 
-                <div class="d-grid gap-2">
-                  <button class="btn btn-outline-success fw-semibold" onclick="saveToLibrary()">
-                    <i class="fa-solid fa-floppy-disk me-2"></i>Simpan ke Pustaka Soal
-                  </button>
-                  <button id="btnPublishQuiz" class="btn btn-gradient py-2 fs-6 shadow-sm">
-                    <i class="fa-solid fa-bolt me-2"></i>Terbitkan / Kirim Ke HP Siswa
+                <div class="d-flex gap-2 mb-2">
+                  <button id="btnSaveToLibrary" class="btn btn-outline-success w-100 fw-bold" onclick="saveQuestionsToLibrary()">
+                    <i class="fa-solid fa-bookmark me-1"></i> Simpan ke Pustaka
                   </button>
                 </div>
+
+                <button id="btnPublishQuiz" class="btn btn-gradient py-2 fs-6 shadow-sm w-100">
+                  <i class="fa-solid fa-paper-plane me-2"></i>Terbitkan Soal Kuis
+                </button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Tab 2: Pustaka -->
-        <div class="tab-pane fade" id="content-pustaka" role="tabpanel">
+        <!-- Tab Baru: Pustaka Soal -->
+        <div class="tab-pane fade" id="content-pustaka-soal" role="tabpanel">
           <div class="card card-custom p-4">
-            <h4 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-book-bookmark me-2"></i>Pustaka Soal Tersimpan</h4>
-            <div class="table-responsive">
-              <table class="table table-hover align-middle">
-                <thead class="table-light">
-                  <tr>
-                    <th>Judul Paket Soal</th>
-                    <th class="text-center">Jumlah Soal</th>
-                    <th class="text-center">Tanggal Dibuat</th>
-                    <th class="text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody id="libraryTableBody"></tbody>
-              </table>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h4 class="fw-bold text-primary mb-0">
+                <i class="fa-solid fa-book-bookmark me-2"></i>Pustaka Paket Soal Tersimpan
+              </h4>
+            </div>
+            <p class="text-muted small mb-4">
+              Kumpulan paket soal yang telah Anda simpan. Anda dapat menggunakan kembali paket soal ini untuk diterbitkan.
+            </p>
+
+            <div class="row g-3" id="libraryCardsContainer">
+              <div class="col-12 text-center text-muted py-5">
+                <i class="fa-solid fa-box-archive fs-1 mb-2 d-block opacity-50"></i>
+                Belum ada paket soal tersimpan di Pustaka.
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Tab 3: Monitoring -->
+        <!-- Tab 2: Monitoring -->
         <div class="tab-pane fade" id="content-monitoring" role="tabpanel">
           <div class="card card-custom p-4">
-            <h4 class="fw-bold mb-3 text-warning"><i class="fa-solid fa-trophy me-2"></i>Papan Monitoring Realtime Siswa</h4>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h4 class="fw-bold text-warning mb-0"><i class="fa-solid fa-trophy me-2"></i>Monitoring Realtime Siswa Saya</h4>
+              <span class="badge bg-primary fs-6">Kode Ruang Anda: <span id="monitorRoomDisplay">-</span></span>
+            </div>
             <div class="table-responsive">
               <table class="table table-hover align-middle">
                 <thead class="table-light">
                   <tr>
-                    <th style="width: 80px;">No</th>
+                    <th style="width: 60px;">No</th>
                     <th>Nama Siswa</th>
-                    <th>Kelas / Jurusan</th>
+                    <th>Kelas</th>
                     <th class="text-center">Skor</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Aksi</th>
@@ -305,13 +334,62 @@
           </div>
         </div>
 
+        <!-- Tab 3: Kelola Guru -->
+        <div class="tab-pane fade" id="content-kelola-guru" role="tabpanel">
+          <div class="row g-4">
+            <div class="col-md-5">
+              <div class="card card-custom p-4">
+                <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-user-plus me-2"></i>Tambah Guru Baru</h5>
+                <form id="addTeacherForm">
+                  <div class="mb-3">
+                    <label class="form-label small fw-bold">Nama Lengkap Guru</label>
+                    <input type="text" id="newTeacherName" class="form-control" placeholder="Contoh: Budi Santoso, S.T." required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label small fw-bold">Mata Pelajaran / Jurusan</label>
+                    <input type="text" id="newTeacherSubject" class="form-control uppercase-input" placeholder="Contoh: TSM / TKJ / MATEMATIKA" oninput="this.value = this.value.toUpperCase()" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label small fw-bold">Kode Ruang Unik Guru</label>
+                    <input type="text" id="newTeacherRoom" class="form-control uppercase-input fw-bold text-primary" placeholder="Contoh: TSM-BUDI" oninput="this.value = this.value.toUpperCase()" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label small fw-bold">PIN Akses Guru</label>
+                    <input type="password" id="newTeacherPin" class="form-control" placeholder="Masukkan PIN Login" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100 fw-bold rounded-pill">
+                    <i class="fa-solid fa-save me-1"></i> Simpan Guru Baru
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <div class="col-md-7">
+              <div class="card card-custom p-4">
+                <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-users me-2"></i>Daftar Guru Terdaftar</h5>
+                <div class="table-responsive">
+                  <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Nama Guru</th>
+                        <th>Mapel/Jurusan</th>
+                        <th>Kode Ruang</th>
+                        <th class="text-center">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="teacherListTable"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
     <!-- VIEW 2: MODE SISWA -->
     <div id="studentView">
-      
-      <!-- Screen 1: Form Nama -->
       <div id="studentStartScreen" class="row justify-content-center py-5">
         <div class="col-md-6 col-lg-5">
           <div class="card card-custom p-4 text-center animate__animated animate__fadeInDown">
@@ -321,47 +399,54 @@
               </span>
             </div>
             <h3 class="fw-bold mb-2">Selamat Datang!</h3>
-            <p class="text-muted small mb-4">Masukkan Nama dan Kelas Anda untuk memulai kuis.</p>
+            <p class="text-muted small mb-4">Masukkan data dan Kode Ruang dari guru Anda.</p>
             
             <form id="startQuizForm">
               <div class="form-floating mb-3 text-start">
-                <input type="text" class="form-control" id="studentName" placeholder="Nama Lengkap" required>
-                <label for="studentName">Nama Lengkap</label>
+                <input type="text" class="form-control uppercase-input" id="studentRoomCode" placeholder="Kode Ruang" oninput="this.value = this.value.toUpperCase()" required>
+                <label for="studentRoomCode">Kode Ruang</label>
+              </div>
+              <div class="form-floating mb-3 text-start">
+                <input type="text" class="form-control uppercase-input" id="studentName" placeholder="Nama Lengkap" oninput="this.value = this.value.toUpperCase()" required>
+                <label for="studentName">Nama Lengkap </label>
               </div>
               <div class="form-floating mb-4 text-start">
-                <input type="text" class="form-control" id="studentClass" placeholder="Kelas / Jurusan" required>
-                <label for="studentClass">Kelas / Jurusan (misal: XI TBSM 1)</label>
+                <input type="text" class="form-control uppercase-input" id="studentClass" placeholder="Kelas / Jurusan" oninput="this.value = this.value.toUpperCase()" required>
+                <label for="studentClass">Kelas </label>
               </div>
-              <button type="submit" class="btn btn-gradient w-100 py-3 fw-bold fs-5">
-                <i class="fa-solid fa-play me-2"></i> Mulai Kuis Now!
+              <button type="submit" class="btn btn-gradient w-100 py-3 fw-bold fs-5 rounded-pill">
+                <i class="fa-solid fa-play me-2"></i> Masuk Kuis
               </button>
             </form>
           </div>
         </div>
       </div>
 
-      <!-- Screen 2: Pengerjaan Soal -->
+      <!-- Screen 2: Pengerjaan Soal Siswa -->
       <div id="quizPlayScreen" class="d-none">
-        <div class="row justify-content-center g-4">
-          <div class="col-lg-9">
-            <div class="card card-custom p-4">
-              <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
-                <div>
-                  <span class="text-muted small d-block">Pertanyaan</span>
-                  <span class="fs-4 fw-bold text-primary">
-                    <span id="currentQIndex">1</span> / <span id="totalQIndex">0</span>
-                  </span>
-                </div>
+        <div class="row justify-content-center">
+          <div class="col-md-8 col-lg-6">
+            <div class="quiz-progress-bar mb-3">
+              <div id="quizProgressFill" class="quiz-progress-fill"></div>
+            </div>
+
+            <div class="quiz-card animate__animated animate__fadeIn">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="badge bg-primary-subtle text-primary uppercase-input fw-bold px-3 py-2 rounded-pill" id="quizRoomDisplay">RUANG: -</span>
                 <div class="timer-badge">
                   <i class="fa-solid fa-clock me-1"></i> <span id="timerDisplay">00:00</span>
                 </div>
               </div>
 
-              <h5 id="questionTextDisplay" class="fw-bold mb-4" style="line-height: 1.6;">
-                Memuat soal dari guru...
-              </h5>
+              <h4 id="questionTextDisplay" class="fw-bold mb-4 text-dark" style="line-height: 1.5; font-size: 1.25rem;">
+                Memuat soal...
+              </h4>
 
-              <div id="optionsContainer" class="mb-4"></div>
+              <div id="optionsContainer" class="mb-2"></div>
+
+              <div class="text-end text-muted small fw-semibold mt-3">
+                Soal <span id="currentQIndex">1</span> dari <span id="totalQIndex">0</span>
+              </div>
             </div>
           </div>
         </div>
@@ -369,16 +454,16 @@
 
       <!-- Screen 3: Hasil Akhir -->
       <div id="quizResultScreen" class="d-none row justify-content-center py-4">
-        <div class="col-md-7 text-center">
+        <div class="col-md-6 col-lg-5 text-center">
           <div class="card card-custom p-5 animate__animated animate__zoomIn">
             <div class="mb-3">
               <i class="fa-solid fa-award text-warning" style="font-size: 5rem;"></i>
             </div>
             <h2 class="fw-bold mb-2">Kuis Selesai!</h2>
-            <p class="text-muted">Jawaban Anda telah tersimpan secara realtime ke guru.</p>
+            <p class="text-muted">Jawaban Anda telah tersimpan ke guru.</p>
 
             <div class="row my-4 g-3 justify-content-center">
-              <div class="col-6">
+              <div class="col-8">
                 <div class="p-3 bg-light rounded-4 border">
                   <span class="text-muted small d-block">Skor Akhir</span>
                   <span id="finalScoreDisplay" class="fs-1 fw-bold text-primary">0</span>
@@ -386,7 +471,7 @@
               </div>
             </div>
 
-            <button onclick="location.reload()" class="btn btn-gradient py-3 fw-bold">
+            <button onclick="location.reload()" class="btn btn-gradient py-3 fw-bold rounded-pill w-100">
               <i class="fa-solid fa-rotate-right me-2"></i> Kembali Ke Awal
             </button>
           </div>
@@ -402,16 +487,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 
-  <!-- Firebase SDK App & Realtime Database via CDN -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-    // -------------------------------------------------------------
-    // KONFIGURASI FIREBASE MILIK ANDA
-    // -------------------------------------------------------------
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyBCocRqB_pecbcVCsfWvGvkK2gtLzn54RQ",
       authDomain: "kuis-smk.firebaseapp.com",
@@ -423,104 +506,353 @@
       measurementId: "G-N6NJ7PM2VG"
     };
 
-    // Inisialisasi Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Application State
+    // State
     let state = {
       isTeacherLoggedIn: false,
-      teacherPin: localStorage.getItem('teacher_pin') || 'anggara.com',
+      currentTeacher: null,
+      registeredTeachers: {},
       questions: [],
       currentQuestionIdx: 0,
       userAnswers: {},
       studentInfo: null,
-      quizLibrary: JSON.parse(localStorage.getItem('smk_quiz_library')) || [],
       leaderboard: [],
       timer: 0,
       timerInterval: null,
-      isAnswering: false
+      isAnswering: false,
+      activeStudentsRef: null,
+      libraryRef: null
     };
 
     const btnSwitchMode = document.getElementById('btnSwitchMode');
     const teacherView = document.getElementById('teacherView');
     const studentView = document.getElementById('studentView');
 
-    // Default Fallback Soal
-    const defaultQuestions = [
-      {
-        id: 1,
-        question: "Komponen yang berfungsi menyimpan energi listrik pada sepeda motor adalah ...",
-        options: { A: "Alternator", B: "Baterai", C: "Regulator", D: "Koil", E: "CDI" },
-        key: "B"
-      },
-      {
-        id: 2,
-        question: "Fungsi utama sekring (fuse) pada sistem kelistrikan sepeda motor adalah ...",
-        options: { A: "Menaikkan tegangan", B: "Menyimpan arus", C: "Melindungi rangkaian dari arus berlebih", D: "Menghasilkan api", E: "Mengisi baterai" },
-        key: "C"
-      }
-    ];
-
-    // INISIALISASI LISTENER REALTIME FIREBASE
-    window.addEventListener('DOMContentLoaded', () => {
-      // 1. Mendengarkan perubahan SOAL dari Firebase
-      db.ref('active_quiz/questions').on('value', (snapshot) => {
-        const val = snapshot.val();
-        if (val && Array.isArray(val) && val.length > 0) {
-          state.questions = val;
-          renderQuestionPreview();
-          
-          // Jika siswa sedang di halaman kuis, update tampilan
-          if (state.studentInfo && !document.getElementById('quizPlayScreen').classList.contains('d-none')) {
-            renderPlayQuestion();
-          }
-        } else if (state.questions.length === 0) {
-          state.questions = defaultQuestions;
-          renderQuestionPreview();
-        }
-      });
-
-      // 2. Mendengarkan perubahan MONITORING / LEADERBOARD dari Firebase
-      db.ref('active_quiz/students').on('value', (snapshot) => {
+    document.addEventListener('DOMContentLoaded', () => {
+      db.ref('teachers').on('value', (snapshot) => {
         const val = snapshot.val();
         if (val) {
-          state.leaderboard = Object.values(val);
-          renderTeacherMonitoring();
+          state.registeredTeachers = val;
         } else {
-          state.leaderboard = [];
-          renderTeacherMonitoring();
+          state.registeredTeachers = {
+            "ADMIN": { name: "Admin Utama", subject: "UMUM", roomCode: "ADMIN", pin: "anggara.com" }
+          };
+          db.ref('teachers').set(state.registeredTeachers);
+        }
+        renderTeacherList();
+      });
+    });
+
+    // ==========================================
+    // LOGIKA PARSE FILE (DOCX, PDF, TXT)
+    // ==========================================
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const fileName = file.name.toLowerCase();
+      Swal.fire({
+        title: 'Membaca File...',
+        text: 'Sedang memproses soal secara otomatis',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      if (fileName.endsWith('.docx')) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          mammoth.extractRawText({ arrayBuffer: evt.target.result })
+            .then(result => processRawTextToQuestions(result.value))
+            .catch(err => Swal.fire('Error', 'Gagal membaca file Word .docx', 'error'));
+        };
+        reader.readAsArrayBuffer(file);
+
+      } else if (fileName.endsWith('.pdf')) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const typedarray = new Uint8Array(evt.target.result);
+          pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+            let maxPages = pdf.numPages;
+            let countPromises = [];
+            for (let j = 1; j <= maxPages; j++) {
+              countPromises.push(pdf.getPage(j).then(page => {
+                return page.getTextContent().then(textContent => {
+                  return textContent.items.map(item => item.str).join(' ');
+                });
+              }));
+            }
+            Promise.all(countPromises).then(pagesText => {
+              processRawTextToQuestions(pagesText.join('\n'));
+            });
+          }).catch(err => Swal.fire('Error', 'Gagal membaca file PDF', 'error'));
+        };
+        reader.readAsArrayBuffer(file);
+
+      } else if (fileName.endsWith('.txt')) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          processRawTextToQuestions(evt.target.result);
+        };
+        reader.readAsText(file);
+      } else {
+        Swal.fire('Format Tidak Didukung', 'Gunakan file .docx, .pdf, atau .txt', 'warning');
+      }
+
+      this.value = '';
+    });
+
+    function processRawTextToQuestions(rawText) {
+      const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+      let parsedQuestions = [];
+      let currentQ = null;
+
+      lines.forEach(line => {
+        const isNewQuestion = /^\d+[\.\)]\s*/.test(line);
+        const optionMatch = line.match(/^([A-Ea-e])[\.\)]\s*(.+)/);
+        const keyMatch = line.match(/^(kunci|jawaban|key)\s*:\s*([A-Ea-e])/i);
+
+        if (isNewQuestion) {
+          if (currentQ && currentQ.question && Object.keys(currentQ.options).length >= 2) {
+            parsedQuestions.push(currentQ);
+          }
+          currentQ = {
+            id: Date.now() + Math.random(),
+            question: line.replace(/^\d+[\.\)]\s*/, ''),
+            options: {},
+            key: 'A'
+          };
+        } else if (optionMatch && currentQ) {
+          const optLetter = optionMatch[1].toUpperCase();
+          const optText = optionMatch[2];
+          currentQ.options[optLetter] = optText;
+        } else if (keyMatch && currentQ) {
+          currentQ.key = keyMatch[2].toUpperCase();
+        } else if (currentQ && !optionMatch && !keyMatch) {
+          currentQ.question += ' ' + line;
         }
       });
 
-      renderLibraryTable();
-    });
+      if (currentQ && currentQ.question && Object.keys(currentQ.options).length >= 2) {
+        parsedQuestions.push(currentQ);
+      }
 
-    // Login Mode Guru
+      Swal.close();
+
+      if (parsedQuestions.length > 0) {
+        state.questions = [...state.questions, ...parsedQuestions];
+        renderQuestionPreview();
+        Swal.fire({
+          icon: 'success',
+          title: 'Berhasil Dibarukan!',
+          text: `Otomatis menambahkan ${parsedQuestions.length} soal ke Pratinjau.`,
+          timer: 2000,
+          showConfirmButton: false
+        });
+      } else {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Soal Tidak Terdeteksi',
+          text: 'Pastikan format teks di dalam file rapi (Nomor soal diawali angka, Opsi diawali A./B./C.)'
+        });
+      }
+    }
+
+    // ==========================================
+    // LOGIKA FITUR PUSTAKA SOAL
+    // ==========================================
+    function saveQuestionsToLibrary() {
+      if (state.questions.length === 0) {
+        Swal.fire('Soal Kosong', 'Tambahkan atau import soal terlebih dahulu sebelum menyimpan.', 'warning');
+        return;
+      }
+
+      if (!state.currentTeacher) return;
+
+      Swal.fire({
+        title: 'Simpan ke Pustaka Soal',
+        input: 'text',
+        inputLabel: 'Nama Paket Soal',
+        inputPlaceholder: 'Contoh: Ulangan Harian BAB 1 TSM',
+        showCancelButton: true,
+        confirmButtonText: 'Simpan',
+        inputValidator: (value) => {
+          if (!value) {
+            return 'Nama paket soal tidak boleh kosong!';
+          }
+        }
+      }).then((res) => {
+        if (res.isConfirmed) {
+          const title = res.value.trim();
+          const room = state.currentTeacher.roomCode;
+          const libKey = db.ref(`libraries/${room}`).push().key;
+
+          const packageData = {
+            id: libKey,
+            title: title,
+            totalQuestions: state.questions.length,
+            dateCreated: new Date().toLocaleDateString('id-ID'),
+            questions: state.questions
+          };
+
+          db.ref(`libraries/${room}/${libKey}`).set(packageData).then(() => {
+            Swal.fire('Tersimpan!', 'Paket soal berhasil disimpan ke Pustaka Soal.', 'success');
+          });
+        }
+      });
+    }
+
+    function listenToTeacherLibrary() {
+      if (!state.currentTeacher) return;
+      const room = state.currentTeacher.roomCode;
+
+      if (state.libraryRef) state.libraryRef.off();
+
+      state.libraryRef = db.ref(`libraries/${room}`);
+      state.libraryRef.on('value', (snapshot) => {
+        const val = snapshot.val();
+        renderLibraryCards(val);
+      });
+    }
+
+    function renderLibraryCards(libraryData) {
+      const container = document.getElementById('libraryCardsContainer');
+
+      if (!libraryData) {
+        container.innerHTML = `
+          <div class="col-12 text-center text-muted py-5">
+            <i class="fa-solid fa-box-archive fs-1 mb-2 d-block opacity-50"></i>
+            Belum ada paket soal tersimpan di Pustaka.
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      Object.keys(libraryData).forEach(key => {
+        const item = libraryData[key];
+        html += `
+          <div class="col-md-6 col-lg-4">
+            <div class="card border rounded-4 p-3 h-100 shadow-sm">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="badge bg-primary-subtle text-primary fw-bold px-2 py-1 rounded-pill">
+                  <i class="fa-solid fa-list me-1"></i> ${item.totalQuestions} Soal
+                </span>
+                <span class="text-muted small">${item.dateCreated}</span>
+              </div>
+              <h5 class="fw-bold text-dark mb-3">${item.title}</h5>
+              <div class="mt-auto d-flex gap-2">
+                <button class="btn btn-primary btn-sm rounded-pill w-100 fw-bold" onclick="loadLibraryToPreview('${item.id}')">
+                  <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Gunakan
+                </button>
+                <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="deleteLibraryPackage('${item.id}')">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function loadLibraryToPreview(libId) {
+      if (!state.currentTeacher) return;
+      const room = state.currentTeacher.roomCode;
+
+      db.ref(`libraries/${room}/${libId}`).get().then((snapshot) => {
+        if (snapshot.exists()) {
+          const pkg = snapshot.val();
+          state.questions = pkg.questions || [];
+          renderQuestionPreview();
+
+          // Switch tab ke Kelola Soal
+          const tabBuat = new bootstrap.Tab(document.getElementById('tab-buat-soal'));
+          tabBuat.show();
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Paket Soal Dimuat!',
+            text: `Paket "${pkg.title}" telah dimuat ke Pratinjau Soal.`,
+            timer: 1800,
+            showConfirmButton: false
+          });
+        }
+      });
+    }
+
+    function deleteLibraryPackage(libId) {
+      if (!state.currentTeacher) return;
+      const room = state.currentTeacher.roomCode;
+
+      Swal.fire({
+        title: 'Hapus Paket Soal?',
+        text: 'Paket soal ini akan dihapus permanen dari pustaka Anda.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Hapus'
+      }).then((res) => {
+        if (res.isConfirmed) {
+          db.ref(`libraries/${room}/${libId}`).remove().then(() => {
+            Swal.fire('Terhapus', 'Paket soal telah dihapus.', 'success');
+          });
+        }
+      });
+    }
+
+    // AUTH & NAVIGASI GURU
     btnSwitchMode.addEventListener('click', () => {
       if (!state.isTeacherLoggedIn) {
+        let teacherOptions = '';
+        Object.keys(state.registeredTeachers).forEach(key => {
+          const t = state.registeredTeachers[key];
+          teacherOptions += `<option value="${key}">${t.name} (${t.subject})</option>`;
+        });
+
         Swal.fire({
-          title: 'Akses Mode Guru',
-          text: 'Masukkan KODE PIN Guru:',
-          input: 'password',
-          inputAttributes: { placeholder: 'Default: anggara.com' },
+          title: 'Login Portal Guru',
+          html: `
+            <div class="text-start mb-3">
+              <label class="form-label small fw-bold">Pilih Nama Guru:</label>
+              <select id="swalTeacherSelect" class="form-select">${teacherOptions}</select>
+            </div>
+            <div class="text-start">
+              <label class="form-label small fw-bold">PIN Akses Guru:</label>
+              <input type="password" id="swalTeacherPin" class="form-control" placeholder="Masukkan PIN">
+            </div>
+          `,
           showCancelButton: true,
           confirmButtonText: 'Masuk',
-          confirmButtonColor: '#4f46e5'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            if (result.value === state.teacherPin) {
-              state.isTeacherLoggedIn = true;
-              btnSwitchMode.innerHTML = '<i class="fa-solid fa-user-graduate me-1"></i> Mode Siswa';
-              teacherView.classList.remove('d-none');
-              studentView.classList.add('d-none');
-              renderTeacherMonitoring();
-              renderLibraryTable();
+          preConfirm: () => {
+            const selectedKey = document.getElementById('swalTeacherSelect').value;
+            const enteredPin = document.getElementById('swalTeacherPin').value;
+            const teacher = state.registeredTeachers[selectedKey];
+
+            if (teacher && teacher.pin === enteredPin) {
+              return teacher;
             } else {
-              Swal.fire({ icon: 'error', title: 'PIN Salah!' });
+              Swal.showValidationMessage('PIN Salah atau Akun tidak ditemukan!');
             }
           }
+        }).then((res) => {
+          if (res.isConfirmed) {
+            state.isTeacherLoggedIn = true;
+            state.currentTeacher = res.value;
+            
+            document.getElementById('loggedInTeacherBadge').innerText = `${state.currentTeacher.name} [${state.currentTeacher.roomCode}]`;
+            document.getElementById('monitorRoomDisplay').innerText = state.currentTeacher.roomCode;
+            
+            btnSwitchMode.innerHTML = '<i class="fa-solid fa-user-graduate me-1"></i> Mode Siswa';
+            teacherView.classList.remove('d-none');
+            studentView.classList.add('d-none');
+
+            listenToTeacherRoom();
+            listenToTeacherLibrary();
+          }
         });
+
       } else {
         lockTeacherSession();
       }
@@ -528,76 +860,43 @@
 
     function lockTeacherSession() {
       state.isTeacherLoggedIn = false;
-      btnSwitchMode.innerHTML = '<i class="fa-solid fa-user-gear me-1"></i> Mode Guru';
+      state.currentTeacher = null;
+      btnSwitchMode.innerHTML = '<i class="fa-solid fa-user-gear me-1"></i> Portal Guru';
       teacherView.classList.add('d-none');
       studentView.classList.remove('d-none');
     }
 
-    // TERBITKAN SOAL KE FIREBASE (SINKRONISASI INSTAN KE HP SISWA)
-    document.getElementById('btnPublishQuiz').addEventListener('click', () => {
-      if (state.questions.length === 0) {
-        Swal.fire({ icon: 'warning', title: 'Soal Masih Kosong!' });
-        return;
-      }
+    // KELOLA GURU
+    document.getElementById('addTeacherForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('newTeacherName').value.trim();
+      const subject = document.getElementById('newTeacherSubject').value.trim().toUpperCase();
+      const roomCode = document.getElementById('newTeacherRoom').value.trim().toUpperCase();
+      const pin = document.getElementById('newTeacherPin').value.trim();
 
-      Swal.fire({ title: 'Menyinkronkan...', text: 'Mengirim soal ke Firebase...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      const teacherKey = roomCode.replace(/[^A-Z0-9]/g, '_');
 
-      // Simpan ke Firebase
-      db.ref('active_quiz/questions').set(state.questions)
-        .then(() => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Berhasil Diterbitkan!',
-            text: 'Soal otomatis masuk ke seluruh HP siswa yang terhubung.',
-            timer: 2000,
-            showConfirmButton: false
-          });
-        })
-        .catch((err) => {
-          Swal.fire({ icon: 'error', title: 'Gagal Sinkron', text: err.message });
-        });
+      db.ref(`teachers/${teacherKey}`).set({
+        name: name, subject: subject, roomCode: roomCode, pin: pin
+      }).then(() => {
+        Swal.fire({ icon: 'success', title: 'Guru Baru Berhasil Ditambahkan!', timer: 1500, showConfirmButton: false });
+        document.getElementById('addTeacherForm').reset();
+      });
     });
 
-    // PUSTAKA SOAL FUNCTIONS
-    function saveToLibrary() {
-      if (state.questions.length === 0) return;
-      Swal.fire({
-        title: 'Simpan Ke Pustaka',
-        input: 'text',
-        inputLabel: 'Judul Paket Soal:',
-        showCancelButton: true
-      }).then((result) => {
-        if (result.isConfirmed && result.value) {
-          state.quizLibrary.push({
-            id: Date.now(),
-            title: result.value,
-            count: state.questions.length,
-            date: new Date().toLocaleDateString('id-ID'),
-            questions: [...state.questions]
-          });
-          localStorage.setItem('smk_quiz_library', JSON.stringify(state.quizLibrary));
-          renderLibraryTable();
-        }
-      });
-    }
-
-    function renderLibraryTable() {
-      const tbody = document.getElementById('libraryTableBody');
-      if (state.quizLibrary.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">Belum ada paket soal tersimpan.</td></tr>`;
-        return;
-      }
-
+    function renderTeacherList() {
+      const tbody = document.getElementById('teacherListTable');
       let html = '';
-      state.quizLibrary.forEach((item, index) => {
+
+      Object.keys(state.registeredTeachers).forEach(key => {
+        const t = state.registeredTeachers[key];
         html += `
           <tr>
-            <td class="fw-bold">${item.title}</td>
-            <td class="text-center"><span class="badge bg-info text-dark">${item.count} Soal</span></td>
-            <td class="text-center text-muted small">${item.date}</td>
+            <td class="fw-bold">${t.name}</td>
+            <td><span class="badge bg-secondary">${t.subject}</span></td>
+            <td><span class="badge bg-primary fs-6">${t.roomCode}</span></td>
             <td class="text-center">
-              <button class="btn btn-primary btn-sm me-1" onclick="loadPackage(${index})">Pakai</button>
-              <button class="btn btn-outline-danger btn-sm" onclick="deletePackage(${index})"><i class="fa-solid fa-trash"></i></button>
+              ${key !== 'ADMIN' ? `<button class="btn btn-outline-danger btn-sm" onclick="deleteTeacher('${key}')"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-muted small">Admin Utama</span>'}
             </td>
           </tr>
         `;
@@ -605,92 +904,197 @@
       tbody.innerHTML = html;
     }
 
-    function loadPackage(index) {
-      state.questions = [...state.quizLibrary[index].questions];
-      renderQuestionPreview();
-      Swal.fire({ icon: 'success', title: 'Paket Dimuat!', timer: 1200, showConfirmButton: false });
+    function deleteTeacher(key) {
+      Swal.fire({
+        title: 'Hapus Akun Guru?',
+        text: 'Guru ini tidak akan bisa login lagi.',
+        icon: 'warning',
+        showCancelButton: true
+      }).then((res) => {
+        if (res.isConfirmed) {
+          db.ref(`teachers/${key}`).remove();
+        }
+      });
     }
 
-    function deletePackage(index) {
-      state.quizLibrary.splice(index, 1);
-      localStorage.setItem('smk_quiz_library', JSON.stringify(state.quizLibrary));
-      renderLibraryTable();
+    function listenToTeacherRoom() {
+      if (!state.currentTeacher) return;
+      const room = state.currentTeacher.roomCode;
+
+      if (state.activeStudentsRef) state.activeStudentsRef.off();
+
+      state.activeStudentsRef = db.ref(`rooms/${room}/students`);
+      state.activeStudentsRef.on('value', (snapshot) => {
+        const val = snapshot.val();
+        if (val) {
+          state.leaderboard = Object.keys(val).map(k => ({
+            id: k,
+            name: val[k].name || '-',
+            class: val[k].class || '-',
+            score: val[k].score || 0,
+            status: val[k].status || 'Sedang Mengerjakan'
+          }));
+        } else {
+          state.leaderboard = [];
+        }
+        renderTeacherMonitoring();
+      });
     }
 
-    // MONITORING REALTIME GURU
-    function renderTeacherMonitoring() {
-      const tableBody = document.getElementById('teacherLeaderboardTable');
-      const sorted = [...state.leaderboard].sort((a, b) => b.score - a.score);
+    // TERBITKAN SOAL
+    document.getElementById('btnPublishQuiz').addEventListener('click', () => {
+      if (!state.currentTeacher) return;
+      const room = state.currentTeacher.roomCode;
 
-      if (sorted.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Belum ada siswa yang mengerjakan kuis.</td></tr>`;
+      if (state.questions.length === 0) {
+        Swal.fire({ icon: 'warning', title: 'Soal Masih Kosong!' });
         return;
       }
 
-      let html = '';
-      sorted.forEach((item, idx) => {
-        let badgeClass = item.status === 'Selesai' ? 'bg-success' : 'bg-warning text-dark';
-        html += `
-          <tr>
-            <td class="fw-bold">#${idx + 1}</td>
-            <td class="fw-semibold">${item.name}</td>
-            <td>${item.class}</td>
-            <td class="text-center fw-bold text-primary fs-5">${item.score}</td>
-            <td class="text-center"><span class="badge ${badgeClass}">${item.status || 'Sedang Mengerjakan'}</span></td>
-            <td class="text-center">
-              <button class="btn btn-outline-danger btn-sm py-0 px-2" onclick="removeStudent('${item.id}')">Keluarkan</button>
-            </td>
-          </tr>
-        `;
-      });
-
-      tableBody.innerHTML = html;
-    }
-
-    function removeStudent(studentId) {
-      db.ref(`active_quiz/students/${studentId}`).remove();
-    }
-
-    // SISWA START QUIZ
-    document.getElementById('startQuizForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('studentName').value.trim();
-      const sClass = document.getElementById('studentClass').value.trim();
-
-      const studentId = `${name.toLowerCase().replace(/\s+/g, '_')}_${sClass.toLowerCase().replace(/\s+/g, '_')}`;
-      state.studentInfo = { id: studentId, name, class: sClass };
-
-      // Daftarkan/Ambil status siswa dari Firebase
-      db.ref(`active_quiz/students/${studentId}`).get().then((snapshot) => {
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          if (data.status === 'Selesai') {
-            Swal.fire({ icon: 'error', title: 'Anda Sudah Menyelesaikan Kuis!' });
-            return;
-          }
-          state.userAnswers = data.answers || {};
-          state.currentQuestionIdx = data.lastQuestionIdx || 0;
-        } else {
-          state.userAnswers = {};
-          state.currentQuestionIdx = 0;
-          db.ref(`active_quiz/students/${studentId}`).set({
-            id: studentId,
-            name: name,
-            class: sClass,
-            score: 0,
-            status: 'Sedang Mengerjakan',
-            lastQuestionIdx: 0,
-            answers: {}
-          });
-        }
-
-        document.getElementById('studentStartScreen').classList.add('d-none');
-        document.getElementById('quizPlayScreen').classList.remove('d-none');
-
-        startTimer();
-        renderPlayQuestion();
+      db.ref(`rooms/${room}/questions`).set(state.questions).then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Soal Diterbitkan!',
+          text: `Soal aktif untuk Ruang [${room}].`,
+          timer: 1800,
+          showConfirmButton: false
+        });
       });
     });
+
+    // SISWA MASUK KUIS
+    document.getElementById('startQuizForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const roomCode = document.getElementById('studentRoomCode').value.trim().toUpperCase();
+      const name = document.getElementById('studentName').value.trim().toUpperCase();
+      const sClass = document.getElementById('studentClass').value.trim().toUpperCase();
+
+      Swal.fire({ title: 'Menghubungkan ke Ruang Guru...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+      db.ref(`rooms/${roomCode}/questions`).get().then((snapshot) => {
+        Swal.close();
+        if (!snapshot.exists() || !snapshot.val() || snapshot.val().length === 0) {
+          Swal.fire({ icon: 'error', title: 'Kode Ruang Tidak Ditemukan!', text: `Belum ada kuis aktif pada Kode Ruang [${roomCode}].` });
+          return;
+        }
+
+        state.questions = snapshot.val();
+        const studentId = `${name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${sClass.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+        state.studentInfo = { roomCode, id: studentId, name, class: sClass };
+
+        document.getElementById('quizRoomDisplay').innerText = `RUANG: ${roomCode}`;
+
+        db.ref(`rooms/${roomCode}/students/${studentId}`).get().then((stuSnap) => {
+          if (stuSnap.exists()) {
+            const data = stuSnap.val();
+            if (data.status === 'Selesai') {
+              Swal.fire({ icon: 'error', title: 'Anda Sudah Menyelesaikan Kuis Di Ruang Ini!' });
+              return;
+            }
+            state.userAnswers = data.answers || {};
+            state.currentQuestionIdx = data.lastQuestionIdx || 0;
+          } else {
+            state.userAnswers = {};
+            state.currentQuestionIdx = 0;
+            db.ref(`rooms/${roomCode}/students/${studentId}`).set({
+              name: name,
+              class: sClass,
+              score: 0,
+              status: 'Sedang Mengerjakan',
+              lastQuestionIdx: 0,
+              answers: {}
+            });
+          }
+
+          document.getElementById('studentStartScreen').classList.add('d-none');
+          document.getElementById('quizPlayScreen').classList.remove('d-none');
+
+          startTimer();
+          renderPlayQuestion();
+        });
+      });
+    });
+
+    function renderPlayQuestion() {
+      state.isAnswering = false;
+      const q = state.questions[state.currentQuestionIdx];
+      if (!q) return;
+
+      const progressPercent = ((state.currentQuestionIdx + 1) / state.questions.length) * 100;
+      document.getElementById('quizProgressFill').style.width = `${progressPercent}%`;
+
+      document.getElementById('currentQIndex').innerText = state.currentQuestionIdx + 1;
+      document.getElementById('totalQIndex').innerText = state.questions.length;
+      document.getElementById('questionTextDisplay').innerText = q.question;
+
+      const container = document.getElementById('optionsContainer');
+      container.innerHTML = '';
+
+      Object.keys(q.options).forEach(key => {
+        container.innerHTML += `
+          <div class="option-card-app" onclick="selectOption('${key}', this)">
+            <span>${q.options[key]}</span>
+            <div class="status-icon d-none"></div>
+          </div>
+        `;
+      });
+    }
+
+    function selectOption(key, el) {
+      if (state.isAnswering) return;
+      state.isAnswering = true;
+
+      const currentQ = state.questions[state.currentQuestionIdx];
+      const isCorrect = (key === currentQ.key);
+      const iconEl = el.querySelector('.status-icon');
+
+      document.querySelectorAll('.option-card-app').forEach(c => c.classList.add('disabled'));
+
+      if (isCorrect) {
+        el.classList.add('correct');
+        iconEl.classList.remove('d-none');
+        iconEl.innerHTML = '<i class="fa-solid fa-check"></i>';
+      } else {
+        el.classList.add('wrong');
+        iconEl.classList.remove('d-none');
+        iconEl.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      }
+
+      state.userAnswers[state.currentQuestionIdx] = key;
+
+      let correctCount = 0;
+      state.questions.forEach((q, i) => {
+        if (state.userAnswers[i] === q.key) correctCount++;
+      });
+      const currentScore = Math.round((correctCount / state.questions.length) * 100);
+
+      db.ref(`rooms/${state.studentInfo.roomCode}/students/${state.studentInfo.id}`).update({
+        score: currentScore,
+        lastQuestionIdx: state.currentQuestionIdx,
+        answers: state.userAnswers
+      });
+
+      setTimeout(() => {
+        if (state.currentQuestionIdx < state.questions.length - 1) {
+          state.currentQuestionIdx++;
+          renderPlayQuestion();
+        } else {
+          finishQuiz(currentScore);
+        }
+      }, 1000);
+    }
+
+    function finishQuiz(score) {
+      clearInterval(state.timerInterval);
+      db.ref(`rooms/${state.studentInfo.roomCode}/students/${state.studentInfo.id}`).update({
+        score: score,
+        status: 'Selesai'
+      });
+
+      document.getElementById('quizPlayScreen').classList.add('d-none');
+      document.getElementById('quizResultScreen').classList.remove('d-none');
+      document.getElementById('finalScoreDisplay').innerText = score;
+    }
 
     function startTimer() {
       state.timer = 0;
@@ -702,152 +1106,41 @@
       }, 1000);
     }
 
-    function renderPlayQuestion() {
-      state.isAnswering = false;
-      const q = state.questions[state.currentQuestionIdx];
-      if (!q) return;
+    function renderTeacherMonitoring() {
+      const tableBody = document.getElementById('teacherLeaderboardTable');
+      const sorted = [...state.leaderboard].sort((a, b) => b.score - a.score);
 
-      document.getElementById('currentQIndex').innerText = state.currentQuestionIdx + 1;
-      document.getElementById('totalQIndex').innerText = state.questions.length;
-      document.getElementById('questionTextDisplay').innerText = q.question;
+      if (sorted.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Belum ada siswa di ruang kuis ini.</td></tr>`;
+        return;
+      }
 
-      const container = document.getElementById('optionsContainer');
-      container.innerHTML = '';
-
-      Object.keys(q.options).forEach(key => {
-        container.innerHTML += `
-          <div class="option-card" onclick="selectOption('${key}', this)">
-            <div class="option-prefix">${key}</div>
-            <div class="fw-medium">${q.options[key]}</div>
-          </div>
+      let html = '';
+      sorted.forEach((item, idx) => {
+        let badgeClass = item.status === 'Selesai' ? 'bg-success' : 'bg-warning text-dark';
+        html += `
+          <tr>
+            <td class="fw-bold">#${idx + 1}</td>
+            <td class="fw-semibold uppercase-input">${item.name}</td>
+            <td class="uppercase-input">${item.class}</td>
+            <td class="text-center fw-bold text-primary fs-5">${item.score}</td>
+            <td class="text-center"><span class="badge ${badgeClass}">${item.status}</span></td>
+            <td class="text-center">
+              <button class="btn btn-outline-danger btn-sm py-0 px-2" onclick="removeStudent('${item.id}')">Keluarkan</button>
+            </td>
+          </tr>
         `;
       });
+
+      tableBody.innerHTML = html;
     }
 
-    function selectOption(key, el) {
-      if (state.isAnswering) return;
-      state.isAnswering = true;
-
-      document.querySelectorAll('.option-card').forEach(c => c.classList.add('disabled'));
-      el.classList.add('selected');
-
-      const currentQ = state.questions[state.currentQuestionIdx];
-      state.userAnswers[state.currentQuestionIdx] = key;
-
-      let correctCount = 0;
-      state.questions.forEach((q, i) => {
-        if (state.userAnswers[i] === q.key) correctCount++;
-      });
-      const currentScore = Math.round((correctCount / state.questions.length) * 100);
-
-      // Update Realtime ke Firebase
-      db.ref(`active_quiz/students/${state.studentInfo.id}`).update({
-        score: currentScore,
-        lastQuestionIdx: state.currentQuestionIdx,
-        answers: state.userAnswers
-      });
-
-      const isCorrect = (key === currentQ.key);
-      Swal.fire({
-        icon: isCorrect ? 'success' : 'error',
-        title: isCorrect ? 'Jawaban Benar!' : 'Jawaban Salah!',
-        timer: 1200,
-        showConfirmButton: false
-      }).then(() => {
-        if (state.currentQuestionIdx < state.questions.length - 1) {
-          state.currentQuestionIdx++;
-          renderPlayQuestion();
-        } else {
-          finishQuiz(currentScore);
-        }
-      });
+    function removeStudent(studentId) {
+      if (!studentId || !state.currentTeacher) return;
+      db.ref(`rooms/${state.currentTeacher.roomCode}/students/${studentId}`).remove();
     }
 
-    function finishQuiz(score) {
-      clearInterval(state.timerInterval);
-      db.ref(`active_quiz/students/${state.studentInfo.id}`).update({
-        score: score,
-        status: 'Selesai'
-      });
-
-      document.getElementById('quizPlayScreen').classList.add('d-none');
-      document.getElementById('quizResultScreen').classList.remove('d-none');
-      document.getElementById('finalScoreDisplay').innerText = score;
-    }
-
-    // FILE PARSER (Word, PDF, TXT)
-    document.getElementById('fileInput').addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const parseStatus = document.getElementById('parseStatus');
-      parseStatus.classList.remove('d-none');
-
-      try {
-        let extractedText = "";
-        const fileExt = file.name.split('.').pop().toLowerCase();
-
-        if (fileExt === 'docx') {
-          const arrayBuffer = await file.arrayBuffer();
-          const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
-          extractedText = result.value;
-        } else if (fileExt === 'pdf') {
-          const arrayBuffer = await file.arrayBuffer();
-          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-          for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const textContent = await page.getTextContent();
-            extractedText += textContent.items.map(item => item.str).join(' ') + '\n';
-          }
-        } else {
-          extractedText = await file.text();
-        }
-
-        parseTextToQuestions(extractedText);
-        parseStatus.classList.add('d-none');
-        Swal.fire({ icon: 'success', title: 'File Berhasil Dibaca!', timer: 1500, showConfirmButton: false });
-      } catch (err) {
-        parseStatus.classList.add('d-none');
-        Swal.fire({ icon: 'error', title: 'Gagal Membaca File' });
-      }
-    });
-
-    function parseTextToQuestions(text) {
-      const cleanText = text.replace(/\r\n/g, '\n');
-      const qBlocks = cleanText.split(/\n(?=\d+[\.\)])/);
-      const parsedQuestions = [];
-
-      qBlocks.forEach((block, idx) => {
-        const lines = block.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-        if (lines.length < 3) return;
-
-        let questionStr = lines[0].replace(/^\d+[\.\)]\s*/, '');
-        let optionsObj = {};
-        let key = "A";
-
-        lines.slice(1).forEach(line => {
-          const optMatch = line.match(/^(\*?)([A-Ea-e])[\.\)]\s*(.*)/);
-          if (optMatch) {
-            const isStarred = optMatch[1] === '*';
-            const letter = optMatch[2].toUpperCase();
-            const textVal = optMatch[3].replace(/\*$/, '').trim();
-            optionsObj[letter] = textVal;
-            if (isStarred) key = letter;
-          }
-        });
-
-        if (Object.keys(optionsObj).length >= 2) {
-          parsedQuestions.push({ id: Date.now() + idx, question: questionStr, options: optionsObj, key: key });
-        }
-      });
-
-      if (parsedQuestions.length > 0) {
-        state.questions = parsedQuestions;
-        renderQuestionPreview();
-      }
-    }
-
-    // FORM INPUT MANUAL SOAL
+    // MANAGE INPUT MANUAL
     document.getElementById('manualQuestionForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const qText = document.getElementById('manualQuestionText').value;
@@ -867,10 +1160,9 @@
     });
 
     function renderQuestionPreview() {
-      const qCount = document.getElementById('qCount');
+      document.getElementById('qCount').innerText = state.questions.length;
       const questionListPreview = document.getElementById('questionListPreview');
 
-      qCount.innerText = state.questions.length;
       if (state.questions.length === 0) {
         questionListPreview.innerHTML = `<div class="text-center text-muted py-5"><i class="fa-solid fa-folder-open fs-1 mb-2 d-block opacity-50"></i>Belum ada soal ditambahkan.</div>`;
         return;
@@ -885,15 +1177,6 @@
               <button class="btn btn-outline-danger btn-sm py-0 px-2" onclick="deleteQuestion(${i})"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <p class="small mb-2 fw-semibold">${q.question}</p>
-            <div class="d-flex align-items-center justify-content-between">
-              <span class="badge bg-light text-dark border">${Object.keys(q.options).length} Pilihan Jawaban</span>
-              <div class="d-flex align-items-center gap-1">
-                <span class="small text-muted me-1">Kunci:</span>
-                <select class="form-select form-select-sm py-0 px-2 fw-bold text-success" style="width: auto;" onchange="updateKey(${i}, this.value)">
-                  ${Object.keys(q.options).map(opt => `<option value="${opt}" ${q.key === opt ? 'selected' : ''}>${opt}</option>`).join('')}
-                </select>
-              </div>
-            </div>
           </div>
         `;
       });
@@ -905,12 +1188,7 @@
       renderQuestionPreview();
     }
 
-    function updateKey(idx, newKey) {
-      state.questions[idx].key = newKey;
-    }
-
     function clearQuestions() {
-      if (state.questions.length === 0) return;
       state.questions = [];
       renderQuestionPreview();
     }
