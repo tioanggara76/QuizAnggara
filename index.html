@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kuis Interaktif Realtime SMK</title>
+  <title>Kuis Interaktif SMK - Realtime Sync</title>
   
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -120,16 +120,6 @@
       padding: 6px 16px;
       border-radius: 20px;
     }
-
-    .status-indicator {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 6px;
-    }
-    .status-online { background-color: #10b981; }
-    .status-offline { background-color: #ef4444; }
   </style>
 </head>
 <body>
@@ -139,13 +129,13 @@
     <div class="container">
       <a class="navbar-brand d-flex align-items-center gap-2 fw-bold fs-4" href="#">
         <i class="fa-solid fa-graduation-cap fs-3"></i>
-        <span>Kuis Realtime SMK</span>
+        <span>Kuis Interaktif SMK</span>
       </a>
       <div class="d-flex align-items-center gap-2">
-        <span id="syncBadge" class="badge bg-light text-dark fw-semibold me-2 d-none d-md-inline-block">
-          <span class="status-indicator status-online"></span> Realtime Sync Active
+        <span id="syncStatus" class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2 small">
+          <i class="fa-solid fa-wifi me-1"></i> Firebase Realtime
         </span>
-        <button id="btnSwitchMode" class="btn btn-light btn-sm rounded-pill px-3 fw-semibold text-primary">
+        <button id="btnSwitchMode" class="btn btn-light btn-sm rounded-pill px-3 fw-semibold text-primary ms-2">
           <i class="fa-solid fa-user-gear me-1"></i> Mode Guru
         </button>
       </div>
@@ -155,11 +145,11 @@
   <!-- Container Utama -->
   <div class="container py-4">
 
-    <!-- VIEW 1: MODE GURU / BUAT SOAL, PUSTAKA & MONITORING -->
+    <!-- VIEW 1: MODE GURU -->
     <div id="teacherView" class="d-none">
       
       <!-- Navigasi Menu Guru -->
-      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <div class="d-flex justify-content-between align-items-center mb-4">
         <ul class="nav nav-pills" id="teacherTab" role="tablist">
           <li class="nav-item" role="presentation">
             <button class="nav-link active fw-bold px-4" id="tab-buat-soal" data-bs-toggle="pill" data-bs-target="#content-buat-soal" type="button">
@@ -173,32 +163,31 @@
           </li>
           <li class="nav-item" role="presentation">
             <button class="nav-link fw-bold px-4" id="tab-monitoring" data-bs-toggle="pill" data-bs-target="#content-monitoring" type="button">
-              <i class="fa-solid fa-chart-line me-2"></i>Ranking Realtime <span class="badge bg-danger ms-1 pulse-badge">LIVE</span>
+              <i class="fa-solid fa-chart-line me-2"></i>Monitoring Siswa <span class="badge bg-danger ms-1 pulse-badge">LIVE</span>
             </button>
           </li>
         </ul>
         <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="lockTeacherSession()">
-          <i class="fa-solid fa-lock me-1"></i> Keluar / Kunci
+          <i class="fa-solid fa-lock me-1"></i> Keluar
         </button>
       </div>
 
       <div class="tab-content" id="teacherTabContent">
         
-        <!-- Tab 1: Buat & Import Soal -->
+        <!-- Tab 1: Buat Soal -->
         <div class="tab-pane fade show active" id="content-buat-soal" role="tabpanel">
           <div class="row g-4">
-            <!-- Panel Input & Import Soal -->
+            <!-- Panel Input -->
             <div class="col-lg-7">
               <div class="card card-custom p-4 mb-4">
                 <h5 class="fw-bold mb-3 text-primary">
                   <i class="fa-solid fa-file-circle-plus me-2"></i>1. Import File Soal (Word / PDF / TXT)
                 </h5>
                 <p class="text-muted small">
-                  Upload file Word (<code>.docx</code>), PDF (<code>.pdf</code>), atau Teks (<code>.txt</code>). Gunakan format kunci tanda bintang (<code>*B. Jawaban Benar</code>).
+                  Upload file Word (<code>.docx</code>), PDF (<code>.pdf</code>), atau TXT dengan kunci tanda bintang (<code>*B. Jawaban</code>).
                 </p>
 
                 <div class="mb-3">
-                  <label for="fileInput" class="form-label fw-semibold">Pilih File Soal:</label>
                   <input type="file" class="form-control" id="fileInput" accept=".docx, .pdf, .txt">
                 </div>
 
@@ -209,46 +198,20 @@
                 <hr class="my-4">
 
                 <h5 class="fw-bold mb-3 text-primary">
-                  <i class="fa-solid fa-pen-to-square me-2"></i>2. Atau Tambah Soal Manual
+                  <i class="fa-solid fa-pen-to-square me-2"></i>2. Tambah Soal Manual
                 </h5>
 
                 <form id="manualQuestionForm">
                   <div class="mb-3">
-                    <label class="form-label fw-semibold">Teks Soal Pertanyaan:</label>
                     <textarea class="form-control" id="manualQuestionText" rows="2" placeholder="Masukkan pertanyaan..." required></textarea>
                   </div>
 
                   <div class="row g-2 mb-2">
-                    <div class="col-md-6">
-                      <div class="input-group input-group-sm">
-                        <span class="input-group-text fw-bold">A</span>
-                        <input type="text" class="form-control" id="optA" placeholder="Pilihan A" required>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="input-group input-group-sm">
-                        <span class="input-group-text fw-bold">B</span>
-                        <input type="text" class="form-control" id="optB" placeholder="Pilihan B" required>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="input-group input-group-sm">
-                        <span class="input-group-text fw-bold">C</span>
-                        <input type="text" class="form-control" id="optC" placeholder="Pilihan C" required>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="input-group input-group-sm">
-                        <span class="input-group-text fw-bold">D</span>
-                        <input type="text" class="form-control" id="optD" placeholder="Pilihan D" required>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="input-group input-group-sm">
-                        <span class="input-group-text fw-bold">E</span>
-                        <input type="text" class="form-control" id="optE" placeholder="Pilihan E (Opsional)">
-                      </div>
-                    </div>
+                    <div class="col-md-6"><input type="text" class="form-control form-control-sm" id="optA" placeholder="Pilihan A" required></div>
+                    <div class="col-md-6"><input type="text" class="form-control form-control-sm" id="optB" placeholder="Pilihan B" required></div>
+                    <div class="col-md-6"><input type="text" class="form-control form-control-sm" id="optC" placeholder="Pilihan C" required></div>
+                    <div class="col-md-6"><input type="text" class="form-control form-control-sm" id="optD" placeholder="Pilihan D" required></div>
+                    <div class="col-md-6"><input type="text" class="form-control form-control-sm" id="optE" placeholder="Pilihan E (Opsional)"></div>
                     <div class="col-md-6">
                       <select class="form-select form-select-sm fw-semibold text-success" id="keySelect" required>
                         <option value="" disabled selected>-- Pilih Kunci Jawaban --</option>
@@ -262,37 +225,37 @@
                   </div>
 
                   <button type="submit" class="btn btn-outline-primary w-100 btn-sm mt-2 fw-semibold">
-                    <i class="fa-solid fa-plus me-1"></i> Tambahkan Soal Ke Daftar
+                    <i class="fa-solid fa-plus me-1"></i> Tambahkan Ke Daftar
                   </button>
                 </form>
               </div>
             </div>
 
-            <!-- Panel Daftar Soal, Simpan Ke Pustaka & Publish -->
+            <!-- Panel Preview & Sync -->
             <div class="col-lg-5">
               <div class="card card-custom p-4 mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                   <h5 class="fw-bold mb-0">
-                    <i class="fa-solid fa-list-check me-2"></i>Daftar Soal (<span id="qCount">0</span>)
+                    <i class="fa-solid fa-list-check me-2"></i>Pratinjau Soal (<span id="qCount">0</span>)
                   </h5>
                   <button class="btn btn-outline-danger btn-sm" onclick="clearQuestions()">
-                    <i class="fa-solid fa-trash me-1"></i> Hapus
+                    <i class="fa-solid fa-trash me-1"></i> Hapus Semua
                   </button>
                 </div>
 
                 <div id="questionListPreview" class="overflow-auto mb-3" style="max-height: 320px;">
                   <div class="text-center text-muted py-5">
                     <i class="fa-solid fa-folder-open fs-1 mb-2 d-block opacity-50"></i>
-                    Belum ada soal. Tambahkan secara manual atau upload file.
+                    Belum ada soal ditambahkan.
                   </div>
                 </div>
 
                 <div class="d-grid gap-2">
                   <button class="btn btn-outline-success fw-semibold" onclick="saveToLibrary()">
-                    <i class="fa-solid fa-floppy-disk me-2"></i>Simpan Ke Pustaka
+                    <i class="fa-solid fa-floppy-disk me-2"></i>Simpan ke Pustaka Soal
                   </button>
-                  <button id="btnPublishQuiz" class="btn btn-gradient py-3 fs-6 shadow-sm fw-bold">
-                    <i class="fa-solid fa-wifi me-2"></i>Terbitkan / Sinkronkan Soal Ke HP Siswa
+                  <button id="btnPublishQuiz" class="btn btn-gradient py-2 fs-6 shadow-sm">
+                    <i class="fa-solid fa-bolt me-2"></i>Terbitkan / Kirim Ke HP Siswa
                   </button>
                 </div>
               </div>
@@ -300,14 +263,10 @@
           </div>
         </div>
 
-        <!-- Tab 2: Pustaka Soal -->
+        <!-- Tab 2: Pustaka -->
         <div class="tab-pane fade" id="content-pustaka" role="tabpanel">
           <div class="card card-custom p-4">
-            <h4 class="fw-bold mb-3 text-primary">
-              <i class="fa-solid fa-book-bookmark me-2"></i>Pustaka Soal Tersimpan
-            </h4>
-            <p class="text-muted small">Pilih paket soal yang pernah disimpan untuk digunakan atau diterbitkan ulang.</p>
-
+            <h4 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-book-bookmark me-2"></i>Pustaka Soal Tersimpan</h4>
             <div class="table-responsive">
               <table class="table table-hover align-middle">
                 <thead class="table-light">
@@ -318,44 +277,29 @@
                     <th class="text-center">Aksi</th>
                   </tr>
                 </thead>
-                <tbody id="libraryTableBody">
-                  <!-- Data pustaka dimuat dinamis -->
-                </tbody>
+                <tbody id="libraryTableBody"></tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <!-- Tab 3: Monitoring Ranking Realtime Guru -->
+        <!-- Tab 3: Monitoring -->
         <div class="tab-pane fade" id="content-monitoring" role="tabpanel">
           <div class="card card-custom p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-              <div>
-                <h4 class="fw-bold mb-1 text-warning">
-                  <i class="fa-solid fa-trophy me-2"></i>Papan Ranking Siswa Realtime
-                </h4>
-                <p class="text-muted small mb-0">Memantau progres siswa secara langsung (Realtime Cloud Sync).</p>
-              </div>
-              <button class="btn btn-outline-danger btn-sm" onclick="clearLeaderboard()">
-                <i class="fa-solid fa-rotate-left me-1"></i> Reset Nilai Siswa
-              </button>
-            </div>
-
+            <h4 class="fw-bold mb-3 text-warning"><i class="fa-solid fa-trophy me-2"></i>Papan Monitoring Realtime Siswa</h4>
             <div class="table-responsive">
               <table class="table table-hover align-middle">
                 <thead class="table-light">
                   <tr>
-                    <th scope="col" style="width: 80px;">Peringkat</th>
-                    <th scope="col">Nama Siswa</th>
-                    <th scope="col">Kelas / Jurusan</th>
-                    <th scope="col" class="text-center">Skor</th>
-                    <th scope="col" class="text-center">Status</th>
-                    <th scope="col" class="text-center">Aksi (Kontrol)</th>
+                    <th style="width: 80px;">No</th>
+                    <th>Nama Siswa</th>
+                    <th>Kelas / Jurusan</th>
+                    <th class="text-center">Skor</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Aksi</th>
                   </tr>
                 </thead>
-                <tbody id="teacherLeaderboardTable">
-                  <!-- Data leaderboard dimuat dinamis dari Firebase -->
-                </tbody>
+                <tbody id="teacherLeaderboardTable"></tbody>
               </table>
             </div>
           </div>
@@ -364,20 +308,20 @@
       </div>
     </div>
 
-    <!-- VIEW 2: MODE SISWA / KERJAKAN KUIS -->
+    <!-- VIEW 2: MODE SISWA -->
     <div id="studentView">
       
-      <!-- Screen 1: Register Name -->
+      <!-- Screen 1: Form Nama -->
       <div id="studentStartScreen" class="row justify-content-center py-5">
         <div class="col-md-6 col-lg-5">
           <div class="card card-custom p-4 text-center animate__animated animate__fadeInDown">
             <div class="my-3">
               <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fs-6 fw-bold">
-                <i class="fa-solid fa-bolt me-1"></i> Live Realtime Quiz
+                <i class="fa-solid fa-bolt me-1"></i> Kuis Interaktif SMK
               </span>
             </div>
             <h3 class="fw-bold mb-2">Selamat Datang!</h3>
-            <p class="text-muted small mb-4">Masukkan identitas Anda. Soal akan otomatis diperbarui saat Guru menerbitkan kuis baru.</p>
+            <p class="text-muted small mb-4">Masukkan Nama dan Kelas Anda untuk memulai kuis.</p>
             
             <form id="startQuizForm">
               <div class="form-floating mb-3 text-start">
@@ -389,52 +333,41 @@
                 <label for="studentClass">Kelas / Jurusan (misal: XI TBSM 1)</label>
               </div>
               <button type="submit" class="btn btn-gradient w-100 py-3 fw-bold fs-5">
-                <i class="fa-solid fa-play me-2"></i> Masuk Ruang Kuis
+                <i class="fa-solid fa-play me-2"></i> Mulai Kuis Now!
               </button>
             </form>
           </div>
         </div>
       </div>
 
-      <!-- Screen 2: Quiz Playboard -->
+      <!-- Screen 2: Pengerjaan Soal -->
       <div id="quizPlayScreen" class="d-none">
         <div class="row justify-content-center g-4">
-          <!-- Area Soal & Pilihan -->
           <div class="col-lg-9">
             <div class="card card-custom p-4">
-              <!-- Header Kuis -->
               <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
                 <div>
-                  <span class="text-muted small d-block">Pertanyaan No:</span>
+                  <span class="text-muted small d-block">Pertanyaan</span>
                   <span class="fs-4 fw-bold text-primary">
                     <span id="currentQIndex">1</span> / <span id="totalQIndex">0</span>
                   </span>
                 </div>
-                <div class="d-flex align-items-center gap-2">
-                  <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 rounded-pill small">
-                    <i class="fa-solid fa-lock me-1"></i> 1x Jawab
-                  </span>
-                  <div class="timer-badge">
-                    <i class="fa-solid fa-clock me-1"></i> <span id="timerDisplay">00:00</span>
-                  </div>
+                <div class="timer-badge">
+                  <i class="fa-solid fa-clock me-1"></i> <span id="timerDisplay">00:00</span>
                 </div>
               </div>
 
-              <!-- Teks Soal -->
               <h5 id="questionTextDisplay" class="fw-bold mb-4" style="line-height: 1.6;">
-                Memuat pertanyaan dari server...
+                Memuat soal dari guru...
               </h5>
 
-              <!-- Pilihan Jawaban -->
-              <div id="optionsContainer" class="mb-4">
-                <!-- Pilihan interaktif dimuat di sini -->
-              </div>
+              <div id="optionsContainer" class="mb-4"></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Screen 3: Hasil Akhir Kuis -->
+      <!-- Screen 3: Hasil Akhir -->
       <div id="quizResultScreen" class="d-none row justify-content-center py-4">
         <div class="col-md-7 text-center">
           <div class="card card-custom p-5 animate__animated animate__zoomIn">
@@ -442,19 +375,19 @@
               <i class="fa-solid fa-award text-warning" style="font-size: 5rem;"></i>
             </div>
             <h2 class="fw-bold mb-2">Kuis Selesai!</h2>
-            <p class="text-muted">Hasil telah dikirim ke Papan Ranking Guru secara realtime.</p>
+            <p class="text-muted">Jawaban Anda telah tersimpan secara realtime ke guru.</p>
 
             <div class="row my-4 g-3 justify-content-center">
               <div class="col-6">
                 <div class="p-3 bg-light rounded-4 border">
                   <span class="text-muted small d-block">Skor Akhir</span>
-                  <span id="finalScoreDisplay" class="fs-1 fw-extrabold text-primary">0</span>
+                  <span id="finalScoreDisplay" class="fs-1 fw-bold text-primary">0</span>
                 </div>
               </div>
             </div>
 
-            <button onclick="resetStudentState()" class="btn btn-gradient py-3 fw-bold">
-              <i class="fa-solid fa-rotate-right me-2"></i> Tunggu Soal Baru dari Guru
+            <button onclick="location.reload()" class="btn btn-gradient py-3 fw-bold">
+              <i class="fa-solid fa-rotate-right me-2"></i> Kembali Ke Awal
             </button>
           </div>
         </div>
@@ -463,58 +396,41 @@
     </div>
   </div>
 
-  <!-- External JS Libraries -->
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-  <!-- Firebase SDK via ES Modules -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+  <!-- Firebase SDK App & Realtime Database via CDN -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-    // Setup PDF Worker
+  <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-    // Firebase App Initialization
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'smk-quiz-app';
-    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-      apiKey: "demo-api-key",
-      authDomain: "demo-app.firebaseapp.com",
-      projectId: "demo-app",
-      storageBucket: "demo-app.appspot.com",
-      messagingSenderId: "123456789",
-      appId: "1:123456789:web:abcdef"
+    // -------------------------------------------------------------
+    // KONFIGURASI FIREBASE MILIK ANDA
+    // -------------------------------------------------------------
+    const firebaseConfig = {
+      apiKey: "AIzaSyBCocRqB_pecbcVCsfWvGvkK2gtLzn54RQ",
+      authDomain: "kuis-smk.firebaseapp.com",
+      databaseURL: "https://kuis-smk-default-rtdb.firebaseio.com",
+      projectId: "kuis-smk",
+      storageBucket: "kuis-smk.firebasestorage.app",
+      messagingSenderId: "299347266848",
+      appId: "1:299347266848:web:f18ee45a20aec7e51cdb45",
+      measurementId: "G-N6NJ7PM2VG"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    let currentUserId = null;
-
-    // Authenticate First
-    async function initAuth() {
-      try {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          const userCred = await signInWithCustomToken(auth, __initial_auth_token);
-          currentUserId = userCred.user.uid;
-        } else {
-          const userCred = await signInAnonymously(auth);
-          currentUserId = userCred.user.uid;
-        }
-      } catch (err) {
-        console.error("Auth Exception:", err);
-      }
-    }
+    // Inisialisasi Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
     // Application State
-    window.state = {
+    let state = {
       isTeacherLoggedIn: false,
-      teacherPin: 'anggara.com',
+      teacherPin: localStorage.getItem('teacher_pin') || 'anggara.com',
       questions: [],
       currentQuestionIdx: 0,
       userAnswers: {},
@@ -526,7 +442,11 @@
       isAnswering: false
     };
 
-    // Default Fallback Questions
+    const btnSwitchMode = document.getElementById('btnSwitchMode');
+    const teacherView = document.getElementById('teacherView');
+    const studentView = document.getElementById('studentView');
+
+    // Default Fallback Soal
     const defaultQuestions = [
       {
         id: 1,
@@ -542,293 +462,142 @@
       }
     ];
 
-    // Initialization on DOM Loaded
-    window.addEventListener('DOMContentLoaded', async () => {
-      await initAuth();
-      
-      // Load local library
+    // INISIALISASI LISTENER REALTIME FIREBASE
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Mendengarkan perubahan SOAL dari Firebase
+      db.ref('active_quiz/questions').on('value', (snapshot) => {
+        const val = snapshot.val();
+        if (val && Array.isArray(val) && val.length > 0) {
+          state.questions = val;
+          renderQuestionPreview();
+          
+          // Jika siswa sedang di halaman kuis, update tampilan
+          if (state.studentInfo && !document.getElementById('quizPlayScreen').classList.contains('d-none')) {
+            renderPlayQuestion();
+          }
+        } else if (state.questions.length === 0) {
+          state.questions = defaultQuestions;
+          renderQuestionPreview();
+        }
+      });
+
+      // 2. Mendengarkan perubahan MONITORING / LEADERBOARD dari Firebase
+      db.ref('active_quiz/students').on('value', (snapshot) => {
+        const val = snapshot.val();
+        if (val) {
+          state.leaderboard = Object.values(val);
+          renderTeacherMonitoring();
+        } else {
+          state.leaderboard = [];
+          renderTeacherMonitoring();
+        }
+      });
+
       renderLibraryTable();
-
-      // Listen to Active Quiz Firestore Document Realtime
-      listenActiveQuizRealtime();
-
-      // Listen to Leaderboard Firestore Collection Realtime
-      listenLeaderboardRealtime();
     });
 
-    // 1. Realtime Active Quiz Listener (Guru -> HP Siswa)
-    function listenActiveQuizRealtime() {
-      const quizDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'active_quiz', 'current');
-      
-      onSnapshot(quizDocRef, (docSnap) => {
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          if (data.questions && Array.isArray(data.questions) && data.questions.length > 0) {
-            const oldQuestionsStr = JSON.stringify(window.state.questions);
-            const newQuestionsStr = JSON.stringify(data.questions);
-
-            window.state.questions = data.questions;
-
-            // Mode Guru Preview Update
-            renderQuestionPreview();
-
-            // Notify Student if active quiz changes
-            if (oldQuestionsStr !== newQuestionsStr && oldQuestionsStr !== '[]') {
-              if (window.state.studentInfo) {
-                Swal.fire({
-                  icon: 'info',
-                  title: 'Soal Baru Diterbitkan Guru!',
-                  text: 'Daftar pertanyaan telah diperbarui secara otomatis.',
-                  timer: 2000,
-                  showConfirmButton: false
-                });
-
-                // Reset Student Progress for new Quiz
-                window.state.currentQuestionIdx = 0;
-                window.state.userAnswers = {};
-                renderPlayQuestion();
-              }
-            }
-          }
-        } else {
-          // If Firestore document doesn't exist yet, seed with default questions
-          if (window.state.questions.length === 0) {
-            window.state.questions = defaultQuestions;
-            renderQuestionPreview();
-          }
-        }
-      }, (error) => {
-        console.error("Quiz Snapshot Error:", error);
-      });
-    }
-
-    // 2. Realtime Leaderboard Listener (Siswa -> Panel Monitoring Guru)
-    function listenLeaderboardRealtime() {
-      const leaderboardColRef = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
-      
-      onSnapshot(leaderboardColRef, (snapshot) => {
-        const list = [];
-        snapshot.forEach((doc) => {
-          list.push({ id: doc.id, ...doc.data() });
-        });
-        window.state.leaderboard = list;
-        renderTeacherMonitoring();
-      }, (error) => {
-        console.error("Leaderboard Snapshot Error:", error);
-      });
-    }
-
-    // Publish / Synchronize Quiz to Cloud Database
-    window.publishQuizToCloud = async function() {
-      if (window.state.questions.length === 0) {
-        Swal.fire({ icon: 'warning', title: 'Soal Masih Kosong!' });
-        return;
-      }
-
-      try {
-        Swal.showLoading();
-        const quizDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'active_quiz', 'current');
-        
-        await setDoc(quizDocRef, {
-          questions: window.state.questions,
-          updatedAt: new Date().toISOString()
-        });
-
-        const fullUrl = `${window.location.origin}${window.location.pathname}`;
-
-        Swal.fire({
-          title: 'Kuis Berhasil Disinkronkan!',
-          html: `
-            <p class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Soal telah terbit ke seluruh HP Siswa secara Realtime!</p>
-            <p class="text-muted small mb-3">Bagikan link atau QR code berikut kepada siswa:</p>
-            <div class="input-group mb-3">
-              <input type="text" id="swalShareUrl" class="form-control form-control-sm" value="${fullUrl}" readonly>
-              <button class="btn btn-primary btn-sm" id="btnSwalCopy">Salin Link</button>
-            </div>
-            <div class="text-center my-3">
-              <div id="swalQrCode" class="p-2 bg-light d-inline-block rounded border"></div>
-            </div>
-          `,
-          icon: 'success',
-          didOpen: () => {
-            new QRCode(document.getElementById('swalQrCode'), { text: fullUrl, width: 140, height: 140 });
-            document.getElementById('btnSwalCopy').addEventListener('click', () => {
-              const input = document.getElementById('swalShareUrl');
-              input.select();
-              document.execCommand('copy');
-              Swal.showValidationMessage('Link berhasil disalin!');
-            });
-          }
-        });
-      } catch (err) {
-        console.error("Error publishing quiz:", err);
-        Swal.fire({ icon: 'error', title: 'Gagal Menyinkronkan Soal', text: err.message });
-      }
-    };
-
-    document.getElementById('btnPublishQuiz').addEventListener('click', window.publishQuizToCloud);
-
-    // Update Student Record in Firestore
-    async function syncStudentToCloud(studentData) {
-      if (!currentUserId) return;
-      const docId = `${studentData.name}_${studentData.class}`.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-      const studentDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', docId);
-
-      try {
-        await setDoc(studentDocRef, {
-          name: studentData.name,
-          class: studentData.class,
-          score: studentData.score,
-          status: studentData.status,
-          lastQuestionIdx: studentData.lastQuestionIdx,
-          updatedAt: new Date().toISOString()
-        }, { merge: true });
-      } catch (err) {
-        console.error("Sync Student Error:", err);
-      }
-    }
-
-    window.clearLeaderboard = async function() {
-      Swal.fire({
-        title: 'Reset Papan Skor?',
-        text: 'Seluruh nilai siswa akan dihapus dari server realtime.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'Reset'
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            for (let item of window.state.leaderboard) {
-              if (item.id) {
-                const itemRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', item.id);
-                await deleteDoc(itemRef);
-              }
-            }
-            Swal.fire({ icon: 'success', title: 'Reset Berhasil', timer: 1200, showConfirmButton: false });
-          } catch (e) {
-            console.error(e);
-          }
-        }
-      });
-    };
-
-    window.removeStudentCloud = async function(docId) {
-      if (!docId) return;
-      try {
-        const itemRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', docId);
-        await deleteDoc(itemRef);
-        Swal.fire({ icon: 'success', title: 'Siswa Dikeluarkan', timer: 1200, showConfirmButton: false });
-      } catch (e) {
-        console.error(e);
-      }
-    };
-
-    // Switch Mode Button
-    const btnSwitchMode = document.getElementById('btnSwitchMode');
-    const teacherView = document.getElementById('teacherView');
-    const studentView = document.getElementById('studentView');
-
+    // Login Mode Guru
     btnSwitchMode.addEventListener('click', () => {
-      if (!window.state.isTeacherLoggedIn) {
+      if (!state.isTeacherLoggedIn) {
         Swal.fire({
           title: 'Akses Mode Guru',
           text: 'Masukkan KODE PIN Guru:',
           input: 'password',
-          inputAttributes: { autocapitalize: 'off', placeholder: 'PIN: anggara.com' },
+          inputAttributes: { placeholder: 'Default: anggara.com' },
           showCancelButton: true,
           confirmButtonText: 'Masuk',
-          cancelButtonText: 'Batal',
           confirmButtonColor: '#4f46e5'
         }).then((result) => {
           if (result.isConfirmed) {
-            if (result.value === window.state.teacherPin) {
-              window.state.isTeacherLoggedIn = true;
+            if (result.value === state.teacherPin) {
+              state.isTeacherLoggedIn = true;
               btnSwitchMode.innerHTML = '<i class="fa-solid fa-user-graduate me-1"></i> Mode Siswa';
               teacherView.classList.remove('d-none');
               studentView.classList.add('d-none');
               renderTeacherMonitoring();
               renderLibraryTable();
-              
-              Swal.fire({
-                icon: 'success',
-                title: 'Berhasil Masuk!',
-                text: 'Selamat datang di Panel Guru.',
-                timer: 1500,
-                showConfirmButton: false
-              });
             } else {
-              Swal.fire({ icon: 'error', title: 'PIN Salah!', text: 'Kode akses tidak sesuai.' });
+              Swal.fire({ icon: 'error', title: 'PIN Salah!' });
             }
           }
         });
       } else {
-        window.lockTeacherSession();
+        lockTeacherSession();
       }
     });
 
-    window.lockTeacherSession = function() {
-      window.state.isTeacherLoggedIn = false;
+    function lockTeacherSession() {
+      state.isTeacherLoggedIn = false;
       btnSwitchMode.innerHTML = '<i class="fa-solid fa-user-gear me-1"></i> Mode Guru';
       teacherView.classList.add('d-none');
       studentView.classList.remove('d-none');
-    };
+    }
 
-    // Library Rendering & Management
-    window.saveToLibrary = function() {
-      if (window.state.questions.length === 0) {
-        Swal.fire({ icon: 'warning', title: 'Soal Kosong', text: 'Tambahkan soal terlebih dahulu.' });
+    // TERBITKAN SOAL KE FIREBASE (SINKRONISASI INSTAN KE HP SISWA)
+    document.getElementById('btnPublishQuiz').addEventListener('click', () => {
+      if (state.questions.length === 0) {
+        Swal.fire({ icon: 'warning', title: 'Soal Masih Kosong!' });
         return;
       }
 
+      Swal.fire({ title: 'Menyinkronkan...', text: 'Mengirim soal ke Firebase...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+      // Simpan ke Firebase
+      db.ref('active_quiz/questions').set(state.questions)
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Berhasil Diterbitkan!',
+            text: 'Soal otomatis masuk ke seluruh HP siswa yang terhubung.',
+            timer: 2000,
+            showConfirmButton: false
+          });
+        })
+        .catch((err) => {
+          Swal.fire({ icon: 'error', title: 'Gagal Sinkron', text: err.message });
+        });
+    });
+
+    // PUSTAKA SOAL FUNCTIONS
+    function saveToLibrary() {
+      if (state.questions.length === 0) return;
       Swal.fire({
-        title: 'Simpan Ke Pustaka Soal',
+        title: 'Simpan Ke Pustaka',
         input: 'text',
         inputLabel: 'Judul Paket Soal:',
-        inputPlaceholder: 'Misal: Kuis Kelistrikan Motor',
-        showCancelButton: true,
-        confirmButtonText: 'Simpan',
-        inputValidator: (value) => { if (!value) return 'Judul tidak boleh kosong!'; }
+        showCancelButton: true
       }).then((result) => {
-        if (result.isConfirmed) {
-          const newPackage = {
+        if (result.isConfirmed && result.value) {
+          state.quizLibrary.push({
             id: Date.now(),
             title: result.value,
-            count: window.state.questions.length,
-            date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
-            questions: [...window.state.questions]
-          };
-
-          window.state.quizLibrary.push(newPackage);
-          localStorage.setItem('smk_quiz_library', JSON.stringify(window.state.quizLibrary));
+            count: state.questions.length,
+            date: new Date().toLocaleDateString('id-ID'),
+            questions: [...state.questions]
+          });
+          localStorage.setItem('smk_quiz_library', JSON.stringify(state.quizLibrary));
           renderLibraryTable();
-
-          Swal.fire({ icon: 'success', title: 'Tersimpan!', timer: 1500, showConfirmButton: false });
         }
       });
-    };
+    }
 
     function renderLibraryTable() {
       const tbody = document.getElementById('libraryTableBody');
-      if (window.state.quizLibrary.length === 0) {
+      if (state.quizLibrary.length === 0) {
         tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">Belum ada paket soal tersimpan.</td></tr>`;
         return;
       }
 
       let html = '';
-      window.state.quizLibrary.forEach((item, index) => {
+      state.quizLibrary.forEach((item, index) => {
         html += `
           <tr>
             <td class="fw-bold">${item.title}</td>
             <td class="text-center"><span class="badge bg-info text-dark">${item.count} Soal</span></td>
             <td class="text-center text-muted small">${item.date}</td>
             <td class="text-center">
-              <button class="btn btn-primary btn-sm me-1" onclick="loadPackage(${index})">
-                <i class="fa-solid fa-folder-open me-1"></i> Pakai
-              </button>
-              <button class="btn btn-outline-danger btn-sm" onclick="deletePackage(${index})">
-                <i class="fa-solid fa-trash"></i>
-              </button>
+              <button class="btn btn-primary btn-sm me-1" onclick="loadPackage(${index})">Pakai</button>
+              <button class="btn btn-outline-danger btn-sm" onclick="deletePackage(${index})"><i class="fa-solid fa-trash"></i></button>
             </td>
           </tr>
         `;
@@ -836,55 +605,40 @@
       tbody.innerHTML = html;
     }
 
-    window.loadPackage = function(index) {
-      const pkg = window.state.quizLibrary[index];
-      window.state.questions = [...pkg.questions];
+    function loadPackage(index) {
+      state.questions = [...state.quizLibrary[index].questions];
       renderQuestionPreview();
+      Swal.fire({ icon: 'success', title: 'Paket Dimuat!', timer: 1200, showConfirmButton: false });
+    }
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Paket Dimuat!',
-        text: `Paket "${pkg.title}" dimuat. Klik 'Terbitkan' untuk menyinkronkan ke HP siswa.`,
-        timer: 1800,
-        showConfirmButton: false
-      });
-    };
-
-    window.deletePackage = function(index) {
-      window.state.quizLibrary.splice(index, 1);
-      localStorage.setItem('smk_quiz_library', JSON.stringify(window.state.quizLibrary));
+    function deletePackage(index) {
+      state.quizLibrary.splice(index, 1);
+      localStorage.setItem('smk_quiz_library', JSON.stringify(state.quizLibrary));
       renderLibraryTable();
-    };
+    }
 
-    // Teacher Monitoring UI Rendering
+    // MONITORING REALTIME GURU
     function renderTeacherMonitoring() {
       const tableBody = document.getElementById('teacherLeaderboardTable');
-      const sorted = [...window.state.leaderboard].sort((a, b) => b.score - a.score);
+      const sorted = [...state.leaderboard].sort((a, b) => b.score - a.score);
 
       if (sorted.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Belum ada siswa yang mendaftar / mengerjakan.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Belum ada siswa yang mengerjakan kuis.</td></tr>`;
         return;
       }
 
       let html = '';
       sorted.forEach((item, idx) => {
         let badgeClass = item.status === 'Selesai' ? 'bg-success' : 'bg-warning text-dark';
-        let rankBadge = `#${idx + 1}`;
-        if (idx === 0) rankBadge = '🥇 #1';
-        else if (idx === 1) rankBadge = '🥈 #2';
-        else if (idx === 2) rankBadge = '🥉 #3';
-
         html += `
           <tr>
-            <td class="fw-bold">${rankBadge}</td>
+            <td class="fw-bold">#${idx + 1}</td>
             <td class="fw-semibold">${item.name}</td>
             <td>${item.class}</td>
-            <td class="text-center fw-bold text-primary fs-5">${item.score || 0}</td>
+            <td class="text-center fw-bold text-primary fs-5">${item.score}</td>
             <td class="text-center"><span class="badge ${badgeClass}">${item.status || 'Sedang Mengerjakan'}</span></td>
             <td class="text-center">
-              <button class="btn btn-outline-danger btn-sm py-0 px-2" onclick="removeStudentCloud('${item.id}')">
-                <i class="fa-solid fa-user-xmark me-1"></i> Keluarkan
-              </button>
+              <button class="btn btn-outline-danger btn-sm py-0 px-2" onclick="removeStudent('${item.id}')">Keluarkan</button>
             </td>
           </tr>
         `;
@@ -893,179 +647,135 @@
       tableBody.innerHTML = html;
     }
 
-    // Student Form Submit
+    function removeStudent(studentId) {
+      db.ref(`active_quiz/students/${studentId}`).remove();
+    }
+
+    // SISWA START QUIZ
     document.getElementById('startQuizForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const name = document.getElementById('studentName').value.trim();
       const sClass = document.getElementById('studentClass').value.trim();
 
-      window.state.studentInfo = { name, class: sClass };
+      const studentId = `${name.toLowerCase().replace(/\s+/g, '_')}_${sClass.toLowerCase().replace(/\s+/g, '_')}`;
+      state.studentInfo = { id: studentId, name, class: sClass };
 
-      const existingRecord = window.state.leaderboard.find(i => 
-        i.name && i.name.toLowerCase() === name.toLowerCase() && 
-        i.class && i.class.toLowerCase() === sClass.toLowerCase()
-      );
-
-      if (existingRecord) {
-        if (existingRecord.status === 'Selesai') {
-          Swal.fire({
-            icon: 'info',
-            title: 'Kuis Selesai',
-            text: 'Anda telah menyelesaikan kuis ini. Menunggu soal baru dari guru.'
-          });
-          return;
+      // Daftarkan/Ambil status siswa dari Firebase
+      db.ref(`active_quiz/students/${studentId}`).get().then((snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          if (data.status === 'Selesai') {
+            Swal.fire({ icon: 'error', title: 'Anda Sudah Menyelesaikan Kuis!' });
+            return;
+          }
+          state.userAnswers = data.answers || {};
+          state.currentQuestionIdx = data.lastQuestionIdx || 0;
         } else {
-          window.state.currentQuestionIdx = existingRecord.lastQuestionIdx || 0;
+          state.userAnswers = {};
+          state.currentQuestionIdx = 0;
+          db.ref(`active_quiz/students/${studentId}`).set({
+            id: studentId,
+            name: name,
+            class: sClass,
+            score: 0,
+            status: 'Sedang Mengerjakan',
+            lastQuestionIdx: 0,
+            answers: {}
+          });
         }
-      } else {
-        window.state.currentQuestionIdx = 0;
-        window.state.userAnswers = {};
-        syncStudentToCloud({
-          name: name,
-          class: sClass,
-          score: 0,
-          status: 'Sedang Mengerjakan',
-          lastQuestionIdx: 0
-        });
-      }
 
-      document.getElementById('studentStartScreen').classList.add('d-none');
-      document.getElementById('quizPlayScreen').classList.remove('d-none');
+        document.getElementById('studentStartScreen').classList.add('d-none');
+        document.getElementById('quizPlayScreen').classList.remove('d-none');
 
-      startTimer();
-      renderPlayQuestion();
+        startTimer();
+        renderPlayQuestion();
+      });
     });
 
     function startTimer() {
-      if (window.state.timerInterval) clearInterval(window.state.timerInterval);
-      window.state.timer = 0;
-      window.state.timerInterval = setInterval(() => {
-        window.state.timer++;
-        const mins = Math.floor(window.state.timer / 60).toString().padStart(2, '0');
-        const secs = (window.state.timer % 60).toString().padStart(2, '0');
+      state.timer = 0;
+      state.timerInterval = setInterval(() => {
+        state.timer++;
+        const mins = Math.floor(state.timer / 60).toString().padStart(2, '0');
+        const secs = (state.timer % 60).toString().padStart(2, '0');
         document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
       }, 1000);
     }
 
     function renderPlayQuestion() {
-      window.state.isAnswering = false;
-      const qList = window.state.questions;
+      state.isAnswering = false;
+      const q = state.questions[state.currentQuestionIdx];
+      if (!q) return;
 
-      if (!qList || qList.length === 0) {
-        document.getElementById('questionTextDisplay').innerText = "Belum ada soal yang diterbitkan oleh Guru.";
-        document.getElementById('optionsContainer').innerHTML = "";
-        return;
-      }
-
-      if (window.state.currentQuestionIdx >= qList.length) {
-        finishQuiz();
-        return;
-      }
-
-      const q = qList[window.state.currentQuestionIdx];
-      document.getElementById('currentQIndex').innerText = window.state.currentQuestionIdx + 1;
-      document.getElementById('totalQIndex').innerText = qList.length;
+      document.getElementById('currentQIndex').innerText = state.currentQuestionIdx + 1;
+      document.getElementById('totalQIndex').innerText = state.questions.length;
       document.getElementById('questionTextDisplay').innerText = q.question;
 
       const container = document.getElementById('optionsContainer');
       container.innerHTML = '';
 
       Object.keys(q.options).forEach(key => {
-        const optionEl = document.createElement('div');
-        optionEl.className = 'option-card';
-        optionEl.innerHTML = `
-          <div class="option-prefix">${key}</div>
-          <div class="fw-medium">${q.options[key]}</div>
+        container.innerHTML += `
+          <div class="option-card" onclick="selectOption('${key}', this)">
+            <div class="option-prefix">${key}</div>
+            <div class="fw-medium">${q.options[key]}</div>
+          </div>
         `;
-        optionEl.addEventListener('click', () => selectOption(key, optionEl));
-        container.appendChild(optionEl);
       });
     }
 
-    function selectOption(key, element) {
-      if (window.state.isAnswering) return;
-      window.state.isAnswering = true;
+    function selectOption(key, el) {
+      if (state.isAnswering) return;
+      state.isAnswering = true;
 
-      const cards = document.querySelectorAll('.option-card');
-      cards.forEach(card => card.classList.add('disabled'));
+      document.querySelectorAll('.option-card').forEach(c => c.classList.add('disabled'));
+      el.classList.add('selected');
 
-      element.classList.add('selected');
+      const currentQ = state.questions[state.currentQuestionIdx];
+      state.userAnswers[state.currentQuestionIdx] = key;
 
-      const currentQ = window.state.questions[window.state.currentQuestionIdx];
-      window.state.userAnswers[window.state.currentQuestionIdx] = key;
-
-      // Calculate temporary score
-      let tempCorrect = 0;
-      window.state.questions.forEach((q, i) => {
-        if (window.state.userAnswers[i] === q.key) tempCorrect++;
+      let correctCount = 0;
+      state.questions.forEach((q, i) => {
+        if (state.userAnswers[i] === q.key) correctCount++;
       });
-      const tempScore = Math.round((tempCorrect / window.state.questions.length) * 100);
+      const currentScore = Math.round((correctCount / state.questions.length) * 100);
 
-      // Sync to cloud
-      syncStudentToCloud({
-        name: window.state.studentInfo.name,
-        class: window.state.studentInfo.class,
-        score: tempScore,
-        status: 'Sedang Mengerjakan',
-        lastQuestionIdx: window.state.currentQuestionIdx
+      // Update Realtime ke Firebase
+      db.ref(`active_quiz/students/${state.studentInfo.id}`).update({
+        score: currentScore,
+        lastQuestionIdx: state.currentQuestionIdx,
+        answers: state.userAnswers
       });
 
       const isCorrect = (key === currentQ.key);
-      const swalConfig = isCorrect ? {
-        icon: 'success',
-        title: 'Jawaban Benar! 🎉',
-        timer: 1000,
+      Swal.fire({
+        icon: isCorrect ? 'success' : 'error',
+        title: isCorrect ? 'Jawaban Benar!' : 'Jawaban Salah!',
+        timer: 1200,
         showConfirmButton: false
-      } : {
-        icon: 'error',
-        title: 'Jawaban Salah! ❌',
-        text: `Kunci: (${currentQ.key})`,
-        timer: 1300,
-        showConfirmButton: false
-      };
-
-      Swal.fire(swalConfig).then(() => {
-        if (window.state.currentQuestionIdx < window.state.questions.length - 1) {
-          window.state.currentQuestionIdx++;
+      }).then(() => {
+        if (state.currentQuestionIdx < state.questions.length - 1) {
+          state.currentQuestionIdx++;
           renderPlayQuestion();
         } else {
-          finishQuiz();
+          finishQuiz(currentScore);
         }
       });
     }
 
-    function finishQuiz() {
-      clearInterval(window.state.timerInterval);
-
-      let correct = 0;
-      window.state.questions.forEach((q, i) => {
-        if (window.state.userAnswers[i] === q.key) correct++;
+    function finishQuiz(score) {
+      clearInterval(state.timerInterval);
+      db.ref(`active_quiz/students/${state.studentInfo.id}`).update({
+        score: score,
+        status: 'Selesai'
       });
-
-      const finalScore = window.state.questions.length > 0 ? Math.round((correct / window.state.questions.length) * 100) : 0;
-
-      if (window.state.studentInfo) {
-        syncStudentToCloud({
-          name: window.state.studentInfo.name,
-          class: window.state.studentInfo.class,
-          score: finalScore,
-          status: 'Selesai',
-          lastQuestionIdx: window.state.questions.length
-        });
-      }
 
       document.getElementById('quizPlayScreen').classList.add('d-none');
       document.getElementById('quizResultScreen').classList.remove('d-none');
-      document.getElementById('finalScoreDisplay').innerText = finalScore;
+      document.getElementById('finalScoreDisplay').innerText = score;
     }
 
-    window.resetStudentState = function() {
-      document.getElementById('quizResultScreen').classList.add('d-none');
-      document.getElementById('studentStartScreen').classList.remove('d-none');
-      window.state.studentInfo = null;
-    };
-
-    // Document File Upload Parsing
+    // FILE PARSER (Word, PDF, TXT)
     document.getElementById('fileInput').addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -1132,12 +842,12 @@
       });
 
       if (parsedQuestions.length > 0) {
-        window.state.questions = parsedQuestions;
+        state.questions = parsedQuestions;
         renderQuestionPreview();
       }
     }
 
-    // Manual Question Input
+    // FORM INPUT MANUAL SOAL
     document.getElementById('manualQuestionForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const qText = document.getElementById('manualQuestionText').value;
@@ -1151,7 +861,7 @@
       const options = { A: optA, B: optB, C: optC, D: optD };
       if (optE) options.E = optE;
 
-      window.state.questions.push({ id: Date.now(), question: qText, options: options, key: keyVal });
+      state.questions.push({ id: Date.now(), question: qText, options: options, key: keyVal });
       renderQuestionPreview();
       document.getElementById('manualQuestionForm').reset();
     });
@@ -1160,14 +870,14 @@
       const qCount = document.getElementById('qCount');
       const questionListPreview = document.getElementById('questionListPreview');
 
-      qCount.innerText = window.state.questions.length;
-      if (window.state.questions.length === 0) {
-        questionListPreview.innerHTML = `<div class="text-center text-muted py-5"><i class="fa-solid fa-folder-open fs-1 mb-2 d-block opacity-50"></i>Belum ada soal. Tambahkan secara manual atau upload file.</div>`;
+      qCount.innerText = state.questions.length;
+      if (state.questions.length === 0) {
+        questionListPreview.innerHTML = `<div class="text-center text-muted py-5"><i class="fa-solid fa-folder-open fs-1 mb-2 d-block opacity-50"></i>Belum ada soal ditambahkan.</div>`;
         return;
       }
 
       let html = '';
-      window.state.questions.forEach((q, i) => {
+      state.questions.forEach((q, i) => {
         html += `
           <div class="card mb-2 p-3 border">
             <div class="d-flex justify-content-between align-items-start mb-2">
@@ -1190,30 +900,20 @@
       questionListPreview.innerHTML = html;
     }
 
-    window.deleteQuestion = function(idx) {
-      window.state.questions.splice(idx, 1);
+    function deleteQuestion(idx) {
+      state.questions.splice(idx, 1);
       renderQuestionPreview();
-    };
+    }
 
-    window.updateKey = function(idx, newKey) {
-      window.state.questions[idx].key = newKey;
-    };
+    function updateKey(idx, newKey) {
+      state.questions[idx].key = newKey;
+    }
 
-    window.clearQuestions = function() {
-      if (window.state.questions.length === 0) return;
-      Swal.fire({
-        title: 'Hapus Semua Soal?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'Hapus'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.state.questions = [];
-          renderQuestionPreview();
-        }
-      });
-    };
+    function clearQuestions() {
+      if (state.questions.length === 0) return;
+      state.questions = [];
+      renderQuestionPreview();
+    }
   </script>
 </body>
 </html>
