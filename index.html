@@ -1,1197 +1,1441 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kuis Interaktif SMK - Bank/Pustaka Soal</title>
-  
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <!-- Animate.css -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-  <!-- SweetAlert2 CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-  
-  <style>
-    :root {
-      --primary-color: #6366f1;
-      --secondary-color: #a855f7;
-      --bg-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%);
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: var(--bg-gradient);
-      min-height: 100vh;
-      color: #1e293b;
-    }
-
-    .uppercase-input { text-transform: uppercase; }
-
-    .navbar-custom {
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .card-custom {
-      border: none;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-      background: #ffffff;
-    }
-
-    .btn-gradient {
-      background: var(--bg-gradient);
-      border: none;
-      color: white;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-
-    .btn-gradient:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
-      color: white;
-    }
-
-    .quiz-card {
-      border-radius: 28px;
-      padding: 32px 28px;
-      background: #ffffff;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    }
-
-    .quiz-progress-bar {
-      height: 8px;
-      border-radius: 10px;
-      background-color: #e2e8f0;
-      overflow: hidden;
-    }
-
-    .quiz-progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
-      width: 0%;
-      transition: width 0.4s ease;
-    }
-
-    .option-card-app {
-      border: 2px solid #f1f5f9;
-      border-radius: 20px;
-      padding: 16px 20px;
-      margin-bottom: 14px;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      background: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-weight: 600;
-      color: #334155;
-    }
-
-    .option-card-app:hover {
-      border-color: #cbd5e1;
-      background-color: #f8fafc;
-      transform: translateY(-2px);
-    }
-
-    .option-card-app.disabled { pointer-events: none; }
-
-    .option-card-app.correct {
-      background-color: #dcfce7 !important;
-      border-color: #86efac !important;
-      color: #166534 !important;
-    }
-
-    .option-card-app.wrong {
-      background-color: #ffe4e6 !important;
-      border-color: #fca5a5 !important;
-      color: #991b1b !important;
-    }
-
-    .status-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-    }
-
-    .correct .status-icon { background-color: #22c55e; color: white; }
-    .wrong .status-icon { background-color: #ef4444; color: white; }
-
-    .timer-badge {
-      font-size: 1.1rem;
-      font-weight: 700;
-      background: #f1f5f9;
-      color: #475569;
-      padding: 6px 16px;
-      border-radius: 20px;
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
-    <div class="container">
-      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold fs-4 text-white" href="#">
-        <i class="fa-solid fa-graduation-cap fs-3"></i>
-        <span>quiz</span>
-      </a>
-      <div class="d-flex align-items-center gap-2">
-        <span id="syncStatus" class="badge bg-success text-white rounded-pill px-3 py-2 small">
-          <i class="fa-solid fa-users-gear me-1"></i> Multi-Teacher System
-        </span>
-        <button id="btnSwitchMode" class="btn btn-light btn-sm rounded-pill px-3 fw-semibold text-primary ms-2">
-          <i class="fa-solid fa-user-gear me-1"></i> Portal Guru
+<!doctype html>
+<html lang="id" data-bs-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Kuis Interaktif SMK</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --a: #22d3ee;
+        --b: #a78bfa;
+        --c: #f472b6;
+      }
+      body {
+        font-family: 'Sora', system-ui, sans-serif;
+        background: #0b1020;
+        min-height: 100vh;
+        color: #e5e7f5;
+        overflow-x: hidden;
+      }
+      body:before,
+      body:after {
+        content: '';
+        position: fixed;
+        width: 520px;
+        height: 520px;
+        border-radius: 50%;
+        filter: blur(110px);
+        opacity: 0.35;
+        z-index: -1;
+        animation: fl 14s ease-in-out infinite alternate;
+      }
+      body:before {
+        background: #7c3aed;
+        top: -120px;
+        left: -120px;
+      }
+      body:after {
+        background: #06b6d4;
+        bottom: -140px;
+        right: -100px;
+        animation-delay: -7s;
+      }
+      @keyframes fl {
+        to {
+          transform: translate(80px, 60px) scale(1.15);
+        }
+      }
+      .up {
+        text-transform: uppercase;
+      }
+      .gt {
+        background: linear-gradient(90deg, var(--a), var(--c));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .nv {
+        background: rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .cc {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      }
+      .bg-g {
+        background: linear-gradient(90deg, var(--a), var(--b), var(--c));
+        background-size: 200%;
+        border: 0;
+        color: #0b1020 !important;
+        font-weight: 700;
+        transition: 0.4s;
+      }
+      .bg-g:hover {
+        background-position: 100%;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(167, 139, 250, 0.45);
+      }
+      .nav-pills .nav-link {
+        color: #cbd5f5;
+      }
+      .nav-pills .nav-link.active {
+        background: linear-gradient(90deg, var(--a), var(--b));
+        color: #0b1020;
+      }
+      .opt {
+        border: 2px solid rgba(255, 255, 255, 0.12);
+        border-radius: 16px;
+        padding: 14px 18px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.05);
+        transition: 0.2s;
+      }
+      .opt:hover {
+        border-color: var(--a);
+        transform: translateX(6px);
+        background: rgba(34, 211, 238, 0.08);
+      }
+      .opt.off {
+        pointer-events: none;
+      }
+      .opt.ok {
+        background: rgba(34, 197, 94, 0.22);
+        border-color: #22c55e;
+      }
+      .opt.no {
+        background: rgba(244, 63, 94, 0.22);
+        border-color: #f43f5e;
+      }
+      .bar {
+        height: 8px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.12);
+        overflow: hidden;
+      }
+      .bar > div {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, var(--a), var(--c));
+        transition: width 0.4s;
+      }
+      .pod {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 20px;
+        text-align: center;
+        padding: 14px 8px;
+      }
+      .p0 {
+        padding: 34px 8px;
+        border-color: #fbbf24;
+        box-shadow: 0 0 34px rgba(251, 191, 36, 0.3);
+      }
+      .p1 {
+        border-color: #cbd5e1;
+      }
+      .p2 {
+        border-color: #d97706;
+      }
+      tr.top td {
+        background: rgba(251, 191, 36, 0.06) !important;
+      }
+      .swal2-popup {
+        background: #141a33 !important;
+        color: #e5e7f5 !important;
+      }
+      .swal2-title,
+      .swal2-html-container {
+        color: #e5e7f5 !important;
+      }
+      #prev {
+        max-height: 340px;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nv navbar py-3">
+      <div class="container">
+        <span class="navbar-brand fw-bold fs-4 text-white"
+          ><i class="fa-solid fa-bolt me-2 text-info"></i><span class="gt">QUIZ ARENA</span></span
+        >
+        <button
+          id="btnMode"
+          class="btn btn-light btn-sm rounded-pill px-3 fw-semibold text-primary"
+        >
+          <i class="fa-solid fa-user-gear me-1"></i>Portal Guru
         </button>
       </div>
-    </div>
-  </nav>
-
-  <!-- Container Utama -->
-  <div class="container py-4">
-
-    <!-- VIEW 1: MODE GURU -->
-    <div id="teacherView" class="d-none">
-      
-      <!-- Navigasi Menu Guru -->
-      <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded-4 shadow-sm">
-        <ul class="nav nav-pills" id="teacherTab" role="tablist">
-          <li class="nav-item">
-            <button class="nav-link active fw-bold px-3" id="tab-buat-soal" data-bs-toggle="pill" data-bs-target="#content-buat-soal" type="button">
-              <i class="fa-solid fa-pen-to-square me-2"></i>Kelola Soal
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link fw-bold px-3" id="tab-pustaka-soal" data-bs-toggle="pill" data-bs-target="#content-pustaka-soal" type="button">
-              <i class="fa-solid fa-book-bookmark me-2"></i>Pustaka Soal
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link fw-bold px-3" id="tab-monitoring" data-bs-toggle="pill" data-bs-target="#content-monitoring" type="button">
-              <i class="fa-solid fa-chart-line me-2"></i>Monitoring Siswa
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link fw-bold px-3" id="tab-kelola-guru" data-bs-toggle="pill" data-bs-target="#content-kelola-guru" type="button">
-              <i class="fa-solid fa-user-plus me-2"></i>Kelola Guru
-            </button>
-          </li>
-        </ul>
-        
-        <div class="d-flex align-items-center gap-2">
-          <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-2 rounded-pill" id="loggedInTeacherBadge">
-            Guru: Admin
-          </span>
-          <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="lockTeacherSession()">
-            <i class="fa-solid fa-lock me-1"></i> Keluar
-          </button>
+    </nav>
+    <div class="container py-4">
+      <!-- ============ GURU ============ -->
+      <div id="tView" class="d-none">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4 cc p-3">
+          <ul class="nav nav-pills">
+            <li>
+              <button
+                class="nav-link active fw-bold"
+                id="tabSoal"
+                data-bs-toggle="pill"
+                data-bs-target="#pSoal"
+              >
+                Kelola Soal
+              </button>
+            </li>
+            <li>
+              <button class="nav-link fw-bold" data-bs-toggle="pill" data-bs-target="#pLib">
+                Pustaka Soal
+              </button>
+            </li>
+            <li>
+              <button class="nav-link fw-bold" data-bs-toggle="pill" data-bs-target="#pMon">
+                Monitoring
+              </button>
+            </li>
+            <li>
+              <button class="nav-link fw-bold" data-bs-toggle="pill" data-bs-target="#pRank">
+                Rengking
+              </button>
+            </li>
+            <li id="liGuru" class="d-none">
+              <button class="nav-link fw-bold" data-bs-toggle="pill" data-bs-target="#pGuru">
+                Kelola Guru
+              </button>
+            </li>
+          </ul>
+          <span
+            ><span
+              class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill"
+              id="badge"
+            ></span>
+            <button class="btn btn-outline-secondary btn-sm rounded-pill ms-1" onclick="logout()">
+              Keluar
+            </button></span
+          >
         </div>
-      </div>
-
-      <div class="tab-content" id="teacherTabContent">
-        
-        <!-- Tab 1: Buat Soal -->
-        <div class="tab-pane fade show active" id="content-buat-soal" role="tabpanel">
-          <div class="row g-4">
-            <!-- Panel Input -->
-            <div class="col-lg-7">
-              <div class="card card-custom p-4 mb-4">
-                <h5 class="fw-bold mb-3 text-primary">
-                  <i class="fa-solid fa-file-circle-plus me-2"></i>1. Import File Soal (.docx, .pdf, .txt)
-                </h5>
-                <div class="mb-2">
-                  <input type="file" class="form-control" id="fileInput" accept=".docx, .pdf, .txt">
-                </div>
-                <small class="text-muted d-block mb-3">
-                  <strong>Format teks file yang didukung:</strong><br>
-                  1. Pertanyaan...<br>
-                  A. Pilihan A<br>
-                  B. Pilihan B<br>
-                  Kunci: A
-                </small>
-
-                <hr class="my-4">
-
-                <h5 class="fw-bold mb-3 text-primary">
-                  <i class="fa-solid fa-pen-to-square me-2"></i>2. Tambah Soal Manual
-                </h5>
-
-                <form id="manualQuestionForm">
-                  <div class="mb-3">
-                    <textarea class="form-control" id="manualQuestionText" rows="2" placeholder="Masukkan pertanyaan..." required></textarea>
-                  </div>
-
-                  <div class="row g-2 mb-2">
-                    <div class="col-md-6"><input type="text" class="form-control form-control-sm" id="optA" placeholder="Pilihan A" required></div>
-                    <div class="col-md-6"><input type="text" class="form-control form-control-sm" id="optB" placeholder="Pilihan B" required></div>
-                    <div class="col-md-6"><input type="text" class="form-control form-control-sm" id="optC" placeholder="Pilihan C" required></div>
-                    <div class="col-md-6"><input type="text" class="form-control form-control-sm" id="optD" placeholder="Pilihan D" required></div>
-                    <div class="col-md-6"><input type="text" class="form-control form-control-sm" id="optE" placeholder="Pilihan E (Opsional)"></div>
-                    <div class="col-md-6">
-                      <select class="form-select form-select-sm fw-semibold text-success" id="keySelect" required>
-                        <option value="" disabled selected>-- Kunci Jawaban --</option>
-                        <option value="A">Kunci: A</option>
-                        <option value="B">Kunci: B</option>
-                        <option value="C">Kunci: C</option>
-                        <option value="D">Kunci: D</option>
-                        <option value="E">Kunci: E</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <button type="submit" class="btn btn-outline-primary w-100 btn-sm mt-2 fw-semibold">
-                    <i class="fa-solid fa-plus me-1"></i> Tambahkan Ke Daftar
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="pSoal">
+            <div class="row g-4">
+              <div class="col-lg-7">
+                <div class="card cc p-4 mb-4">
+                  <h5 class="fw-bold text-primary">
+                    <i class="fa-solid fa-wand-magic-sparkles me-2"></i>Buat Soal Otomatis dari
+                    Materi (AI)
+                  </h5>
+                  <p class="small text-muted mb-2">
+                    Upload materi (.pptx, .docx, .pdf, .txt), tentukan jumlah soal, AI membuatkan
+                    soal + kunci.
+                  </p>
+                  <input
+                    type="file"
+                    id="aiFile"
+                    class="form-control mb-2"
+                    accept=".pptx,.docx,.pdf,.txt"
+                  />
+                  <label class="small fw-bold">Jumlah soal</label
+                  ><input
+                    type="number"
+                    id="aiN"
+                    class="form-control mb-2"
+                    value="20"
+                    min="1"
+                    max="200"
+                  />
+                  <button class="btn bg-g w-100" onclick="genAI()">
+                    <i class="fa-solid fa-bolt me-1"></i>Buat Soal dengan AI
                   </button>
-                </form>
+                </div>
+                <div class="card cc p-4 mb-4">
+                  <h5 class="fw-bold text-primary">
+                    <i class="fa-solid fa-file-import me-2"></i>Import File Soal
+                  </h5>
+                  <input type="file" id="fileInput" class="form-control" accept=".docx,.pdf,.txt" />
+                  <small class="text-muted"
+                    >Format: <code>1. Soal</code>, <code>A. Opsi</code>, <code>Kunci: B</code> (tiap
+                    opsi boleh di baris sama atau terpisah).</small
+                  >
+                  <hr />
+                  <h5 class="fw-bold text-primary">Tambah Manual</h5>
+                  <form id="manForm">
+                    <textarea
+                      id="mq"
+                      class="form-control mb-2"
+                      rows="2"
+                      placeholder="Pertanyaan"
+                      required
+                    ></textarea>
+                    <div class="row g-2">
+                      <div class="col-6">
+                        <input
+                          id="oA"
+                          class="form-control form-control-sm"
+                          placeholder="A"
+                          required
+                        />
+                      </div>
+                      <div class="col-6">
+                        <input
+                          id="oB"
+                          class="form-control form-control-sm"
+                          placeholder="B"
+                          required
+                        />
+                      </div>
+                      <div class="col-6">
+                        <input
+                          id="oC"
+                          class="form-control form-control-sm"
+                          placeholder="C"
+                          required
+                        />
+                      </div>
+                      <div class="col-6">
+                        <input
+                          id="oD"
+                          class="form-control form-control-sm"
+                          placeholder="D"
+                          required
+                        />
+                      </div>
+                      <div class="col-6">
+                        <input
+                          id="oE"
+                          class="form-control form-control-sm"
+                          placeholder="E (opsional)"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <select id="mk" class="form-select form-select-sm" required>
+                          <option value="">Kunci</option>
+                          <option>A</option>
+                          <option>B</option>
+                          <option>C</option>
+                          <option>D</option>
+                          <option>E</option>
+                        </select>
+                      </div>
+                    </div>
+                    <button class="btn btn-outline-primary btn-sm w-100 mt-2">Tambahkan</button>
+                  </form>
+                </div>
+              </div>
+              <div class="col-lg-5">
+                <div class="card cc p-4">
+                  <div class="d-flex justify-content-between mb-2">
+                    <h5 class="fw-bold mb-0">Pratinjau (<span id="qCount">0</span>)</h5>
+                    <button class="btn btn-outline-danger btn-sm" onclick="clearQ()">
+                      Hapus Semua
+                    </button>
+                  </div>
+                  <div id="missKey" class="alert alert-warning py-1 small d-none"></div>
+                  <div id="prev" class="mb-3"></div>
+                  <button class="btn btn-outline-success w-100 fw-bold mb-2" onclick="saveLib()">
+                    Simpan ke Pustaka
+                  </button>
+                  <button class="btn bg-g w-100 py-2" onclick="publish()">
+                    <i class="fa-solid fa-paper-plane me-2"></i>Terbitkan Soal Kuis
+                  </button>
+                </div>
               </div>
             </div>
+          </div>
 
-            <!-- Panel Preview & Sync -->
-            <div class="col-lg-5">
-              <div class="card card-custom p-4 mb-3">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h5 class="fw-bold mb-0">
-                    <i class="fa-solid fa-list-check me-2"></i>Pratinjau Soal (<span id="qCount">0</span>)
-                  </h5>
-                  <button class="btn btn-outline-danger btn-sm" onclick="clearQuestions()">
-                    <i class="fa-solid fa-trash me-1"></i> Hapus Semua
-                  </button>
-                </div>
+          <div class="tab-pane fade" id="pLib">
+            <div class="card cc p-4">
+              <h4 class="fw-bold text-primary">Pustaka Paket Soal</h4>
+              <div class="row g-3" id="libBox"></div>
+            </div>
+          </div>
 
-                <div id="questionListPreview" class="overflow-auto mb-3" style="max-height: 320px;">
-                  <div class="text-center text-muted py-5">
-                    <i class="fa-solid fa-folder-open fs-1 mb-2 d-block opacity-50"></i>
-                    Belum ada soal ditambahkan.
-                  </div>
-                </div>
-
-                <div class="d-flex gap-2 mb-2">
-                  <button id="btnSaveToLibrary" class="btn btn-outline-success w-100 fw-bold" onclick="saveQuestionsToLibrary()">
-                    <i class="fa-solid fa-bookmark me-1"></i> Simpan ke Pustaka
-                  </button>
-                </div>
-
-                <button id="btnPublishQuiz" class="btn btn-gradient py-2 fs-6 shadow-sm w-100">
-                  <i class="fa-solid fa-paper-plane me-2"></i>Terbitkan Soal Kuis
+          <div class="tab-pane fade" id="pMon">
+            <div class="card cc p-4">
+              <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                <h4 class="fw-bold mb-0">
+                  Rengking Live
+                  <span class="badge bg-primary fs-6">Ruang: <span id="monRoom">-</span></span>
+                </h4>
+                <button class="btn btn-danger rounded-pill px-4 fw-bold" onclick="endQuiz()">
+                  <i class="fa-solid fa-flag-checkered me-1"></i>Akhiri Kuis
                 </button>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tab Baru: Pustaka Soal -->
-        <div class="tab-pane fade" id="content-pustaka-soal" role="tabpanel">
-          <div class="card card-custom p-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h4 class="fw-bold text-primary mb-0">
-                <i class="fa-solid fa-book-bookmark me-2"></i>Pustaka Paket Soal Tersimpan
-              </h4>
-            </div>
-            <p class="text-muted small mb-4">
-              Kumpulan paket soal yang telah Anda simpan. Anda dapat menggunakan kembali paket soal ini untuk diterbitkan.
-            </p>
-
-            <div class="row g-3" id="libraryCardsContainer">
-              <div class="col-12 text-center text-muted py-5">
-                <i class="fa-solid fa-box-archive fs-1 mb-2 d-block opacity-50"></i>
-                Belum ada paket soal tersimpan di Pustaka.
+              <div id="podium" class="row g-3 mb-3 align-items-end"></div>
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Nama</th>
+                      <th class="text-center">Skor</th>
+                      <th class="text-center">Waktu</th>
+                      <th class="text-center">Status</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="monBody"></tbody>
+                </table>
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- Tab 2: Monitoring -->
-        <div class="tab-pane fade" id="content-monitoring" role="tabpanel">
-          <div class="card card-custom p-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h4 class="fw-bold text-warning mb-0"><i class="fa-solid fa-trophy me-2"></i>Monitoring Realtime Siswa Saya</h4>
-              <span class="badge bg-primary fs-6">Kode Ruang Anda: <span id="monitorRoomDisplay">-</span></span>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-hover align-middle">
-                <thead class="table-light">
-                  <tr>
-                    <th style="width: 60px;">No</th>
-                    <th>Nama Siswa</th>
-                    <th>Kelas</th>
-                    <th class="text-center">Skor</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody id="teacherLeaderboardTable"></tbody>
-              </table>
+          <div class="tab-pane fade" id="pRank">
+            <div class="card cc p-4">
+              <h4 class="fw-bold mb-1">Riwayat Rengking</h4>
+              <p class="small text-muted">Tersimpan otomatis saat guru menekan "Akhiri Kuis".</p>
+              <div class="row g-3" id="rkBox"></div>
             </div>
           </div>
-        </div>
 
-        <!-- Tab 3: Kelola Guru -->
-        <div class="tab-pane fade" id="content-kelola-guru" role="tabpanel">
-          <div class="row g-4">
-            <div class="col-md-5">
-              <div class="card card-custom p-4">
-                <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-user-plus me-2"></i>Tambah Guru Baru</h5>
-                <form id="addTeacherForm">
-                  <div class="mb-3">
-                    <label class="form-label small fw-bold">Nama Lengkap Guru</label>
-                    <input type="text" id="newTeacherName" class="form-control" placeholder="Contoh: Budi Santoso, S.T." required>
+          <div class="tab-pane fade" id="pGuru">
+            <div class="row g-4">
+              <div class="col-md-5">
+                <div class="card cc p-4">
+                  <h5 class="fw-bold text-primary">Tambah Guru</h5>
+                  <form id="gForm">
+                    <input
+                      id="gName"
+                      class="form-control mb-2"
+                      placeholder="Nama lengkap"
+                      required
+                    />
+                    <input
+                      id="gSub"
+                      class="form-control mb-2 up"
+                      placeholder="Mapel/Jurusan"
+                      required
+                    />
+                    <input
+                      id="gRoom"
+                      class="form-control mb-2 up"
+                      placeholder="Kode ruang, mis. TSM-BUDI"
+                      required
+                    />
+                    <input
+                      id="gPin"
+                      type="password"
+                      class="form-control mb-2"
+                      placeholder="PIN"
+                      required
+                    />
+                    <button class="btn btn-primary w-100 rounded-pill">Simpan Guru</button>
+                  </form>
+                </div>
+                <div class="card cc p-4 mt-4">
+                  <h5 class="fw-bold text-primary">Pengaturan AI (isi sekali)</h5>
+                  <select id="aiProv" class="form-select mb-2">
+                    <option value="gemini">Google Gemini</option>
+                    <option value="groq">Groq (gratis, cepat)</option>
+                    <option value="claude">Anthropic Claude</option>
+                  </select>
+                  <input id="aiModel" class="form-control mb-2" placeholder="Model" />
+                  <input
+                    id="aiKey"
+                    type="password"
+                    class="form-control mb-2"
+                    placeholder="API Key"
+                    autocomplete="off"
+                  />
+                  <hr />
+                  <div class="small fw-bold mb-1">
+                    AI Cadangan (dipakai otomatis jika AI utama sibuk/gagal)
                   </div>
-                  <div class="mb-3">
-                    <label class="form-label small fw-bold">Mata Pelajaran / Jurusan</label>
-                    <input type="text" id="newTeacherSubject" class="form-control uppercase-input" placeholder="Contoh: TSM / TKJ / MATEMATIKA" oninput="this.value = this.value.toUpperCase()" required>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label small fw-bold">Kode Ruang Unik Guru</label>
-                    <input type="text" id="newTeacherRoom" class="form-control uppercase-input fw-bold text-primary" placeholder="Contoh: TSM-BUDI" oninput="this.value = this.value.toUpperCase()" required>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label small fw-bold">PIN Akses Guru</label>
-                    <input type="password" id="newTeacherPin" class="form-control" placeholder="Masukkan PIN Login" required>
-                  </div>
-                  <button type="submit" class="btn btn-primary w-100 fw-bold rounded-pill">
-                    <i class="fa-solid fa-save me-1"></i> Simpan Guru Baru
+                  <select id="aiProv2" class="form-select mb-2">
+                    <option value="">- tidak dipakai -</option>
+                    <option value="groq">Groq (gratis, cepat)</option>
+                    <option value="gemini">Google Gemini</option>
+                    <option value="claude">Anthropic Claude</option>
+                  </select>
+                  <input id="aiModel2" class="form-control mb-2" placeholder="Model cadangan" />
+                  <input
+                    id="aiKey2"
+                    type="password"
+                    class="form-control mb-2"
+                    placeholder="API Key cadangan"
+                    autocomplete="off"
+                  />
+                  <button class="btn btn-primary w-100 rounded-pill" onclick="saveAI()">
+                    Simpan Pengaturan AI
                   </button>
-                </form>
+                </div>
               </div>
-            </div>
-
-            <div class="col-md-7">
-              <div class="card card-custom p-4">
-                <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-users me-2"></i>Daftar Guru Terdaftar</h5>
-                <div class="table-responsive">
-                  <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                      <tr>
-                        <th>Nama Guru</th>
-                        <th>Mapel/Jurusan</th>
-                        <th>Kode Ruang</th>
-                        <th class="text-center">Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody id="teacherListTable"></tbody>
+              <div class="col-md-7">
+                <div class="card cc p-4">
+                  <h5 class="fw-bold text-primary">Daftar Guru</h5>
+                  <table class="table align-middle">
+                    <tbody id="gBody"></tbody>
                   </table>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
       </div>
-    </div>
 
-    <!-- VIEW 2: MODE SISWA -->
-    <div id="studentView">
-      <div id="studentStartScreen" class="row justify-content-center py-5">
-        <div class="col-md-6 col-lg-5">
-          <div class="card card-custom p-4 text-center animate__animated animate__fadeInDown">
-            <div class="my-3">
-              <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fs-6 fw-bold">
-                <i class="fa-solid fa-bolt me-1"></i> Kuis Interaktif SMK
-              </span>
+      <!-- ============ SISWA ============ -->
+      <div id="sView">
+        <div id="sStart" class="row justify-content-center py-5">
+          <div class="col-md-6 col-lg-5">
+            <div class="card cc p-4 text-center">
+              <div class="fs-1">🚀</div>
+              <h3 class="fw-bold gt">Selamat Datang!</h3>
+              <p class="text-muted small">Masukkan data dan Kode Ruang dari guru Anda.</p>
+              <form id="sForm">
+                <input id="sRoom" class="form-control up mb-3" placeholder="Kode Ruang" required />
+                <input
+                  id="sName"
+                  class="form-control up mb-3"
+                  placeholder="Nama Lengkap"
+                  required
+                />
+                <button class="btn bg-g w-100 py-3 rounded-pill fs-5">Masuk Kuis</button>
+              </form>
             </div>
-            <h3 class="fw-bold mb-2">Selamat Datang!</h3>
-            <p class="text-muted small mb-4">Masukkan data dan Kode Ruang dari guru Anda.</p>
-            
-            <form id="startQuizForm">
-              <div class="form-floating mb-3 text-start">
-                <input type="text" class="form-control uppercase-input" id="studentRoomCode" placeholder="Kode Ruang" oninput="this.value = this.value.toUpperCase()" required>
-                <label for="studentRoomCode">Kode Ruang</label>
-              </div>
-              <div class="form-floating mb-3 text-start">
-                <input type="text" class="form-control uppercase-input" id="studentName" placeholder="Nama Lengkap" oninput="this.value = this.value.toUpperCase()" required>
-                <label for="studentName">Nama Lengkap </label>
-              </div>
-              <div class="form-floating mb-4 text-start">
-                <input type="text" class="form-control uppercase-input" id="studentClass" placeholder="Kelas / Jurusan" oninput="this.value = this.value.toUpperCase()" required>
-                <label for="studentClass">Kelas </label>
-              </div>
-              <button type="submit" class="btn btn-gradient w-100 py-3 fw-bold fs-5 rounded-pill">
-                <i class="fa-solid fa-play me-2"></i> Masuk Kuis
-              </button>
-            </form>
           </div>
         </div>
-      </div>
 
-      <!-- Screen 2: Pengerjaan Soal Siswa -->
-      <div id="quizPlayScreen" class="d-none">
-        <div class="row justify-content-center">
+        <div id="sPlay" class="d-none row justify-content-center">
           <div class="col-md-8 col-lg-6">
-            <div class="quiz-progress-bar mb-3">
-              <div id="quizProgressFill" class="quiz-progress-fill"></div>
-            </div>
-
-            <div class="quiz-card animate__animated animate__fadeIn">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="badge bg-primary-subtle text-primary uppercase-input fw-bold px-3 py-2 rounded-pill" id="quizRoomDisplay">RUANG: -</span>
-                <div class="timer-badge">
-                  <i class="fa-solid fa-clock me-1"></i> <span id="timerDisplay">00:00</span>
-                </div>
+            <div class="bar mb-3"><div id="fill"></div></div>
+            <div class="card cc p-4">
+              <div class="d-flex justify-content-between mb-3">
+                <span
+                  class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill"
+                  id="rLbl"
+                ></span
+                ><span class="fw-bold"
+                  ><i class="fa-solid fa-clock me-1"></i><span id="tm">00:00</span></span
+                >
               </div>
-
-              <h4 id="questionTextDisplay" class="fw-bold mb-4 text-dark" style="line-height: 1.5; font-size: 1.25rem;">
-                Memuat soal...
-              </h4>
-
-              <div id="optionsContainer" class="mb-2"></div>
-
-              <div class="text-end text-muted small fw-semibold mt-3">
-                Soal <span id="currentQIndex">1</span> dari <span id="totalQIndex">0</span>
+              <h4 id="qtext" class="fw-bold mb-4" style="font-size: 1.25rem; line-height: 1.5"></h4>
+              <div id="opts"></div>
+              <div class="text-end small text-muted fw-semibold">
+                Soal <span id="qi">1</span> dari <span id="qn">0</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Screen 3: Hasil Akhir -->
-      <div id="quizResultScreen" class="d-none row justify-content-center py-4">
-        <div class="col-md-6 col-lg-5 text-center">
-          <div class="card card-custom p-5 animate__animated animate__zoomIn">
-            <div class="mb-3">
-              <i class="fa-solid fa-award text-warning" style="font-size: 5rem;"></i>
-            </div>
-            <h2 class="fw-bold mb-2">Kuis Selesai!</h2>
-            <p class="text-muted">Jawaban Anda telah tersimpan ke guru.</p>
-
-            <div class="row my-4 g-3 justify-content-center">
-              <div class="col-8">
-                <div class="p-3 bg-light rounded-4 border">
-                  <span class="text-muted small d-block">Skor Akhir</span>
-                  <span id="finalScoreDisplay" class="fs-1 fw-bold text-primary">0</span>
-                </div>
+        <div id="sEnd" class="d-none row justify-content-center py-4">
+          <div class="col-md-6 col-lg-5 text-center">
+            <div class="card cc p-5">
+              <i class="fa-solid fa-award text-warning" style="font-size: 5rem"></i>
+              <h2 class="fw-bold mt-2">Kuis Selesai!</h2>
+              <p class="text-muted">Jawaban Anda sudah tersimpan.</p>
+              <div class="p-3 bg-light rounded-4 border my-3">
+                <small class="text-muted d-block">Skor Akhir</small
+                ><span id="final" class="fs-1 fw-bold text-primary">0</span>
               </div>
+              <button onclick="location.reload()" class="btn bg-g py-3 rounded-pill w-100">
+                Kembali ke Awal
+              </button>
             </div>
-
-            <button onclick="location.reload()" class="btn btn-gradient py-3 fw-bold rounded-pill w-100">
-              <i class="fa-solid fa-rotate-right me-2"></i> Kembali Ke Awal
-            </button>
           </div>
         </div>
       </div>
-
     </div>
-  </div>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script>
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+      firebase.initializeApp({
+        apiKey: 'AIzaSyBCocRqB_pecbcVCsfWvGvkK2gtLzn54RQ',
+        authDomain: 'kuis-smk.firebaseapp.com',
+        databaseURL: 'https://kuis-smk-default-rtdb.firebaseio.com',
+        projectId: 'kuis-smk',
+        storageBucket: 'kuis-smk.firebasestorage.app',
+        messagingSenderId: '299347266848',
+        appId: '1:299347266848:web:f18ee45a20aec7e51cdb45',
+      });
+      const db = firebase.database(),
+        $ = (id) => document.getElementById(id);
+      const esc = (s) =>
+        String(s ?? '').replace(
+          /[&<>"']/g,
+          (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c],
+        );
+      const sha = async (s) =>
+        [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)))]
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('');
+      const room = (s) =>
+        String(s)
+          .toUpperCase()
+          .replace(/[^A-Z0-9_-]/g, '');
+      const S = {
+        teacher: null,
+        teachers: {},
+        qs: [],
+        idx: 0,
+        ans: {},
+        stu: null,
+        timer: 0,
+        ti: null,
+        busy: false,
+        refs: [],
+      };
+      const DEF = {
+        gemini: 'gemini-3.8-flash',
+        groq: 'openai/gpt-oss-120b',
+        claude: 'claude-sonnet-5-5',
+      };
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-  <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-
-    // Firebase Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyBCocRqB_pecbcVCsfWvGvkK2gtLzn54RQ",
-      authDomain: "kuis-smk.firebaseapp.com",
-      databaseURL: "https://kuis-smk-default-rtdb.firebaseio.com",
-      projectId: "kuis-smk",
-      storageBucket: "kuis-smk.firebasestorage.app",
-      messagingSenderId: "299347266848",
-      appId: "1:299347266848:web:f18ee45a20aec7e51cdb45",
-      measurementId: "G-N6NJ7PM2VG"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    // State
-    let state = {
-      isTeacherLoggedIn: false,
-      currentTeacher: null,
-      registeredTeachers: {},
-      questions: [],
-      currentQuestionIdx: 0,
-      userAnswers: {},
-      studentInfo: null,
-      leaderboard: [],
-      timer: 0,
-      timerInterval: null,
-      isAnswering: false,
-      activeStudentsRef: null,
-      libraryRef: null
-    };
-
-    const btnSwitchMode = document.getElementById('btnSwitchMode');
-    const teacherView = document.getElementById('teacherView');
-    const studentView = document.getElementById('studentView');
-
-    document.addEventListener('DOMContentLoaded', () => {
-      db.ref('teachers').on('value', (snapshot) => {
-        const val = snapshot.val();
-        if (val) {
-          state.registeredTeachers = val;
-        } else {
-          state.registeredTeachers = {
-            "ADMIN": { name: "Admin Utama", subject: "UMUM", roomCode: "ADMIN", pin: "anggara.com" }
+      /* ============================================
+         GURU: DATA & LOGIN
+         ============================================ */
+      db.ref('teachers').on('value', async (s) => {
+        let v = s.val();
+        if (!v) {
+          v = {
+            ADMIN: {
+              name: 'Admin Utama',
+              subject: 'UMUM',
+              roomCode: 'ADMIN',
+              pinHash: await sha('anggara.com'),
+            },
           };
-          db.ref('teachers').set(state.registeredTeachers);
+          db.ref('teachers').set(v);
         }
-        renderTeacherList();
+        S.teachers = v;
+        renderTeachers();
       });
-    });
-
-    // ==========================================
-    // LOGIKA PARSE FILE (DOCX, PDF, TXT)
-    // ==========================================
-    document.getElementById('fileInput').addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const fileName = file.name.toLowerCase();
-      Swal.fire({
-        title: 'Membaca File...',
-        text: 'Sedang memproses soal secara otomatis',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-      });
-
-      if (fileName.endsWith('.docx')) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          mammoth.extractRawText({ arrayBuffer: evt.target.result })
-            .then(result => processRawTextToQuestions(result.value))
-            .catch(err => Swal.fire('Error', 'Gagal membaca file Word .docx', 'error'));
-        };
-        reader.readAsArrayBuffer(file);
-
-      } else if (fileName.endsWith('.pdf')) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          const typedarray = new Uint8Array(evt.target.result);
-          pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-            let maxPages = pdf.numPages;
-            let countPromises = [];
-            for (let j = 1; j <= maxPages; j++) {
-              countPromises.push(pdf.getPage(j).then(page => {
-                return page.getTextContent().then(textContent => {
-                  return textContent.items.map(item => item.str).join(' ');
-                });
-              }));
-            }
-            Promise.all(countPromises).then(pagesText => {
-              processRawTextToQuestions(pagesText.join('\n'));
-            });
-          }).catch(err => Swal.fire('Error', 'Gagal membaca file PDF', 'error'));
-        };
-        reader.readAsArrayBuffer(file);
-
-      } else if (fileName.endsWith('.txt')) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          processRawTextToQuestions(evt.target.result);
-        };
-        reader.readAsText(file);
-      } else {
-        Swal.fire('Format Tidak Didukung', 'Gunakan file .docx, .pdf, atau .txt', 'warning');
-      }
-
-      this.value = '';
-    });
-
-    function processRawTextToQuestions(rawText) {
-      const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
-      let parsedQuestions = [];
-      let currentQ = null;
-
-      lines.forEach(line => {
-        const isNewQuestion = /^\d+[\.\)]\s*/.test(line);
-        const optionMatch = line.match(/^([A-Ea-e])[\.\)]\s*(.+)/);
-        const keyMatch = line.match(/^(kunci|jawaban|key)\s*:\s*([A-Ea-e])/i);
-
-        if (isNewQuestion) {
-          if (currentQ && currentQ.question && Object.keys(currentQ.options).length >= 2) {
-            parsedQuestions.push(currentQ);
-          }
-          currentQ = {
-            id: Date.now() + Math.random(),
-            question: line.replace(/^\d+[\.\)]\s*/, ''),
-            options: {},
-            key: 'A'
-          };
-        } else if (optionMatch && currentQ) {
-          const optLetter = optionMatch[1].toUpperCase();
-          const optText = optionMatch[2];
-          currentQ.options[optLetter] = optText;
-        } else if (keyMatch && currentQ) {
-          currentQ.key = keyMatch[2].toUpperCase();
-        } else if (currentQ && !optionMatch && !keyMatch) {
-          currentQ.question += ' ' + line;
-        }
-      });
-
-      if (currentQ && currentQ.question && Object.keys(currentQ.options).length >= 2) {
-        parsedQuestions.push(currentQ);
-      }
-
-      Swal.close();
-
-      if (parsedQuestions.length > 0) {
-        state.questions = [...state.questions, ...parsedQuestions];
-        renderQuestionPreview();
+      $('btnMode').onclick = () => {
+        if (S.teacher) return logout();
+        const o = Object.entries(S.teachers)
+          .map(([k, t]) => `<option value="${esc(k)}">${esc(t.name)} (${esc(t.subject)})</option>`)
+          .join('');
         Swal.fire({
-          icon: 'success',
-          title: 'Berhasil Dibarukan!',
-          text: `Otomatis menambahkan ${parsedQuestions.length} soal ke Pratinjau.`,
-          timer: 2000,
-          showConfirmButton: false
-        });
-      } else {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Soal Tidak Terdeteksi',
-          text: 'Pastikan format teks di dalam file rapi (Nomor soal diawali angka, Opsi diawali A./B./C.)'
-        });
-      }
-    }
-
-    // ==========================================
-    // LOGIKA FITUR PUSTAKA SOAL
-    // ==========================================
-    function saveQuestionsToLibrary() {
-      if (state.questions.length === 0) {
-        Swal.fire('Soal Kosong', 'Tambahkan atau import soal terlebih dahulu sebelum menyimpan.', 'warning');
-        return;
-      }
-
-      if (!state.currentTeacher) return;
-
-      Swal.fire({
-        title: 'Simpan ke Pustaka Soal',
-        input: 'text',
-        inputLabel: 'Nama Paket Soal',
-        inputPlaceholder: 'Contoh: Ulangan Harian BAB 1 TSM',
-        showCancelButton: true,
-        confirmButtonText: 'Simpan',
-        inputValidator: (value) => {
-          if (!value) {
-            return 'Nama paket soal tidak boleh kosong!';
-          }
-        }
-      }).then((res) => {
-        if (res.isConfirmed) {
-          const title = res.value.trim();
-          const room = state.currentTeacher.roomCode;
-          const libKey = db.ref(`libraries/${room}`).push().key;
-
-          const packageData = {
-            id: libKey,
-            title: title,
-            totalQuestions: state.questions.length,
-            dateCreated: new Date().toLocaleDateString('id-ID'),
-            questions: state.questions
-          };
-
-          db.ref(`libraries/${room}/${libKey}`).set(packageData).then(() => {
-            Swal.fire('Tersimpan!', 'Paket soal berhasil disimpan ke Pustaka Soal.', 'success');
-          });
-        }
-      });
-    }
-
-    function listenToTeacherLibrary() {
-      if (!state.currentTeacher) return;
-      const room = state.currentTeacher.roomCode;
-
-      if (state.libraryRef) state.libraryRef.off();
-
-      state.libraryRef = db.ref(`libraries/${room}`);
-      state.libraryRef.on('value', (snapshot) => {
-        const val = snapshot.val();
-        renderLibraryCards(val);
-      });
-    }
-
-    function renderLibraryCards(libraryData) {
-      const container = document.getElementById('libraryCardsContainer');
-
-      if (!libraryData) {
-        container.innerHTML = `
-          <div class="col-12 text-center text-muted py-5">
-            <i class="fa-solid fa-box-archive fs-1 mb-2 d-block opacity-50"></i>
-            Belum ada paket soal tersimpan di Pustaka.
-          </div>
-        `;
-        return;
-      }
-
-      let html = '';
-      Object.keys(libraryData).forEach(key => {
-        const item = libraryData[key];
-        html += `
-          <div class="col-md-6 col-lg-4">
-            <div class="card border rounded-4 p-3 h-100 shadow-sm">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <span class="badge bg-primary-subtle text-primary fw-bold px-2 py-1 rounded-pill">
-                  <i class="fa-solid fa-list me-1"></i> ${item.totalQuestions} Soal
-                </span>
-                <span class="text-muted small">${item.dateCreated}</span>
-              </div>
-              <h5 class="fw-bold text-dark mb-3">${item.title}</h5>
-              <div class="mt-auto d-flex gap-2">
-                <button class="btn btn-primary btn-sm rounded-pill w-100 fw-bold" onclick="loadLibraryToPreview('${item.id}')">
-                  <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Gunakan
-                </button>
-                <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="deleteLibraryPackage('${item.id}')">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-      });
-
-      container.innerHTML = html;
-    }
-
-    function loadLibraryToPreview(libId) {
-      if (!state.currentTeacher) return;
-      const room = state.currentTeacher.roomCode;
-
-      db.ref(`libraries/${room}/${libId}`).get().then((snapshot) => {
-        if (snapshot.exists()) {
-          const pkg = snapshot.val();
-          state.questions = pkg.questions || [];
-          renderQuestionPreview();
-
-          // Switch tab ke Kelola Soal
-          const tabBuat = new bootstrap.Tab(document.getElementById('tab-buat-soal'));
-          tabBuat.show();
-
-          Swal.fire({
-            icon: 'success',
-            title: 'Paket Soal Dimuat!',
-            text: `Paket "${pkg.title}" telah dimuat ke Pratinjau Soal.`,
-            timer: 1800,
-            showConfirmButton: false
-          });
-        }
-      });
-    }
-
-    function deleteLibraryPackage(libId) {
-      if (!state.currentTeacher) return;
-      const room = state.currentTeacher.roomCode;
-
-      Swal.fire({
-        title: 'Hapus Paket Soal?',
-        text: 'Paket soal ini akan dihapus permanen dari pustaka Anda.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Hapus'
-      }).then((res) => {
-        if (res.isConfirmed) {
-          db.ref(`libraries/${room}/${libId}`).remove().then(() => {
-            Swal.fire('Terhapus', 'Paket soal telah dihapus.', 'success');
-          });
-        }
-      });
-    }
-
-    // AUTH & NAVIGASI GURU
-    btnSwitchMode.addEventListener('click', () => {
-      if (!state.isTeacherLoggedIn) {
-        let teacherOptions = '';
-        Object.keys(state.registeredTeachers).forEach(key => {
-          const t = state.registeredTeachers[key];
-          teacherOptions += `<option value="${key}">${t.name} (${t.subject})</option>`;
-        });
-
-        Swal.fire({
-          title: 'Login Portal Guru',
-          html: `
-            <div class="text-start mb-3">
-              <label class="form-label small fw-bold">Pilih Nama Guru:</label>
-              <select id="swalTeacherSelect" class="form-select">${teacherOptions}</select>
-            </div>
-            <div class="text-start">
-              <label class="form-label small fw-bold">PIN Akses Guru:</label>
-              <input type="password" id="swalTeacherPin" class="form-control" placeholder="Masukkan PIN">
-            </div>
-          `,
+          title: 'Login Guru',
+          html: `<select id="lg" class="form-select mb-2">${o}</select><input id="lp" type="password" class="form-control" placeholder="PIN">`,
           showCancelButton: true,
           confirmButtonText: 'Masuk',
-          preConfirm: () => {
-            const selectedKey = document.getElementById('swalTeacherSelect').value;
-            const enteredPin = document.getElementById('swalTeacherPin').value;
-            const teacher = state.registeredTeachers[selectedKey];
+          preConfirm: async () => {
+            const k = $('lg').value,
+              t = S.teachers[k],
+              p = $('lp').value;
+            if (!(t && (t.pinHash ? t.pinHash === (await sha(p)) : t.pin === p)))
+              return Swal.showValidationMessage('PIN salah!');
+            if (!t.pinHash) db.ref('teachers/' + k).update({ pinHash: await sha(p), pin: null });
+            return t;
+          },
+        }).then((r) => r.isConfirmed && login(r.value));
+      };
 
-            if (teacher && teacher.pin === enteredPin) {
-              return teacher;
-            } else {
-              Swal.showValidationMessage('PIN Salah atau Akun tidak ditemukan!');
-            }
-          }
-        }).then((res) => {
-          if (res.isConfirmed) {
-            state.isTeacherLoggedIn = true;
-            state.currentTeacher = res.value;
-            
-            document.getElementById('loggedInTeacherBadge').innerText = `${state.currentTeacher.name} [${state.currentTeacher.roomCode}]`;
-            document.getElementById('monitorRoomDisplay').innerText = state.currentTeacher.roomCode;
-            
-            btnSwitchMode.innerHTML = '<i class="fa-solid fa-user-graduate me-1"></i> Mode Siswa';
-            teacherView.classList.remove('d-none');
-            studentView.classList.add('d-none');
-
-            listenToTeacherRoom();
-            listenToTeacherLibrary();
+      function login(t) {
+        S.teacher = t;
+        $('badge').textContent = `${t.name} [${t.roomCode}]`;
+        $('monRoom').textContent = t.roomCode;
+        $('liGuru').classList.toggle('d-none', t.roomCode !== 'ADMIN');
+        $('btnMode').innerHTML = '<i class="fa-solid fa-user-graduate me-1"></i>Mode Siswa';
+        $('tView').classList.remove('d-none');
+        $('sView').classList.add('d-none');
+        const a = db.ref(`rooms/${t.roomCode}/students`),
+          l = db.ref(`libraries/${t.roomCode}`),
+          ai = db.ref('settings/ai'),
+          rk = db.ref('rankings/' + t.roomCode);
+        S.refs = [a, l, ai, rk];
+        rk.on('value', (s) => {
+          S.rk = s.val() || {};
+          renderRank();
+        });
+        a.on('value', (s) => renderMon(s.val() || {}));
+        l.on('value', (s) => renderLib(s.val()));
+        ai.on('value', (s) => {
+          S.ai = s.val() || {};
+          if (t.roomCode === 'ADMIN') {
+            $('aiProv').value = S.ai.prov || 'gemini';
+            $('aiModel').value = S.ai.model || DEF[$('aiProv').value];
+            $('aiKey').value = S.ai.key || '';
+            const b = S.ai.b || {};
+            $('aiProv2').value = b.prov || '';
+            $('aiModel2').value = b.model || '';
+            $('aiKey2').value = b.key || '';
           }
         });
-
-      } else {
-        lockTeacherSession();
-      }
-    });
-
-    function lockTeacherSession() {
-      state.isTeacherLoggedIn = false;
-      state.currentTeacher = null;
-      btnSwitchMode.innerHTML = '<i class="fa-solid fa-user-gear me-1"></i> Portal Guru';
-      teacherView.classList.add('d-none');
-      studentView.classList.remove('d-none');
-    }
-
-    // KELOLA GURU
-    document.getElementById('addTeacherForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('newTeacherName').value.trim();
-      const subject = document.getElementById('newTeacherSubject').value.trim().toUpperCase();
-      const roomCode = document.getElementById('newTeacherRoom').value.trim().toUpperCase();
-      const pin = document.getElementById('newTeacherPin').value.trim();
-
-      const teacherKey = roomCode.replace(/[^A-Z0-9]/g, '_');
-
-      db.ref(`teachers/${teacherKey}`).set({
-        name: name, subject: subject, roomCode: roomCode, pin: pin
-      }).then(() => {
-        Swal.fire({ icon: 'success', title: 'Guru Baru Berhasil Ditambahkan!', timer: 1500, showConfirmButton: false });
-        document.getElementById('addTeacherForm').reset();
-      });
-    });
-
-    function renderTeacherList() {
-      const tbody = document.getElementById('teacherListTable');
-      let html = '';
-
-      Object.keys(state.registeredTeachers).forEach(key => {
-        const t = state.registeredTeachers[key];
-        html += `
-          <tr>
-            <td class="fw-bold">${t.name}</td>
-            <td><span class="badge bg-secondary">${t.subject}</span></td>
-            <td><span class="badge bg-primary fs-6">${t.roomCode}</span></td>
-            <td class="text-center">
-              ${key !== 'ADMIN' ? `<button class="btn btn-outline-danger btn-sm" onclick="deleteTeacher('${key}')"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-muted small">Admin Utama</span>'}
-            </td>
-          </tr>
-        `;
-      });
-      tbody.innerHTML = html;
-    }
-
-    function deleteTeacher(key) {
-      Swal.fire({
-        title: 'Hapus Akun Guru?',
-        text: 'Guru ini tidak akan bisa login lagi.',
-        icon: 'warning',
-        showCancelButton: true
-      }).then((res) => {
-        if (res.isConfirmed) {
-          db.ref(`teachers/${key}`).remove();
-        }
-      });
-    }
-
-    function listenToTeacherRoom() {
-      if (!state.currentTeacher) return;
-      const room = state.currentTeacher.roomCode;
-
-      if (state.activeStudentsRef) state.activeStudentsRef.off();
-
-      state.activeStudentsRef = db.ref(`rooms/${room}/students`);
-      state.activeStudentsRef.on('value', (snapshot) => {
-        const val = snapshot.val();
-        if (val) {
-          state.leaderboard = Object.keys(val).map(k => ({
-            id: k,
-            name: val[k].name || '-',
-            class: val[k].class || '-',
-            score: val[k].score || 0,
-            status: val[k].status || 'Sedang Mengerjakan'
-          }));
-        } else {
-          state.leaderboard = [];
-        }
-        renderTeacherMonitoring();
-      });
-    }
-
-    // TERBITKAN SOAL
-    document.getElementById('btnPublishQuiz').addEventListener('click', () => {
-      if (!state.currentTeacher) return;
-      const room = state.currentTeacher.roomCode;
-
-      if (state.questions.length === 0) {
-        Swal.fire({ icon: 'warning', title: 'Soal Masih Kosong!' });
-        return;
       }
 
-      db.ref(`rooms/${room}/questions`).set(state.questions).then(() => {
+      function logout() {
+        S.refs.forEach((r) => r.off());
+        S.refs = [];
+        S.teacher = null;
+        S.ai = null;
+        $('aiKey').value = '';
+        $('aiKey2').value = '';
+        $('btnMode').innerHTML = '<i class="fa-solid fa-user-gear me-1"></i>Portal Guru';
+        $('tView').classList.add('d-none');
+        $('sView').classList.remove('d-none');
+      }
+
+      /* ============================================
+         KELOLA GURU (ADMIN)
+         ============================================ */
+      $('gForm').onsubmit = async (e) => {
+        e.preventDefault();
+        if (S.teacher?.roomCode !== 'ADMIN') return;
+        const rc = room($('gRoom').value);
+        if (!rc)
+          return Swal.fire('Kode ruang tidak valid', 'Gunakan huruf, angka, - atau _', 'warning');
+        await db
+          .ref('teachers/' + rc.replace(/-/g, '_'))
+          .set({
+            name: $('gName').value.trim(),
+            subject: $('gSub').value.trim().toUpperCase(),
+            roomCode: rc,
+            pinHash: await sha($('gPin').value),
+          });
+        e.target.reset();
         Swal.fire({
           icon: 'success',
-          title: 'Soal Diterbitkan!',
-          text: `Soal aktif untuk Ruang [${room}].`,
-          timer: 1800,
-          showConfirmButton: false
+          title: 'Guru ditambahkan',
+          timer: 1200,
+          showConfirmButton: false,
         });
-      });
-    });
+      };
 
-    // SISWA MASUK KUIS
-    document.getElementById('startQuizForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const roomCode = document.getElementById('studentRoomCode').value.trim().toUpperCase();
-      const name = document.getElementById('studentName').value.trim().toUpperCase();
-      const sClass = document.getElementById('studentClass').value.trim().toUpperCase();
+      function renderTeachers() {
+        $('gBody').innerHTML = Object.entries(S.teachers)
+          .map(
+            ([k, t]) =>
+              `<tr><td class="fw-bold">${esc(t.name)}</td><td><span class="badge bg-secondary">${esc(t.subject)}</span></td><td><span class="badge bg-primary">${esc(t.roomCode)}</span></td><td>${k === 'ADMIN' ? '' : `<button class="btn btn-outline-danger btn-sm" onclick="delTeacher('${esc(k)}')">Hapus</button>`}</td></tr>`,
+          )
+          .join('');
+      }
 
-      Swal.fire({ title: 'Menghubungkan ke Ruang Guru...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      function delTeacher(k) {
+        if (S.teacher?.roomCode !== 'ADMIN' || k === 'ADMIN') return;
+        Swal.fire({ title: 'Hapus guru ini?', icon: 'warning', showCancelButton: true }).then(
+          (r) => r.isConfirmed && db.ref('teachers/' + k).remove(),
+        );
+      }
 
-      db.ref(`rooms/${roomCode}/questions`).get().then((snapshot) => {
-        Swal.close();
-        if (!snapshot.exists() || !snapshot.val() || snapshot.val().length === 0) {
-          Swal.fire({ icon: 'error', title: 'Kode Ruang Tidak Ditemukan!', text: `Belum ada kuis aktif pada Kode Ruang [${roomCode}].` });
-          return;
+      /* ============================================
+         BACA FILE
+         ============================================ */
+      const htmlText = (h) => {
+        const d = document.createElement('div');
+        d.innerHTML = h.replace(/<br\s*\/?>/gi, '\n').replace(/<\/(p|h[1-6]|li|tr)>/gi, '</$1>\n');
+        return d.textContent;
+      };
+
+      async function fileText(f) {
+        const n = f.name.toLowerCase();
+        if (n.endsWith('.txt')) return f.text();
+        const buf = await f.arrayBuffer();
+        if (n.endsWith('.docx'))
+          return htmlText((await mammoth.convertToHtml({ arrayBuffer: buf })).value);
+        if (n.endsWith('.pdf')) {
+          const pdf = await pdfjsLib.getDocument(new Uint8Array(buf)).promise;
+          let out = '';
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const c = await (await pdf.getPage(i)).getTextContent();
+            c.items.forEach((it) => (out += it.str + (it.hasEOL ? '\n' : ' ')));
+            out += '\n';
+          }
+          return out;
         }
-
-        state.questions = snapshot.val();
-        const studentId = `${name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${sClass.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
-        state.studentInfo = { roomCode, id: studentId, name, class: sClass };
-
-        document.getElementById('quizRoomDisplay').innerText = `RUANG: ${roomCode}`;
-
-        db.ref(`rooms/${roomCode}/students/${studentId}`).get().then((stuSnap) => {
-          if (stuSnap.exists()) {
-            const data = stuSnap.val();
-            if (data.status === 'Selesai') {
-              Swal.fire({ icon: 'error', title: 'Anda Sudah Menyelesaikan Kuis Di Ruang Ini!' });
-              return;
-            }
-            state.userAnswers = data.answers || {};
-            state.currentQuestionIdx = data.lastQuestionIdx || 0;
-          } else {
-            state.userAnswers = {};
-            state.currentQuestionIdx = 0;
-            db.ref(`rooms/${roomCode}/students/${studentId}`).set({
-              name: name,
-              class: sClass,
-              score: 0,
-              status: 'Sedang Mengerjakan',
-              lastQuestionIdx: 0,
-              answers: {}
+        if (n.endsWith('.pptx')) {
+          const z = await JSZip.loadAsync(buf);
+          const names = Object.keys(z.files)
+            .filter((x) => /^ppt\/slides\/slide\d+\.xml$/.test(x))
+            .sort((a, b) => a.match(/\d+/) - b.match(/\d+/));
+          let out = '';
+          for (const [i, nm] of names.entries()) {
+            const x = await z.files[nm].async('string');
+            out += `\n[Slide ${i + 1}]\n`;
+            (x.match(/<a:p[ >].*?<\/a:p>/gs) || []).forEach((p) => {
+              const t = (p.match(/<a:t[^>]*>[^<]*<\/a:t>/g) || [])
+                .map((s) => s.replace(/<[^>]+>/g, ''))
+                .join('');
+              if (t.trim()) out += t + '\n';
             });
           }
-
-          document.getElementById('studentStartScreen').classList.add('d-none');
-          document.getElementById('quizPlayScreen').classList.remove('d-none');
-
-          startTimer();
-          renderPlayQuestion();
-        });
-      });
-    });
-
-    function renderPlayQuestion() {
-      state.isAnswering = false;
-      const q = state.questions[state.currentQuestionIdx];
-      if (!q) return;
-
-      const progressPercent = ((state.currentQuestionIdx + 1) / state.questions.length) * 100;
-      document.getElementById('quizProgressFill').style.width = `${progressPercent}%`;
-
-      document.getElementById('currentQIndex').innerText = state.currentQuestionIdx + 1;
-      document.getElementById('totalQIndex').innerText = state.questions.length;
-      document.getElementById('questionTextDisplay').innerText = q.question;
-
-      const container = document.getElementById('optionsContainer');
-      container.innerHTML = '';
-
-      Object.keys(q.options).forEach(key => {
-        container.innerHTML += `
-          <div class="option-card-app" onclick="selectOption('${key}', this)">
-            <span>${q.options[key]}</span>
-            <div class="status-icon d-none"></div>
-          </div>
-        `;
-      });
-    }
-
-    function selectOption(key, el) {
-      if (state.isAnswering) return;
-      state.isAnswering = true;
-
-      const currentQ = state.questions[state.currentQuestionIdx];
-      const isCorrect = (key === currentQ.key);
-      const iconEl = el.querySelector('.status-icon');
-
-      document.querySelectorAll('.option-card-app').forEach(c => c.classList.add('disabled'));
-
-      if (isCorrect) {
-        el.classList.add('correct');
-        iconEl.classList.remove('d-none');
-        iconEl.innerHTML = '<i class="fa-solid fa-check"></i>';
-      } else {
-        el.classList.add('wrong');
-        iconEl.classList.remove('d-none');
-        iconEl.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-      }
-
-      state.userAnswers[state.currentQuestionIdx] = key;
-
-      let correctCount = 0;
-      state.questions.forEach((q, i) => {
-        if (state.userAnswers[i] === q.key) correctCount++;
-      });
-      const currentScore = Math.round((correctCount / state.questions.length) * 100);
-
-      db.ref(`rooms/${state.studentInfo.roomCode}/students/${state.studentInfo.id}`).update({
-        score: currentScore,
-        lastQuestionIdx: state.currentQuestionIdx,
-        answers: state.userAnswers
-      });
-
-      setTimeout(() => {
-        if (state.currentQuestionIdx < state.questions.length - 1) {
-          state.currentQuestionIdx++;
-          renderPlayQuestion();
-        } else {
-          finishQuiz(currentScore);
+          return out
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&quot;/g, '"')
+            .replace(/&apos;/g, "'");
         }
-      }, 1000);
-    }
-
-    function finishQuiz(score) {
-      clearInterval(state.timerInterval);
-      db.ref(`rooms/${state.studentInfo.roomCode}/students/${state.studentInfo.id}`).update({
-        score: score,
-        status: 'Selesai'
-      });
-
-      document.getElementById('quizPlayScreen').classList.add('d-none');
-      document.getElementById('quizResultScreen').classList.remove('d-none');
-      document.getElementById('finalScoreDisplay').innerText = score;
-    }
-
-    function startTimer() {
-      state.timer = 0;
-      state.timerInterval = setInterval(() => {
-        state.timer++;
-        const mins = Math.floor(state.timer / 60).toString().padStart(2, '0');
-        const secs = (state.timer % 60).toString().padStart(2, '0');
-        document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
-      }, 1000);
-    }
-
-    function renderTeacherMonitoring() {
-      const tableBody = document.getElementById('teacherLeaderboardTable');
-      const sorted = [...state.leaderboard].sort((a, b) => b.score - a.score);
-
-      if (sorted.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Belum ada siswa di ruang kuis ini.</td></tr>`;
-        return;
+        throw Error('Format tidak didukung (.pptx, .docx, .pdf, .txt)');
       }
 
-      let html = '';
-      sorted.forEach((item, idx) => {
-        let badgeClass = item.status === 'Selesai' ? 'bg-success' : 'bg-warning text-dark';
-        html += `
-          <tr>
-            <td class="fw-bold">#${idx + 1}</td>
-            <td class="fw-semibold uppercase-input">${item.name}</td>
-            <td class="uppercase-input">${item.class}</td>
-            <td class="text-center fw-bold text-primary fs-5">${item.score}</td>
-            <td class="text-center"><span class="badge ${badgeClass}">${item.status}</span></td>
-            <td class="text-center">
-              <button class="btn btn-outline-danger btn-sm py-0 px-2" onclick="removeStudent('${item.id}')">Keluarkan</button>
-            </td>
-          </tr>
-        `;
-      });
+      /* ============================================
+         IMPORT SOAL BERFORMAT
+         ============================================ */
+      function parseQ(raw) {
+        if (!/^\s*[A-Ea-e][.)]\s/m.test(raw)) raw = raw.replace(/(\S)\s*([A-E])\.\s+/g, '$1\n$2. ');
+        const out = [];
+        let c = null;
+        const push = () => {
+          if (c && c.question && Object.keys(c.options).length >= 2) out.push(c);
+        };
+        raw
+          .split(/\r?\n/)
+          .map((l) => l.trim())
+          .filter(Boolean)
+          .forEach((l) => {
+            let m;
+            if (/^\d+[.)]\s+/.test(l)) {
+              push();
+              c = {
+                id: Date.now() + Math.random(),
+                question: l.replace(/^\d+[.)]\s+/, ''),
+                options: {},
+                key: null,
+              };
+            } else if (!c) return;
+            else if ((m = l.match(/^(?:kunci|jawaban|key)(?:\s+jawaban)?\s*[:=]\s*([A-Ea-e])/i)))
+              c.key = m[1].toUpperCase();
+            else if ((m = l.match(/^([A-Ea-e])[.)]\s*(.+)/))) c.options[m[1].toUpperCase()] = m[2];
+            else if (!Object.keys(c.options).length) c.question += ' ' + l;
+          });
+        push();
+        return out;
+      }
+      $('fileInput').onchange = async function () {
+        const f = this.files[0];
+        this.value = '';
+        if (!f) return;
+        Swal.fire({
+          title: 'Membaca file...',
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading(),
+        });
+        try {
+          const p = parseQ(await fileText(f));
+          if (!p.length)
+            return Swal.fire(
+              'Soal tidak terdeteksi',
+              'Pastikan format: nomor soal "1.", opsi "A.", dan "Kunci: B".',
+              'warning',
+            );
+          S.qs.push(...p);
+          renderPrev();
+          const m = p.filter((q) => !q.key).length;
+          Swal.fire({
+            icon: m ? 'warning' : 'success',
+            title: `${p.length} soal ditambahkan`,
+            text: m ? `${m} soal belum punya kunci — pilih kuncinya di pratinjau.` : '',
+            timer: m ? undefined : 1800,
+            showConfirmButton: !!m,
+          });
+        } catch (e) {
+          Swal.fire('Gagal', e.message, 'error');
+        }
+      };
 
-      tableBody.innerHTML = html;
-    }
+      /* ============================================
+         GENERATOR SOAL AI
+         ============================================ */
+      $('aiProv').onchange = () => ($('aiModel').value = DEF[$('aiProv').value]);
+      $('aiProv2').onchange = () => ($('aiModel2').value = DEF[$('aiProv2').value] || '');
 
-    function removeStudent(studentId) {
-      if (!studentId || !state.currentTeacher) return;
-      db.ref(`rooms/${state.currentTeacher.roomCode}/students/${studentId}`).remove();
-    }
-
-    // MANAGE INPUT MANUAL
-    document.getElementById('manualQuestionForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const qText = document.getElementById('manualQuestionText').value;
-      const optA = document.getElementById('optA').value;
-      const optB = document.getElementById('optB').value;
-      const optC = document.getElementById('optC').value;
-      const optD = document.getElementById('optD').value;
-      const optE = document.getElementById('optE').value;
-      const keyVal = document.getElementById('keySelect').value;
-
-      const options = { A: optA, B: optB, C: optC, D: optD };
-      if (optE) options.E = optE;
-
-      state.questions.push({ id: Date.now(), question: qText, options: options, key: keyVal });
-      renderQuestionPreview();
-      document.getElementById('manualQuestionForm').reset();
-    });
-
-    function renderQuestionPreview() {
-      document.getElementById('qCount').innerText = state.questions.length;
-      const questionListPreview = document.getElementById('questionListPreview');
-
-      if (state.questions.length === 0) {
-        questionListPreview.innerHTML = `<div class="text-center text-muted py-5"><i class="fa-solid fa-folder-open fs-1 mb-2 d-block opacity-50"></i>Belum ada soal ditambahkan.</div>`;
-        return;
+      function saveAI() {
+        if (S.teacher?.roomCode !== 'ADMIN') return;
+        const c = {
+          prov: $('aiProv').value,
+          model: $('aiModel').value.trim(),
+          key: $('aiKey').value.trim(),
+        };
+        if (!c.model || !c.key) return Swal.fire('Isi model dan API key', '', 'warning');
+        const b = {
+          prov: $('aiProv2').value,
+          model: $('aiModel2').value.trim(),
+          key: $('aiKey2').value.trim(),
+        };
+        if (b.prov && b.model && b.key) c.b = b;
+        db.ref('settings/ai')
+          .set(c)
+          .then(() =>
+            Swal.fire({
+              icon: 'success',
+              title: 'AI aktif untuk semua guru',
+              timer: 1500,
+              showConfirmButton: false,
+            }),
+          );
       }
 
-      let html = '';
-      state.questions.forEach((q, i) => {
-        html += `
-          <div class="card mb-2 p-3 border">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-              <strong class="text-primary">Soal #${i + 1}</strong>
-              <button class="btn btn-outline-danger btn-sm py-0 px-2" onclick="deleteQuestion(${i})"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <p class="small mb-2 fw-semibold">${q.question}</p>
-          </div>
-        `;
-      });
-      questionListPreview.innerHTML = html;
-    }
+      async function askAI(c, mat, n, got) {
+        const prompt = `Kamu guru SMK. Buat ${n} soal pilihan ganda (4 opsi A-D, satu jawaban benar) HANYA berdasarkan materi di bawah. Variasikan tingkat kesulitan (ingatan, pemahaman, penerapan). Jangan mengulang soal ini: ${
+          got
+            .slice(-40)
+            .map((q) => q.question.slice(0, 60))
+            .join(' | ') || '-'
+        }\nBalas HANYA JSON array tanpa markdown: [{"question":"...","options":{"A":"...","B":"...","C":"...","D":"..."},"key":"A"}]\n\nMATERI:\n${mat.slice(0, c.prov === 'groq' ? 12000 : 60000)}`;
+        let r, d, t;
+        if (c.prov === 'gemini') {
+          r = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(c.model)}:generateContent?key=${encodeURIComponent(c.key)}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { responseMimeType: 'application/json', temperature: 0.7 },
+              }),
+            },
+          );
+          d = await r.json();
+          t = d.candidates?.[0]?.content?.parts?.[0]?.text;
+        } else if (c.prov === 'groq') {
+          r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + c.key },
+            body: JSON.stringify({
+              model: c.model,
+              messages: [{ role: 'user', content: prompt }],
+              temperature: 0.7,
+              max_tokens: 6000,
+              ...(/gpt-oss/.test(c.model) ? { reasoning_effort: 'low' } : {}),
+            }),
+          });
+          d = await r.json();
+          t = d.choices?.[0]?.message?.content;
+        } else {
+          r = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+              'x-api-key': c.key,
+              'anthropic-version': '2023-06-01',
+              'anthropic-dangerous-direct-browser-access': 'true',
+            },
+            body: JSON.stringify({
+              model: c.model,
+              max_tokens: 8000,
+              messages: [{ role: 'user', content: prompt }],
+            }),
+          });
+          d = await r.json();
+          t = d.content?.[0]?.text;
+        }
+        if (!r.ok || !t) throw Error(d.error?.message || 'AI tidak mengembalikan jawaban');
+        const a = JSON.parse(t.slice(t.indexOf('['), t.lastIndexOf(']') + 1));
+        return (Array.isArray(a) ? a : [])
+          .filter(
+            (x) =>
+              x &&
+              x.question &&
+              x.options &&
+              x.options[x.key] &&
+              Object.keys(x.options).length >= 3,
+          )
+          .map((x) => {
+            const ok = String(x.options[x.key]),
+              v = Object.values(x.options)
+                .map(String)
+                .slice(0, 5)
+                .sort(() => Math.random() - 0.5),
+              o = {};
+            v.forEach((s, i) => (o['ABCDE'[i]] = s));
+            return {
+              id: Date.now() + Math.random(),
+              question: String(x.question),
+              options: o,
+              key: Object.keys(o).find((k) => o[k] === ok),
+            };
+          });
+      }
 
-    function deleteQuestion(idx) {
-      state.questions.splice(idx, 1);
-      renderQuestionPreview();
-    }
+      async function askRetry(...a) {
+        for (let i = 0; ; i++) {
+          try {
+            return await askAI(...a);
+          } catch (e) {
+            if (
+              i >= (a[4] ?? 4) ||
+              !/demand|overload|unavailable|try again|later|quota|rate|exhaust|busy|JSON|Unexpected/i.test(
+                e.message,
+              )
+            )
+              throw e;
+            Swal.update({ title: `Server AI sedang sibuk, mencoba lagi (${i + 1}/4)...` });
+            await new Promise((r) => setTimeout(r, 4000 * 2 ** i));
+          }
+        }
+      }
 
-    function clearQuestions() {
-      state.questions = [];
-      renderQuestionPreview();
-    }
-  </script>
-</body>
-</html>
+      async function askBoth(c, mat, b, got) {
+        const bk = c.b && c.b.key ? c.b : null;
+        try {
+          return await askRetry(c, mat, b, got, bk ? 2 : 4);
+        } catch (e) {
+          if (!bk) throw e;
+          Swal.update({ title: 'AI utama gagal, pindah ke AI cadangan...' });
+          return await askRetry(bk, mat, b, got, 4);
+        }
+      }
+
+      async function genAI() {
+        const f = $('aiFile').files[0],
+          n = Math.max(1, Math.min(200, +$('aiN').value || 20));
+        const c = S.ai || {};
+        if (!f) return Swal.fire('Pilih file materi dulu', '', 'warning');
+        if (!c.key || !c.model)
+          return Swal.fire(
+            'AI belum diaktifkan',
+            'Minta Admin mengisi Pengaturan AI di menu Kelola Guru.',
+            'warning',
+          );
+        Swal.fire({
+          title: 'Membaca materi...',
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading(),
+        });
+        const got = [];
+        let err = null;
+        try {
+          const mat = (await fileText(f)).slice(0, 60000);
+          if (mat.trim().length < 50)
+            throw Error(
+              'Teks materi tidak terbaca atau terlalu sedikit (PDF hasil scan tidak bisa dibaca).',
+            );
+          while (got.length < n) {
+            const b = Math.min(15, n - got.length);
+            Swal.update({ title: `Membuat soal ${got.length + 1}-${got.length + b} dari ${n}...` });
+            const a = await askBoth(c, mat, b, got);
+            if (!a.length) break;
+            got.push(...a);
+          }
+        } catch (e) {
+          err = e;
+        }
+        if (got.length) {
+          S.qs.push(...got.slice(0, n));
+          renderPrev();
+        }
+        if (err)
+          Swal.fire(
+            got.length ? 'Sebagian berhasil' : 'Gagal',
+            `${got.length} soal dibuat. ${err.message}`,
+            got.length ? 'warning' : 'error',
+          );
+        else
+          Swal.fire({
+            icon: 'success',
+            title: `${Math.min(n, got.length)} soal dibuat`,
+            text: 'Periksa dulu sebelum diterbitkan.',
+            timer: 2200,
+            showConfirmButton: false,
+          });
+      }
+
+      /* ============================================
+         SOAL MANUAL & PRATINJAU
+         ============================================ */
+      $('manForm').onsubmit = (e) => {
+        e.preventDefault();
+        const o = { A: $('oA').value, B: $('oB').value, C: $('oC').value, D: $('oD').value };
+        if ($('oE').value) o.E = $('oE').value;
+        S.qs.push({ id: Date.now(), question: $('mq').value, options: o, key: $('mk').value });
+        renderPrev();
+        e.target.reset();
+      };
+
+      function renderPrev() {
+        $('qCount').textContent = S.qs.length;
+        const m = S.qs.filter((q) => !q.key).length;
+        $('missKey').classList.toggle('d-none', !m);
+        $('missKey').textContent = `${m} soal belum punya kunci — pilih di bawah`;
+        $('prev').innerHTML = S.qs.length
+          ? S.qs
+              .map(
+                (q, i) =>
+                  `<div class="card p-2 mb-2"><div class="d-flex justify-content-between"><b class="text-primary">#${i + 1}</b><button class="btn btn-sm btn-outline-danger py-0" onclick="delQ(${i})">&times;</button></div><div class="small fw-semibold">${esc(q.question)}</div><div class="small text-muted">${Object.entries(
+                    q.options,
+                  )
+                    .map(([k, v]) => `${k}. ${esc(v)}`)
+                    .join(
+                      '<br>',
+                    )}</div><select class="form-select form-select-sm mt-1 ${q.key ? 'text-success' : 'border-danger'}" onchange="S.qs[${i}].key=this.value||null;renderPrev()"><option value="">-- Kunci --</option>${Object.keys(
+                    q.options,
+                  )
+                    .map((k) => `<option ${q.key === k ? 'selected' : ''}>${k}</option>`)
+                    .join('')}</select></div>`,
+              )
+              .join('')
+          : '<div class="text-center text-muted py-4">Belum ada soal.</div>';
+      }
+      const delQ = (i) => {
+        S.qs.splice(i, 1);
+        renderPrev();
+      };
+      const clearQ = () =>
+        S.qs.length &&
+        Swal.fire({
+          title: 'Hapus semua soal di pratinjau?',
+          icon: 'warning',
+          showCancelButton: true,
+        }).then((r) => {
+          if (r.isConfirmed) {
+            S.qs = [];
+            renderPrev();
+          }
+        });
+
+      /* ============================================
+         PUSTAKA & TERBIT
+         ============================================ */
+      function saveLib() {
+        if (!S.qs.length) return Swal.fire('Soal kosong', '', 'warning');
+        Swal.fire({
+          title: 'Nama paket soal',
+          input: 'text',
+          showCancelButton: true,
+          confirmButtonText: 'Simpan',
+          inputValidator: (v) => !v && 'Nama tidak boleh kosong',
+        }).then((r) => {
+          if (!r.isConfirmed) return;
+          const p = db.ref(`libraries/${S.teacher.roomCode}`).push();
+          p.set({
+            id: p.key,
+            title: r.value.trim(),
+            totalQuestions: S.qs.length,
+            dateCreated: new Date().toLocaleDateString('id-ID'),
+            questions: S.qs,
+          }).then(() => Swal.fire('Tersimpan', '', 'success'));
+        });
+      }
+
+      function renderLib(v) {
+        $('libBox').innerHTML = v
+          ? Object.values(v)
+              .map(
+                (i) =>
+                  `<div class="col-md-6 col-lg-4"><div class="card border rounded-4 p-3 h-100"><div class="d-flex justify-content-between mb-2"><span class="badge bg-primary-subtle text-primary">${+i.totalQuestions} soal</span><small class="text-muted">${esc(i.dateCreated)}</small></div><h5 class="fw-bold">${esc(i.title)}</h5><div class="mt-auto d-flex gap-2"><button class="btn btn-primary btn-sm rounded-pill w-100" onclick="useLib('${esc(i.id)}')">Gunakan</button><button class="btn btn-outline-danger btn-sm rounded-pill" onclick="delLib('${esc(i.id)}')">&times;</button></div></div></div>`,
+              )
+              .join('')
+          : '<div class="col-12 text-center text-muted py-5">Belum ada paket tersimpan.</div>';
+      }
+      const useLib = (id) =>
+        db
+          .ref(`libraries/${S.teacher.roomCode}/${id}`)
+          .get()
+          .then((s) => {
+            if (!s.exists()) return;
+            const p = s.val();
+            S.qs = Object.values(p.questions || {});
+            renderPrev();
+            new bootstrap.Tab($('tabSoal')).show();
+            Swal.fire({
+              icon: 'success',
+              title: `"${esc(p.title)}" dimuat`,
+              timer: 1500,
+              showConfirmButton: false,
+            });
+          });
+      const delLib = (id) =>
+        Swal.fire({ title: 'Hapus paket ini?', icon: 'warning', showCancelButton: true }).then(
+          (r) => r.isConfirmed && db.ref(`libraries/${S.teacher.roomCode}/${id}`).remove(),
+        );
+
+      function publish() {
+        if (!S.qs.length) return Swal.fire('Soal masih kosong', '', 'warning');
+        const bad = S.qs.map((q, i) => (q.key ? 0 : i + 1)).filter(Boolean);
+        if (bad.length)
+          return Swal.fire(
+            'Kunci belum lengkap',
+            `Soal nomor ${bad.slice(0, 15).join(', ')}${bad.length > 15 ? '...' : ''} belum punya kunci.`,
+            'error',
+          );
+        db.ref(`rooms/${S.teacher.roomCode}`)
+          .update({ questions: S.qs, closed: false })
+          .then(() =>
+            Swal.fire({
+              icon: 'success',
+              title: 'Soal diterbitkan',
+              text: `Ruang [${S.teacher.roomCode}] aktif.`,
+              timer: 1800,
+              showConfirmButton: false,
+            }),
+          );
+      }
+
+      /* ============================================
+         MONITORING
+         ============================================ */
+      const fmt = (t) =>
+        t == null
+          ? '-'
+          : String((t / 60) | 0).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0');
+      const rankSort = (a, b) =>
+        (b.score || 0) - (a.score || 0) || (a.time ?? 1e9) - (b.time ?? 1e9);
+      const MD = ['🥇', '🥈', '🥉'];
+
+      function renderMon(v) {
+        const a = Object.entries(v)
+          .map(([id, x]) => ({ id, ...x }))
+          .sort(rankSort);
+        $('podium').innerHTML = [1, 0, 2]
+          .filter((i) => a[i])
+          .map(
+            (i) =>
+              `<div class="col-4"><div class="pod p${i}"><div class="fs-1">${MD[i]}</div><div class="fw-bold text-truncate">${esc(a[i].name)}</div><span class="gt fs-3 fw-bold">${+a[i].score || 0}</span></div></div>`,
+          )
+          .join('');
+        $('monBody').innerHTML = a.length
+          ? a
+              .map(
+                (x, i) =>
+                  `<tr class="${i < 3 ? 'top' : ''}"><td>${MD[i] || '#' + (i + 1)}</td><td class="fw-semibold">${esc(x.name)}</td><td class="text-center"><span class="gt fw-bold fs-5">${+x.score || 0}</span></td><td class="text-center">${fmt(x.time)}</td><td class="text-center"><span class="badge ${x.status === 'Selesai' ? 'bg-success' : 'bg-warning text-dark'}">${esc(x.status)}</span></td><td><button class="btn btn-outline-danger btn-sm py-0" onclick="rmStu('${esc(x.id)}')">Keluarkan</button></td></tr>`,
+              )
+              .join('')
+          : '<tr><td colspan="6" class="text-center text-muted py-4">Belum ada siswa.</td></tr>';
+      }
+
+      function endQuiz() {
+        Swal.fire({
+          title: 'Akhiri kuis & simpan rengking?',
+          input: 'text',
+          inputLabel: 'Nama kuis',
+          inputValue: 'Kuis ' + new Date().toLocaleDateString('id-ID'),
+          showCancelButton: true,
+          confirmButtonText: 'Akhiri',
+          inputValidator: (v) => !v.trim() && 'Isi nama kuis',
+        }).then(async (r) => {
+          if (!r.isConfirmed) return;
+          const rc = S.teacher.roomCode,
+            v = (await db.ref(`rooms/${rc}/students`).get()).val() || {};
+          const ranks = Object.values(v)
+            .map((x) => ({
+              name: x.name || '-',
+              score: +x.score || 0,
+              time: x.time ?? null,
+              status: x.status || '-',
+            }))
+            .sort(rankSort);
+          if (!ranks.length)
+            return Swal.fire('Belum ada siswa', 'Tidak ada rengking untuk disimpan.', 'info');
+          const p = db.ref('rankings/' + rc).push();
+          await p.set({
+            id: p.key,
+            title: r.value.trim(),
+            teacher: S.teacher.name,
+            dateText: new Date().toLocaleString('id-ID'),
+            ts: Date.now(),
+            ranks,
+          });
+          await db.ref('rooms/' + rc).update({ closed: true, students: null });
+          Swal.fire({
+            icon: 'success',
+            title: 'Kuis diakhiri',
+            text: 'Rengking tersimpan di menu Rengking.',
+          });
+        });
+      }
+
+      function renderRank() {
+        const a = Object.values(S.rk || {}).sort((x, y) => y.ts - x.ts);
+        $('rkBox').innerHTML = a.length
+          ? a
+              .map(
+                (r) =>
+                  `<div class="col-md-6 col-lg-4"><div class="cc p-3 h-100 d-flex flex-column"><div class="d-flex justify-content-between"><span class="badge bg-primary-subtle text-primary">${r.ranks.length} peserta</span><small class="text-muted">${esc(r.dateText)}</small></div><h5 class="fw-bold my-2">${esc(r.title)}</h5><div class="small mb-3">🥇 ${esc(r.ranks[0].name)} — <b>${+r.ranks[0].score}</b></div><div class="mt-auto d-flex gap-1"><button class="btn bg-g btn-sm rounded-pill flex-fill" onclick="viewRank('${esc(r.id)}')">Lihat</button><button class="btn btn-outline-info btn-sm rounded-pill" onclick="pdfRank('${esc(r.id)}')">PDF</button><button class="btn btn-outline-danger btn-sm rounded-pill" onclick="delRank('${esc(r.id)}')">&times;</button></div></div></div>`,
+              )
+              .join('')
+          : '<div class="col-12 text-center text-muted py-5">Belum ada rengking tersimpan.</div>';
+      }
+      const viewRank = (id) => {
+        const r = S.rk[id];
+        Swal.fire({
+          title: esc(r.title),
+          width: 720,
+          confirmButtonText: 'Tutup',
+          html: `<div class="small text-muted mb-2">${esc(r.dateText)}</div><div style="max-height:55vh;overflow:auto"><table class="table table-sm text-start"><thead><tr><th>#</th><th>Nama</th><th>Skor</th><th>Waktu</th></tr></thead><tbody>${r.ranks.map((x, i) => `<tr><td>${MD[i] || i + 1}</td><td>${esc(x.name)}</td><td><b>${x.score}</b></td><td>${fmt(x.time)}</td></tr>`).join('')}</tbody></table></div>`,
+        });
+      };
+
+      function pdfRank(id) {
+        const r = S.rk[id],
+          d = new window.jspdf.jsPDF();
+        d.setFontSize(16);
+        d.text(r.title, 14, 18);
+        d.setFontSize(10);
+        d.text(`${r.dateText}  |  Guru: ${r.teacher}  |  Peserta: ${r.ranks.length}`, 14, 25);
+        d.autoTable({
+          startY: 30,
+          head: [['No', 'Nama', 'Skor', 'Waktu']],
+          body: r.ranks.map((x, i) => [i + 1, x.name, x.score, fmt(x.time)]),
+          headStyles: { fillColor: [124, 58, 237] },
+        });
+        d.save('Rengking-' + r.title.replace(/[^\w-]+/g, '_') + '.pdf');
+      }
+      const delRank = (id) =>
+        Swal.fire({ title: 'Hapus rengking ini?', icon: 'warning', showCancelButton: true }).then(
+          (r) => r.isConfirmed && db.ref(`rankings/${S.teacher.roomCode}/${id}`).remove(),
+        );
+      const rmStu = (id) =>
+        Swal.fire({ title: 'Keluarkan siswa ini?', icon: 'warning', showCancelButton: true }).then(
+          (r) => r.isConfirmed && db.ref(`rooms/${S.teacher.roomCode}/students/${id}`).remove(),
+        );
+
+      /* ============================================
+         SISWA
+         ============================================ */
+      $('sForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const rc = room($('sRoom').value),
+          name = $('sName').value.trim().toUpperCase();
+        Swal.fire({
+          title: 'Menghubungkan...',
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading(),
+        });
+        try {
+          const qs = await db.ref(`rooms/${rc}/questions`).get(),
+            cl = await db.ref(`rooms/${rc}/closed`).get();
+          Swal.close();
+          if (!rc || !qs.exists())
+            return Swal.fire(
+              'Kode ruang tidak ditemukan',
+              `Belum ada kuis aktif di [${rc}].`,
+              'error',
+            );
+          if (cl.val() === true)
+            return Swal.fire('Kuis sudah diakhiri', 'Silakan hubungi guru Anda.', 'info');
+          S.qs = Object.values(qs.val());
+          const id = name.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+            path = `rooms/${rc}/students/${id}`;
+          S.stu = { path };
+          const st = await db.ref(path).get();
+          let done = 0;
+          if (st.exists()) {
+            const d = st.val();
+            if (d.status === 'Selesai')
+              return Swal.fire('Anda sudah menyelesaikan kuis ini', '', 'error');
+            S.ans = d.answers || {};
+            done = Object.keys(S.ans).length;
+          } else {
+            S.ans = {};
+            await db
+              .ref(path)
+              .set({
+                name,
+                score: 0,
+                status: 'Sedang Mengerjakan',
+                lastQuestionIdx: 0,
+                answers: {},
+              });
+          }
+          if (done >= S.qs.length) return finish(score());
+          S.idx = done;
+          $('rLbl').textContent = 'RUANG: ' + rc;
+          $('qn').textContent = S.qs.length;
+          $('sStart').classList.add('d-none');
+          $('sPlay').classList.remove('d-none');
+          S.over = false;
+          S.cl && S.cl.off();
+          S.cl = db.ref(`rooms/${rc}/closed`);
+          S.cl.on('value', (x) => x.val() === true && closedBy());
+          S.timer = 0;
+          clearInterval(S.ti);
+          S.ti = setInterval(() => {
+            S.timer++;
+            $('tm').textContent =
+              String((S.timer / 60) | 0).padStart(2, '0') +
+              ':' +
+              String(S.timer % 60).padStart(2, '0');
+          }, 1000);
+          showQ();
+        } catch (err) {
+          Swal.fire('Gagal terhubung', err.message, 'error');
+        }
+      };
+      const score = () =>
+        Math.round((S.qs.filter((q, i) => S.ans[i] === q.key).length / S.qs.length) * 100);
+
+      function showQ() {
+        S.busy = false;
+        const q = S.qs[S.idx];
+        $('fill').style.width = ((S.idx + 1) / S.qs.length) * 100 + '%';
+        $('qi').textContent = S.idx + 1;
+        $('qtext').textContent = q.question;
+        const c = $('opts');
+        c.innerHTML = '';
+        Object.entries(q.options).forEach(([k, v]) => {
+          const d = document.createElement('div');
+          d.className = 'opt';
+          d.dataset.k = k;
+          d.textContent = v;
+          d.onclick = () => pick(k, d);
+          c.appendChild(d);
+        });
+      }
+
+      function pick(k, el) {
+        if (S.busy || S.over) return;
+        S.busy = true;
+        const q = S.qs[S.idx];
+        document.querySelectorAll('.opt').forEach((o) => {
+          o.classList.add('off');
+          if (o.dataset.k === q.key) o.classList.add('ok');
+        });
+        if (k !== q.key) el.classList.add('no');
+        S.ans[S.idx] = k;
+        const sc = score();
+        db.ref(S.stu.path).update({ score: sc, lastQuestionIdx: S.idx, answers: S.ans });
+        setTimeout(
+          () => S.over || (S.idx < S.qs.length - 1 ? (S.idx++, showQ()) : finish(sc)),
+          1200,
+        );
+      }
+
+      function finish(sc) {
+        if (S.over) return;
+        S.over = true;
+        clearInterval(S.ti);
+        db.ref(S.stu.path).update({ score: sc, status: 'Selesai', time: S.timer || null });
+        $('sStart').classList.add('d-none');
+        $('sPlay').classList.add('d-none');
+        $('sEnd').classList.remove('d-none');
+        $('final').textContent = sc;
+      }
+
+      function closedBy() {
+        if (S.over) return;
+        S.over = true;
+        S.busy = true;
+        clearInterval(S.ti);
+        Swal.fire({
+          icon: 'info',
+          title: 'Kuis diakhiri guru',
+          timer: 2500,
+          showConfirmButton: false,
+        });
+        $('sPlay').classList.add('d-none');
+        $('sEnd').classList.remove('d-none');
+        $('final').textContent = score();
+      }
+      renderPrev();
+    </script>
+  </body>
+</html> 
