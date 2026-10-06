@@ -173,13 +173,18 @@
         max-height: 340px;
         overflow: auto;
       }
+      #sPlay {
+        user-select: none;
+        -webkit-user-select: none;
+      }
     </style>
   </head>
   <body>
     <nav class="nv navbar py-2">
       <div class="container">
         <span class="navbar-brand fw-bold fs-4 text-white"
-          ><i class="fa-solid fa-bolt me-2 text-info"></i><span class="gt">QUIZ LK UTAMA JAYA</span></span
+          ><i class="fa-solid fa-bolt me-2 text-info"></i
+          ><span class="gt">QUIZ LK UTAMA JAYA</span></span
         >
         <button
           id="btnMode"
@@ -354,6 +359,13 @@
                   <button class="btn btn-outline-success w-100 fw-bold mb-2" onclick="saveLib()">
                     Simpan ke Pustaka
                   </button>
+                  <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="strict" checked /><label
+                      class="form-check-label small"
+                      for="strict"
+                      >Mode ujian ketat (deteksi pindah tab / split screen)</label
+                    >
+                  </div>
                   <button class="btn bg-g w-100 py-2" onclick="publish()">
                     <i class="fa-solid fa-paper-plane me-2"></i>Terbitkan Soal Kuis
                   </button>
@@ -496,7 +508,7 @@
         <div id="sStart" class="row justify-content-center py-5">
           <div class="col-md-6 col-lg-5">
             <div class="card cc p-4 text-center">
-              <div class="fs-1 mb-3"><img src="logo_lkp.png" alt="lk" width="150"></div>
+              <div class="fs-1 mb-3"><img src="logo_lkp.png" alt="lk" width="150" /></div>
               <h3 class="fw-bold gt">Selamat Datang!</h3>
               <p class="text-muted small">Masukkan data dan Kode Ruang dari guru Anda.</p>
               <form id="sForm">
@@ -602,6 +614,7 @@
         busy: false,
         refs: [],
       };
+      const MAXV = 3;
       const DEF = {
         gemini: 'gemini-3.8-flash',
         groq: 'openai/gpt-oss-120b',
@@ -689,7 +702,7 @@
         S.ai = null;
         $('aiKey').value = '';
         $('aiKey2').value = '';
-        $('btnMode').innerHTML = '<i class="fa-solid fa-user-gear me-1"></i>Portal Guru';
+        $('btnMode').innerHTML = '<i class="fa-solid fa-user-gear me-1"></i>Portal Instruktur';
         $('tView').classList.add('d-none');
         $('sView').classList.remove('d-none');
       }
@@ -1168,7 +1181,7 @@
             'error',
           );
         db.ref(`rooms/${S.teacher.roomCode}`)
-          .update({ questions: S.qs, closed: false })
+          .update({ questions: S.qs, closed: false, strict: $('strict').checked })
           .then(() =>
             Swal.fire({
               icon: 'success',
@@ -1206,7 +1219,7 @@
           ? a
               .map(
                 (x, i) =>
-                  `<tr class="${i < 3 ? 'top' : ''}"><td>${MD[i] || '#' + (i + 1)}</td><td class="fw-semibold">${esc(x.name)}</td><td class="text-center"><span class="gt fw-bold fs-5">${+x.score || 0}</span></td><td class="text-center">${fmt(x.time)}</td><td class="text-center"><span class="badge ${x.status === 'Selesai' ? 'bg-success' : 'bg-warning text-dark'}">${esc(x.status)}</span></td><td><button class="btn btn-outline-danger btn-sm py-0" onclick="rmStu('${esc(x.id)}')">Keluarkan</button></td></tr>`,
+                  `<tr class="${i < 3 ? 'top' : ''}"><td>${MD[i] || '#' + (i + 1)}</td><td class="fw-semibold">${esc(x.name)}</td><td class="text-center"><span class="gt fw-bold fs-5">${+x.score || 0}</span></td><td class="text-center">${fmt(x.time)}</td><td class="text-center"><span class="badge ${x.status === 'Selesai' ? 'bg-success' : 'bg-warning text-dark'}">${esc(x.status)}</span>${x.violations ? `<span class="badge bg-danger ms-1" title="${esc(x.lastViolation)}">⚠ ${+x.violations}</span>` : ''}${x.locked ? '<span class="badge bg-dark ms-1">Dikunci</span>' : ''}</td><td><button class="btn btn-outline-danger btn-sm py-0" onclick="rmStu('${esc(x.id)}')">Keluarkan</button></td></tr>`,
               )
               .join('')
           : '<tr><td colspan="6" class="text-center text-muted py-4">Belum ada siswa.</td></tr>';
@@ -1231,6 +1244,7 @@
               score: +x.score || 0,
               time: x.time ?? null,
               status: x.status || '-',
+              viol: +x.violations || 0,
             }))
             .sort(rankSort);
           if (!ranks.length)
@@ -1283,8 +1297,8 @@
         d.text(`${r.dateText}  |  Guru: ${r.teacher}  |  Peserta: ${r.ranks.length}`, 14, 25);
         d.autoTable({
           startY: 30,
-          head: [['No', 'Nama', 'Skor', 'Waktu']],
-          body: r.ranks.map((x, i) => [i + 1, x.name, x.score, fmt(x.time)]),
+          head: [['No', 'Nama', 'Skor', 'Waktu', 'Pelanggaran']],
+          body: r.ranks.map((x, i) => [i + 1, x.name, x.score, fmt(x.time), x.viol || 0]),
           headStyles: { fillColor: [124, 58, 237] },
         });
         d.save('Rengking-' + r.title.replace(/[^\w-]+/g, '_') + '.pdf');
@@ -1312,7 +1326,8 @@
         });
         try {
           const qs = await db.ref(`rooms/${rc}/questions`).get(),
-            cl = await db.ref(`rooms/${rc}/closed`).get();
+            cl = await db.ref(`rooms/${rc}/closed`).get(),
+            sv = await db.ref(`rooms/${rc}/strict`).get();
           Swal.close();
           if (!rc || !qs.exists())
             return Swal.fire(
@@ -1347,6 +1362,29 @@
               });
           }
           if (done >= S.qs.length) return finish(score());
+          S.strict = sv.val() === true;
+          S.v = 0;
+          S.lastV = 0;
+          S.grace = 0;
+          if (S.strict) {
+            await Swal.fire({
+              title: 'Mode Ujian',
+              html:
+                'Selama kuis <b>dilarang</b> membuka tab/aplikasi lain, Google, AI, atau split screen. Pelanggaran dicatat guru dan <b>' +
+                MAXV +
+                'x pelanggaran = kuis dikunci</b>.',
+              confirmButtonText: 'Saya mengerti, mulai',
+              allowOutsideClick: false,
+            });
+            S.grace = Date.now() + 3000;
+            try {
+              await document.documentElement.requestFullscreen();
+            } catch (e) {}
+            setTimeout(() => {
+              S.bw = innerWidth;
+              S.bh = innerHeight;
+            }, 3000);
+          }
           S.idx = done;
           $('rLbl').textContent = 'RUANG: ' + rc;
           $('qn').textContent = S.qs.length;
@@ -1409,11 +1447,17 @@
         );
       }
 
-      function finish(sc) {
+      function finish(sc, lock) {
         if (S.over) return;
         S.over = true;
+        exitFs();
         clearInterval(S.ti);
-        db.ref(S.stu.path).update({ score: sc, status: 'Selesai', time: S.timer || null });
+        db.ref(S.stu.path).update({
+          score: sc,
+          status: 'Selesai',
+          time: S.timer || null,
+          ...(lock ? { locked: true } : {}),
+        });
         $('sStart').classList.add('d-none');
         $('sPlay').classList.add('d-none');
         $('sEnd').classList.remove('d-none');
@@ -1424,6 +1468,7 @@
         if (S.over) return;
         S.over = true;
         S.busy = true;
+        exitFs();
         clearInterval(S.ti);
         Swal.fire({
           icon: 'info',
@@ -1435,7 +1480,66 @@
         $('sEnd').classList.remove('d-none');
         $('final').textContent = score();
       }
+      /* ============================================
+         MODE UJIAN KETAT
+         ============================================ */
+      const exitFs = () => {
+        try {
+          document.fullscreenElement && document.exitFullscreen();
+        } catch (e) {}
+      };
+
+      function violation(why) {
+        const now = Date.now();
+        if (!S.strict || S.over !== false || now < S.grace || now - S.lastV < 2000) return;
+        S.lastV = now;
+        S.v++;
+        db.ref(S.stu.path).update({ violations: S.v, lastViolation: why });
+        if (S.v >= MAXV) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Kuis dikunci',
+            text:
+              'Anda melanggar aturan ' +
+              MAXV +
+              ' kali. Skor dihitung dari jawaban yang sudah masuk.',
+          });
+          return finish(score(), true);
+        }
+        Swal.fire({
+          icon: 'warning',
+          title: `Peringatan ${S.v}/${MAXV}`,
+          text: why + '. Dilarang membuka tab/aplikasi lain atau split screen!',
+          confirmButtonText: 'Kembali ke kuis',
+        }).then(() => {
+          if (!document.fullscreenElement)
+            document.documentElement.requestFullscreen?.().catch(() => {});
+        });
+      }
+      document.addEventListener(
+        'visibilitychange',
+        () => document.hidden && violation('Berpindah tab / aplikasi'),
+      );
+      addEventListener('blur', () =>
+        violation('Layar kehilangan fokus (jendela/aplikasi lain atau split screen)'),
+      );
+      document.addEventListener(
+        'fullscreenchange',
+        () => !document.fullscreenElement && violation('Keluar dari layar penuh'),
+      );
+      addEventListener('resize', () => {
+        if (
+          S.bw &&
+          (Math.abs(innerWidth - S.bw) / S.bw > 0.2 || Math.abs(innerHeight - S.bh) / S.bh > 0.25)
+        )
+          violation('Ukuran layar berubah (split screen)');
+      });
+      ['copy', 'cut', 'paste', 'contextmenu', 'selectstart', 'dragstart'].forEach((ev) =>
+        document.addEventListener(ev, (e) => {
+          if (S.strict && S.over === false) e.preventDefault();
+        }),
+      );
       renderPrev();
     </script>
   </body>
-</html> 
+</html>
